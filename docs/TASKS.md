@@ -27,12 +27,12 @@ Updated: 2026-11-25. Only things actually run are marked as tested; the test env
 
 ## Outstanding (later stages)
 
-- [ ] Stage 2: sync `taxonomy/tropes.yaml` into the database (idempotent).
+- [x] **Stage 2 complete (25 Nov 2026):** taxonomy synced into Supabase.
   - [x] Loader written (`pipeline/sync_taxonomy.py`, `pipeline/db.py`) with 9 tests on an in-memory database.
   - [x] Tested against local PostgreSQL 16 as service_role: run 1 = 78 tropes, 144 aliases, 5 relations, 18 parent links; run 2 = 0 changes.
   - [x] GitHub workflow `sync taxonomy` (manual button + automatic when tropes.yaml changes).
-  - [ ] Repository secrets SUPABASE_URL and SUPABASE_SECRET_KEY added (Joseph).
-  - [ ] First real run on Supabase via the workflow; second run shows 0 changes. (The REST connection itself is untested until then.)
+  - [x] Repository secrets SUPABASE_URL and SUPABASE_SECRET_KEY added (Joseph).
+  - [x] On Supabase via GitHub Actions: dry run planned 245 changes; real run applied 78 tropes, 144 aliases, 18 parent links, 5 relations; separate second run = 0 changes.
 - [ ] Stage 3: Open Library importer for the 30 seed books, with duplicate checks and a coverage report.
 - [ ] Stage 4: Hardcover enrichment (tags, formats, series) and tag-to-trope mapping.
 - [ ] Stage 5: gold labels complete.
