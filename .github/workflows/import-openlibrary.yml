@@ -1,0 +1,49 @@
+name: import open library
+
+# Imports the books in data/seed_books.csv from Open Library into Supabase.
+# Manual only: Actions tab -> "import open library" -> Run workflow.
+# Dry run (the default) fetches and matches every book but writes nothing.
+# The match report appears on the run's summary page and as a downloadable artifact.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (fetch and match, write nothing)"
+        type: boolean
+        default: true
+
+concurrency:
+  group: database-writes
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Import
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          OPENLIBRARY_USER_AGENT: ${{ secrets.OPENLIBRARY_USER_AGENT }}
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            python -m pipeline.import_openlibrary --dry-run
+          else
+            python -m pipeline.import_openlibrary
+          fi
+      - name: Keep report and raw responses
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: openlibrary-import
+          path: |
+            data/reports/
+            data/cache/openlibrary/
+          retention-days: 30

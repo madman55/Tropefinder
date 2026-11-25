@@ -34,6 +34,13 @@ Updated: 2026-11-25. Only things actually run are marked as tested; the test env
   - [x] Repository secrets SUPABASE_URL and SUPABASE_SECRET_KEY added (Joseph).
   - [x] On Supabase via GitHub Actions: dry run planned 245 changes; real run applied 78 tropes, 144 aliases, 18 parent links, 5 relations; separate second run = 0 changes.
 - [ ] Stage 3: Open Library importer for the 30 seed books, with duplicate checks and a coverage report.
+  - [x] Importer (`pipeline/import_openlibrary.py`), Open Library client with 1 req/s limit, retries and response cache, matching helpers (`pipeline/normalise.py`).
+  - [x] Matching rule: title similarity ≥ 0.88 AND author surname match; otherwise "not found", never guessed. Same title + author under a new ID → "needs review", not merged.
+  - [x] 10 new tests (26 total). Local PostgreSQL run with sample data: run 1 imported 2 works / 3 editions; run 2 changed nothing.
+  - [x] Migration `20261125020000_work_subjects.sql` (stores Open Library subjects).
+  - [ ] Migration applied on Supabase (Joseph).
+  - [ ] Dry run on GitHub: review matches.
+  - [ ] Real import; second run adds zero rows.
 - [ ] Stage 4: Hardcover enrichment (tags, formats, series) and tag-to-trope mapping.
 - [ ] Stage 5: gold labels complete.
 - [ ] Stage 6: classification layers (tags, rules, Claude Haiku with quote checking); accuracy report against gold labels.
