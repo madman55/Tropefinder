@@ -1,0 +1,29 @@
+# Secrets — never commit these
+.env
+.env.*
+!.env.example
+
+# Raw API responses (can be large; re-fetchable)
+data/cache/*
+!data/cache/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Node (Phase 3)
+node_modules/
+dist/
+
+# Supabase CLI local files
+supabase/.branches/
+supabase/.temp/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
