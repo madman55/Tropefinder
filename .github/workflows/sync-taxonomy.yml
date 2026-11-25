@@ -1,0 +1,40 @@
+name: sync taxonomy
+
+# Copies taxonomy/tropes.yaml into the Supabase database.
+# Runs automatically when tropes.yaml changes on main, or manually from the
+# Actions tab ("Run workflow"), optionally as a dry run that changes nothing.
+
+on:
+  push:
+    branches: [main]
+    paths: ["taxonomy/tropes.yaml"]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (show changes, change nothing)"
+        type: boolean
+        default: false
+
+concurrency:
+  group: sync-taxonomy
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Sync
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            python -m pipeline.sync_taxonomy --dry-run
+          else
+            python -m pipeline.sync_taxonomy
+          fi

@@ -54,6 +54,12 @@ Also check **Table Editor**: you should see 19 tables, and `data_sources` should
 
 **Check:** GitHub Desktop must **not** list `.env` as a change. If it does, stop and tell Claude; something is wrong with `.gitignore`.
 
+## 5b. GitHub repository secrets (for jobs that run on GitHub)
+
+On GitHub: repo **Settings → Secrets and variables → Actions → New repository secret**. Add `SUPABASE_URL` (the Project URL) and `SUPABASE_SECRET_KEY` (Supabase **Project Settings → API Keys → Secret keys**; or the legacy service_role key). Later stages add `HARDCOVER_TOKEN` and `ANTHROPIC_API_KEY` the same way.
+
+To load the trope list: **Actions → sync taxonomy → Run workflow**. Tick *Dry run* first to preview.
+
 ## 6. Hardcover token (before Stage 4)
 
 1. Make a free account at [hardcover.app](https://hardcover.app).
