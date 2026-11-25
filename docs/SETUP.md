@@ -35,9 +35,12 @@ python -m pytest
 
 In the Supabase dashboard, open **SQL Editor → New query**, then:
 
-1. Paste the whole of `supabase/migrations/20261125000000_initial_schema.sql` and click **Run**. It should say `Success. No rows returned`.
-2. New query: paste `supabase/seed.sql` and **Run**.
-3. New query: paste `supabase/tests/schema_smoke_test.sql` and **Run**.
+Run each file in its own new query, in this order. On a phone, open the file on GitHub, tap **Raw**, then **Select all → Copy** (the small copy icon copies the file *name*, not its contents).
+
+1. `supabase/migrations/20261125000000_initial_schema.sql` → **Run**. If Supabase warns about Row Level Security, choose **Run and enable RLS** (the file enables it anyway). Expect `Success. No rows returned`.
+2. `supabase/migrations/20261125010000_grant_public_read.sql` → **Run**. Expect `Success`.
+3. `supabase/seed.sql` → **Run**.
+4. `supabase/tests/schema_smoke_test.sql` → **Run**. Supabase warns about "destructive operations": choose **Run query**. The test only touches rows it creates and undoes everything at the end.
 
 **Check:** the last result shows `ALL SCHEMA CHECKS PASSED`. The test leaves no data behind. If it shows an error instead, copy the message and send it to Claude.
 

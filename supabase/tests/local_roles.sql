@@ -1,7 +1,10 @@
 -- For testing on a plain PostgreSQL (CI or your own machine), NOT on Supabase.
--- Recreates the roles and default grants that Supabase provides, so the
--- migration and smoke test behave the same way they will on Supabase.
--- Run this first, on an empty database.
+-- Recreates the roles Supabase provides, so the migrations and smoke test
+-- behave the same way they do on Supabase.
+--
+-- Deliberately gives NO automatic table permissions to anon / authenticated:
+-- newer Supabase projects don't either, so the migrations must grant access
+-- explicitly (see 20261125010000_grant_public_read.sql). Run this first.
 
 do $$
 begin
@@ -16,7 +19,3 @@ begin
   end if;
 end;
 $$;
-
-grant usage on schema public to anon, authenticated, service_role;
-alter default privileges in schema public grant all on tables to anon, authenticated, service_role;
-alter default privileges in schema public grant all on functions to anon, authenticated, service_role;

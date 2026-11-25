@@ -87,28 +87,28 @@ $$;
 set local role anon;
 
 do $$
-declare
-  n integer;
 begin
   if (select count(*) from public.works) < 1 then
     raise exception 'FAIL - anon role cannot read works';
   end if;
   raise notice 'ok   - anon can read works';
 
-  if (select count(*) from public.import_runs) <> 0 then
-    raise exception 'FAIL - anon role can see import_runs';
-  end if;
-  raise notice 'ok   - anon sees no import_runs';
+  -- Internal tables: anon must be refused outright (no grant).
+  perform pg_temp.expect_error('anon cannot read import_runs',
+    'select count(*) from public.import_runs');
+  perform pg_temp.expect_error('anon cannot read classification_runs',
+    'select count(*) from public.classification_runs');
 
+  -- Writes: refused either by missing permission or by row-level security.
   perform pg_temp.expect_error('anon cannot insert works',
     'insert into public.works (title, normalised_title) values (''Hack'', ''hack'')');
-  -- With RLS and no update policy, an update silently matches zero rows.
-  update public.works set title = 'Hack' where true;
-  get diagnostics n = row_count;
-  if n <> 0 then
-    raise exception 'FAIL - anon updated % works rows', n;
-  end if;
-  raise notice 'ok   - anon update changes 0 rows';
+  perform pg_temp.expect_error('anon cannot update works',
+    'update public.works set title = ''Hack'' where true');
+  perform pg_temp.expect_error('anon cannot delete works',
+    'delete from public.works where true');
+  perform pg_temp.expect_error('anon cannot insert verdicts',
+    'insert into public.book_tropes (work_id, trope_id, status, confidence, verification)
+       select w.id, t.id, ''present'', 1, ''human_verified'' from public.works w, public.tropes t limit 1');
 end;
 $$;
 

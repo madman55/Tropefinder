@@ -7,19 +7,21 @@ Updated: 2026-11-25. Only things actually run are marked as tested; the test env
 - [x] Phase 1 architecture and plan written and agreed.
 - [x] Decisions recorded: Hardcover as second source, Claude Haiku for AI tagging, private repo, hand-labelled gold set ([decisions](decisions/)).
 - [x] Database schema: 19 tables, row-level security on all, public read-only policies, indexes, duplicate guards.
-  - Tested on a local PostgreSQL 16 with Supabase-style roles emulated: migration applies cleanly, seed runs twice without duplicating, all 18 smoke-test checks pass.
-  - **Not yet tested on Supabase itself** (SETUP step 4).
+  - Tested on local PostgreSQL 16 (old and new Supabase permission models) and in GitHub Actions: all 21 smoke-test checks pass.
+  - First run on Supabase (25 Nov) found that new Supabase projects give the public role no table access by default. Fixed with an explicit-permissions migration (`20261125010000_grant_public_read.sql`). Re-test on Supabase pending.
 - [x] Seed data for 7 data sources.
 - [x] Trope taxonomy v0.1: 78 tropes in 8 categories. Checker passes.
 - [x] Taxonomy checker and 7 unit tests (all passing locally).
 - [x] Proof-of-concept book list (30 candidates) and blank gold-label template.
 - [x] Docs: README, architecture, roadmap, setup, data sources, this file.
-- [x] GitHub Actions workflow for tests (written; **not yet run** — runs on first push).
+- [x] GitHub Actions workflow for tests: passing on GitHub.
+- [x] Repo created (private) and Stage 1 pushed.
+- [x] Supabase project created; schema migration and seed applied.
 
 ## Next (Stage 1 completion — Joseph)
 
-- [ ] SETUP steps 1–5: GitHub repo, Python, Supabase project, build database, `.env`.
-- [ ] Confirm the GitHub Actions "tests" run goes green after the first push.
+- [ ] Run the permissions migration and smoke test on Supabase (SETUP step 4, items 2 and 4).
+- [ ] `.env` with Supabase URL and secret key (needed from Stage 2; only on a machine that runs the Python jobs).
 - [ ] Fill in `data/gold_labels.csv` for the ~20 books you know (present / absent / unknown). Leave books you haven't read blank.
 
 ## Outstanding (later stages)
@@ -35,4 +37,3 @@ Updated: 2026-11-25. Only things actually run are marked as tested; the test env
 
 - Hardcover terms are from a third-party summary; must be confirmed on Hardcover's own rules page (SETUP step 6).
 - Some seed books (indie and web-serial titles) may not be in Open Library. That is a finding to record, not a bug.
-- The schema smoke test emulates Supabase roles; small differences on real Supabase are possible until step 4 is run.
