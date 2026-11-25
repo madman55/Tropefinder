@@ -8,7 +8,7 @@ Updated: 2026-11-25. Only things actually run are marked as tested; the test env
 - [x] Decisions recorded: Hardcover as second source, Claude Haiku for AI tagging, private repo, hand-labelled gold set ([decisions](decisions/)).
 - [x] Database schema: 19 tables, row-level security on all, public read-only policies, indexes, duplicate guards.
   - Tested on local PostgreSQL 16 (old and new Supabase permission models) and in GitHub Actions: all 21 smoke-test checks pass.
-  - First run on Supabase (25 Nov) found that new Supabase projects give the public role no table access by default. Fixed with an explicit-permissions migration (`20261125010000_grant_public_read.sql`). Re-test on Supabase pending.
+  - First run on Supabase (25 Nov) found that new Supabase projects give the public role no table access by default. Fixed with an explicit-permissions migration (`20261125010000_grant_public_read.sql`). Re-tested on Supabase 25 Nov: ALL SCHEMA CHECKS PASSED.
 - [x] Seed data for 7 data sources.
 - [x] Trope taxonomy v0.1: 78 tropes in 8 categories. Checker passes.
 - [x] Taxonomy checker and 7 unit tests (all passing locally).
@@ -18,9 +18,10 @@ Updated: 2026-11-25. Only things actually run are marked as tested; the test env
 - [x] Repo created (private) and Stage 1 pushed.
 - [x] Supabase project created; schema migration and seed applied.
 
-## Next (Stage 1 completion — Joseph)
+**Stage 1 complete (25 Nov 2026).**
 
-- [ ] Run the permissions migration and smoke test on Supabase (SETUP step 4, items 2 and 4).
+## Next (Joseph)
+
 - [ ] `.env` with Supabase URL and secret key (needed from Stage 2; only on a machine that runs the Python jobs).
 - [ ] Fill in `data/gold_labels.csv` for the ~20 books you know (present / absent / unknown). Leave books you haven't read blank.
 
