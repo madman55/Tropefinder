@@ -61,7 +61,14 @@ Updated: 2026-11-25. Only things actually run are marked as tested; the test env
 - [x] **Stage 5 complete (26 Nov 2026):** Joseph labelled the 9 seed books he has read: 90 labels (51 present, 28 absent, 11 unknown), in `data/gold_labels.csv` (entered via the "TropeFinder gold labels" Sheet).
   - Finding: Joseph read tropes as "anywhere in the book" (e.g. soldiers in the story), not "the main character". Adopted as the rule for every category except protagonist; new story-wide trope `military-characters` (taxonomy v0.2), which the "Soldier" column maps to.
   - Labels are used exactly as given. Where the classifier disagrees, the cell is shown to Joseph for a second look rather than assumed wrong either way.
-- [ ] Stage 6: classification layers (tags, rules, Claude Haiku with quote checking); accuracy report against gold labels.
+- [x] **Stage 6 complete (26 Nov 2026):** all 30 books classified and stored with evidence.
+  - Layers: Hardcover tags / Open Library subjects mapped through trope names and aliases; Claude Haiku (claude-haiku-5-5) judging from stored text only, with every quote checked word-for-word. (A separate keyword-rules layer was not needed: tag mapping covers that role.)
+  - Tags alone (free): 9 of 9 "present" right, but found only 18% of Joseph's present tropes.
+  - Prompt v1: present 17/19 right (89%); absent 3/7 right. Fixes: "temperature" no longer accepted by the model; one response format not parsed.
+  - Prompt v2 ("absent" only if stated outright): present 18/20 (90%); absent still 0/3 right, so AI-only "absent" verdicts are no longer stored (`AI_ABSENT_TRUSTED = False`).
+  - Real run: present 18 of 20 right (90%, target 85%); found 35% of Joseph's present tropes; 6 invented quotes rejected; cost $0.06 for 30 books.
+  - Open: Joseph to re-check Monster Hunter International (modern-earth, romance), where the classifier and his labels differ.
+  - Known limit: recall is capped by how little the stored descriptions and tags say. Community verification (Phase 4) is the main route to raising it.
 - [ ] Stage 7: scale to 50, then 500 books; scheduled incremental import.
 
 ## Known gaps and risks
