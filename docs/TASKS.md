@@ -26,8 +26,10 @@ Updated: 2026-11-25. Only things actually run are marked as tested; the test env
 - [x] `supabase/tests/search_test.sql`: 5 checks, passing on local PostgreSQL; added to GitHub's automatic tests.
 - [x] Search page `web/index.html` (plain HTML/CSS/JS, no build step): three trays (must have / nice to have / don't want), trope picker by category with search, audiobooks-only switch, shareable search links, results with reasons, book sheet with evidence quotes, sources and links. Reviewed in a phone-sized browser with sample data.
 - [x] Deploy workflow (`pages.yml`) writes `config.js` from repository variables and refuses a secret key.
-- [ ] Repo made public; Pages source set to GitHub Actions; `SUPABASE_PUBLISHABLE_KEY` variable added (Joseph).
-- [ ] Search migration run in Supabase's SQL Editor, then `search_test.sql` (Joseph).
+- [x] Repo made public; Pages set to GitHub Actions; `SUPABASE_PUBLISHABLE_KEY` variable added (Joseph).
+- [x] Search migration run in Supabase; `search_test.sql` passed there (Joseph, 26 Nov).
+- [x] Live at https://madman55.github.io/Tropefinder/ . The deploy now checks itself: page served, 79 tropes readable with the public key, a real search returns results, and a write with the public key is refused (HTTP 401).
+- First live search (magic + modern firearms, nice: soldiers, not: romance): confirmed Jonathan Strange and Mr Norrell, Small Favor, Wings of Ebony; Monster Hunter International and Control Point missing from the top 10. Suggests over-generous "modern firearms" verdicts and gaps in obvious ones; to review with Joseph's searches.
 - [ ] First real searches; Joseph's searches recorded as test cases.
 
 ## Next (Joseph)
