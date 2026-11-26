@@ -45,6 +45,8 @@ Updated: 2026-11-25. Only things actually run are marked as tested; the test env
 
 **Stage 3 findings (coverage report)**
 
+- Data-quality note: Open Library's *Mother of Learning* work (OL26911545W) mixes ISBNs from several arcs; Hardcover lists Arcs 1–4 separately. Seed entry renamed to "Mother of Learning: Arc 1" (26 Nov) so the right volume is matched.
+
 - Not in Open Library: *Super Powereds: Year 1* (no results) and *The Wandering Inn* (1 result, author didn't match). Logged, not entered by hand.
 - Only 17 of 28 have a description. Missing for: Monster Hunter International, Rivers of London, Hounded, Wearing the Cape, Ex-Heroes, Columbus Day, Unsouled, Mother of Learning, Ascend Online, The Land: Founding, Sufficiently Advanced Magic. Mostly the indie/LitRPG titles: exactly the core audience. Hardcover (Stage 4) needs to fill this gap.
 - Edition formats are mostly "unknown" in Open Library; format filtering will need Hardcover's has_audiobook / has_ebook flags.
