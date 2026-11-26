@@ -78,7 +78,7 @@ def slug_matches(title: str, slug_title: str) -> bool:
     def plain(t: str) -> str:
         t = normalise_text(t.replace("'", "").replace("\u2019", ""))
         return " ".join(w for w in t.split() if w != "and")
-    slug = SLUG_YEAR.sub("", " " + plain(slug_title)).strip()
+    slug = SLUG_YEAR.sub("", " " + plain(slug_title)).strip() or plain(slug_title)   # "1632" is a title
     if SLUG_NOT_SINGLE_BOOK.search(slug):
         return False
     ours = plain(title)

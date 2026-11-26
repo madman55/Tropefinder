@@ -207,7 +207,7 @@ def test_slug_matching_allows_years_and_apostrophes():
     ok = [("Old Man’s War", "old mans war 2005"), ("Sword & citadel", "sword citadel"),
           ("Star Wars Episode I - The Phantom Menace", "the phantom menace 1995"),
           ("Douglas Adams's Starship Titanic", "starship titanic 1997"), ("Devil's valley", "devils valley 1998"),
-          ("Star Wars - Thrawn Ascendancy - Chaos Rising", "chaos rising 2020"), ("Storm Front", "storm front")]
+          ("Star Wars - Thrawn Ascendancy - Chaos Rising", "chaos rising 2020"), ("Storm Front", "storm front"), ("1632", "1632")]
     bad = [("A Game of Thrones", "a clash of kings"), ("Deathlands", "crater lake 1987"),
            ("Settling accounts", "the grapple"), ("The Rise and Fall of D.O.D.O.", "a novel 2017"),
            ("Limitless Lands", "limitless lands the complete series books 1 5"),
