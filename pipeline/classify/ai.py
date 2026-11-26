@@ -148,7 +148,6 @@ class Claude:
         body = {
             "model": self.model,
             "max_tokens": 16000,
-            "temperature": 0,
             "system": SYSTEM,
             "tools": [TOOL],
             "tool_choice": {"type": "tool", "name": "record_verdicts"},
