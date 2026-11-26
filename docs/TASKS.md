@@ -50,6 +50,11 @@ Updated: 2026-11-25. Only things actually run are marked as tested; the test env
 - Edition formats are mostly "unknown" in Open Library; format filtering will need Hardcover's has_audiobook / has_ebook flags.
 - Not yet stored: series (Open Library has no reliable series data; Hardcover in Stage 4).
 - [ ] Stage 4: Hardcover enrichment (tags, formats, series) and tag-to-trope mapping.
+  - [x] Hardcover terms confirmed on Hardcover's own docs (26 Nov): 60 req/min, 5,000/day; aggregate data OK if labelled Hardcover; no user-owned data; no images; not for training public/commercial LLMs.
+  - [x] Migration `20261126000000_work_source_tags.sql`; client `pipeline/sources/hardcover.py`; `pipeline/enrich_hardcover.py`; workflow "enrich hardcover"; 8 new tests (34 total); local PostgreSQL run twice (second run unchanged).
+  - [ ] Migration applied on Supabase (Joseph). HARDCOVER_TOKEN secret added (Joseph, done 26 Nov).
+  - [ ] Dry run, review matches; real run; second run unchanged.
+  - [ ] Tag-to-trope mapping (moved to Stage 6 with classification).
 - [ ] Stage 5: gold labels complete.
 - [ ] Stage 6: classification layers (tags, rules, Claude Haiku with quote checking); accuracy report against gold labels.
 - [ ] Stage 7: scale to 50, then 500 books; scheduled incremental import.

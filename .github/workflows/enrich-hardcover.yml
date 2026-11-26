@@ -1,0 +1,50 @@
+name: enrich hardcover
+
+# Adds Hardcover tags, formats, series and missing descriptions to the seed books,
+# and creates seed books missing from Open Library using Hardcover data.
+# Manual only: Actions tab -> "enrich hardcover" -> Run workflow.
+# Dry run (the default) fetches and matches but writes nothing.
+# The match report appears on the run's summary page and as a downloadable artifact.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (fetch and match, write nothing)"
+        type: boolean
+        default: true
+
+concurrency:
+  group: database-writes
+  cancel-in-progress: false
+
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Enrich
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          HARDCOVER_TOKEN: ${{ secrets.HARDCOVER_TOKEN }}
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            python -m pipeline.enrich_hardcover --dry-run
+          else
+            python -m pipeline.enrich_hardcover
+          fi
+      - name: Keep report and raw responses
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hardcover-enrichment
+          path: |
+            data/reports/
+            data/cache/hardcover/
+          retention-days: 30
