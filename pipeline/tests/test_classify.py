@@ -97,9 +97,40 @@ def test_verdicts_sent_as_a_json_string_are_read():
 
     class Session:
         headers = {}
-        def post(self, *a, **k):
+        def request(self, *a, **k):
             return Resp()
 
     c = Claude(api_key="x", session=Session())
     assert c.classify(BOOK, [{"slug": "magic", "category": "abilities", "definition": "d"}]) == \
         [{"trope": "magic", "status": "unknown", "confidence": 0}]
+
+
+def test_batch_results_are_matched_to_books_and_half_price():
+    import json
+    from pipeline.classify.ai import Claude
+
+    msg = {"usage": {"input_tokens": 1000000, "output_tokens": 0},
+           "content": [{"type": "tool_use", "input": {"verdicts": [{"trope": "magic", "status": "unknown", "confidence": 0}]}}]}
+
+    class Resp:
+        ok, status_code, headers = True, 200, {}
+        def __init__(self, body=None, text=""):
+            self._b, self.text = body, text
+        def json(self):
+            return self._b
+
+    class Session:
+        headers = {}
+        def request(self, method, url, **k):
+            if method == "POST":
+                return Resp({"id": "b1", "processing_status": "ended", "results_url": "https://r"})
+            return Resp(text="\n".join([
+                json.dumps({"custom_id": "w1", "result": {"type": "succeeded", "message": msg}}),
+                json.dumps({"custom_id": "w2", "result": {"type": "errored", "error": {"type": "overloaded"}}})]))
+
+    c = Claude(api_key="x", session=Session())
+    other = BookText("w2", "Other")
+    out = c.classify_batch([BOOK, other], [{"slug": "magic", "category": "abilities", "definition": "d"}], poll_seconds=0)
+    assert out["w1"] == [{"trope": "magic", "status": "unknown", "confidence": 0}]
+    assert isinstance(out["w2"], Exception)
+    assert c.cost_usd == 0.05   # 1M input tokens at $0.10, halved

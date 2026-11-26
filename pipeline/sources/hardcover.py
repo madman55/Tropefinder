@@ -24,8 +24,8 @@ ENDPOINT = "https://api.hardcover.app/v1/graphql"
 DEFAULT_CACHE = Path(__file__).resolve().parents[2] / "data" / "cache" / "hardcover"
 
 SEARCH_QUERY = """
-query Search($q: String!) {
-  search(query: $q, query_type: "Book", per_page: 5, page: 1) { results }
+query Search($q: String!, $per: Int!) {
+  search(query: $q, query_type: "Book", per_page: $per, page: 1) { results }
 }
 """
 
@@ -96,9 +96,9 @@ class Hardcover:
                                          ensure_ascii=False), encoding="utf-8")
         return body
 
-    def search_books(self, text: str) -> list[dict]:
+    def search_books(self, text: str, per_page: int = 5) -> list[dict]:
         """Return the search hits' documents (each a dict of book fields)."""
-        body = self.query(SEARCH_QUERY, {"q": text})
+        body = self.query(SEARCH_QUERY, {"q": text, "per": per_page})
         results = (body.get("data") or {}).get("search", {}).get("results")
         if isinstance(results, str):
             results = json.loads(results)

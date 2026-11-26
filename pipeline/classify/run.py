@@ -148,7 +148,8 @@ def pct(x):
 
 
 # ------------------------------------------------------------------ run
-def run(db: Database, claude: Claude | None, dry_run: bool, force: bool, limit: int | None = None) -> str:
+def run(db: Database, claude: Claude | None, dry_run: bool, force: bool, limit: int | None = None,
+        batch: bool = False) -> str:
     sources = {s["slug"]: s["id"] for s in db.select("data_sources", "id,slug")}
     ai_source = sources.get("ai_claude_haiku")
     tropes = [t for t in db.select("tropes", "id,slug,name,category,definition,classifier_hint,is_active,sort_order")
@@ -165,7 +166,10 @@ def run(db: Database, claude: Claude | None, dry_run: bool, force: bool, limit: 
     done_works = {b["work_id"] for b in existing if b.get("classification_run_id") in current_runs}
     protected = {(b["work_id"], b["trope_id"]) for b in existing if b["verification"] in PROTECTED}
 
-    books = load_books(db)[:limit] if limit else load_books(db)
+    books = load_books(db)
+    if limit:  # the first N books not yet done
+        pending = [b for b in books if force or b.work_id not in done_works]
+        books = pending[:limit]
     run_id = None
     if not dry_run:
         run_id = db.insert("classification_runs", [{"method": "ai", "model_version": MODEL,
@@ -177,16 +181,22 @@ def run(db: Database, claude: Claude | None, dry_run: bool, force: bool, limit: 
             final[(b["work_id"], slug_of[b["trope_id"]])] = b["status"]
 
     lines, processed, rejected_total, conflicts = [], 0, 0, 0
-    for book in books:
-        if book.work_id in done_works and not force:
-            lines.append(f"| {book.title} | skipped (already classified with {PROMPT_VERSION}) | | | | |")
-            continue
+    todo = [b for b in books if force or b.work_id not in done_works]
+    skipped = len(books) - len(todo)
+    batch_results: dict = {}
+    if claude is not None and batch and todo:
+        batch_results = claude.classify_batch(todo, tropes)
+    for book in todo:
         hits = tag_hits(book, lookup)
         ai: list[AIVerdict] = []
         note = ""
         if claude is not None:
             try:
-                ai = verify(claude.classify(book, tropes), book, slugs)
+                raw = batch_results.get(book.work_id, RuntimeError("missing from batch")) if batch \
+                    else claude.classify(book, tropes)
+                if isinstance(raw, Exception):
+                    raise raw
+                ai = verify(raw, book, slugs)
             except Exception as exc:
                 note = f"AI failed: {type(exc).__name__}: {str(exc)[:150]}"
         verdicts = combine(hits, ai, ai_source)
@@ -233,7 +243,8 @@ def run(db: Database, claude: Claude | None, dry_run: bool, force: bool, limit: 
     head = [
         f"## Trope classification{' (DRY RUN - nothing written)' if dry_run else ''}",
         "",
-        f"Model {MODEL}, prompt {PROMPT_VERSION}. Books classified: {processed}. "
+        f"Model {MODEL}, prompt {PROMPT_VERSION}{', Batch API' if batch else ''}. Books classified: {processed}"
+        f" (skipped, already done: {skipped}). "
         f"AI calls: {claude.calls if claude else 0}, tokens in/out: {claude.input_tokens if claude else 0}/"
         f"{claude.output_tokens if claude else 0}, cost ${claude.cost_usd if claude else 0:.4f}. "
         f"Quotes rejected (not found in stored text): {rejected_total}. Tag/AI conflicts kept as unknown: {conflicts}.",
@@ -263,9 +274,10 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--force", action="store_true", help="re-classify books already done with this prompt version")
     p.add_argument("--no-ai", action="store_true", help="tag matching only (free)")
     p.add_argument("--limit", type=int)
+    p.add_argument("--batch", action="store_true", help="use the Message Batches API (half price, slower)")
     a = p.parse_args(argv)
     claude = None if a.no_ai else Claude()
-    text = run(SupabaseREST.from_env(), claude, a.dry_run, a.force, a.limit)
+    text = run(SupabaseREST.from_env(), claude, a.dry_run, a.force, a.limit, a.batch)
     print(text)
     if os.environ.get("GITHUB_STEP_SUMMARY"):
         with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as f:

@@ -55,6 +55,7 @@ class BookResult:
 
 
 def read_seed(path: Path = SEED_PATH) -> list[dict]:
+    """Rows need seed_id, title, author; ol_work / hardcover_id are used when present."""
     with open(path, encoding="utf-8", newline="") as f:
         return list(csv.DictReader(f))
 
@@ -221,9 +222,18 @@ class Importer:
     # ------------------------------------------------------------------ per book
     def import_book(self, seed: dict) -> BookResult:
         res = BookResult(seed["seed_id"], seed["title"], seed["author"])
+        known = (seed.get("ol_work") or "").strip()
+        if known and ("work", known) in self.ext and not self.dry_run:
+            res.outcome, res.ol_work = "already stored", known
+            return res
         try:
             docs = self.ol.search(seed["title"], seed["author"])
             doc, score = best_match(docs, seed["title"], seed["author"])
+            if known:  # discovery already identified the exact Open Library work
+                exact = next((d for d in docs if strip_key(d.get("key")) == known), None)
+                if exact and any(author_matches(seed["author"], [n]) or author_matches(n, [seed["author"]])
+                                 for n in exact.get("author_name") or []):
+                    doc, score = exact, max(score, 1.0)
             if doc is None:
                 docs = self.ol.search(seed["title"])
                 doc, score = best_match(docs, seed["title"], seed["author"])
@@ -306,10 +316,13 @@ def run(db: Database | None, ol: OpenLibrary, seeds: list[dict], dry_run: bool) 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Import seed books from Open Library.")
     parser.add_argument("--dry-run", action="store_true", help="fetch and match only; write nothing")
-    parser.add_argument("--limit", type=int, help="only the first N seed books")
+    parser.add_argument("--list", default=str(SEED_PATH), help="CSV of books (default: the seed list)")
+    parser.add_argument("--offset", type=int, default=0, help="skip the first N rows of the list")
+    parser.add_argument("--limit", type=int, help="only N rows after the offset")
     args = parser.parse_args(argv)
 
-    seeds = read_seed()[: args.limit] if args.limit else read_seed()
+    rows = read_seed(Path(args.list))
+    seeds = rows[args.offset: args.offset + args.limit] if args.limit else rows[args.offset:]
     ol = OpenLibrary()
     # A dry run still reads the database so it can say what's already stored.
     db = SupabaseREST.from_env()

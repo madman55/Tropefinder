@@ -25,6 +25,8 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
+from pipeline.import_openlibrary import SEED_PATH
+
 from pipeline.db import Database, SupabaseREST
 from pipeline.import_openlibrary import read_seed
 from pipeline.normalise import (author_matches, clean_isbn, isbn10_to_13, normalise_text,
@@ -232,14 +234,18 @@ class Enricher:
     # --------------------------------------------------------------- per book
     def enrich(self, seed: dict) -> Result:
         res = Result(seed["seed_id"], seed["title"])
+        known = (seed.get("hardcover_id") or "").strip()
+        if known and ("work", known) in self.ext and not self.dry_run:
+            res.outcome, res.hc_id = "already enriched", known
+            return res
         try:
             work_id = self.find_work(seed)
-            known = self.work_isbns.get(work_id, set()) if work_id else set()
+            known_isbns = self.work_isbns.get(work_id, set()) if work_id else set()
             docs = self.hc.search_books(f"{seed['title']} {seed['author']}")
-            doc, how = pick_hit(docs, seed["title"], seed["author"], known)
+            doc, how = pick_hit(docs, seed["title"], seed["author"], known_isbns)
             if doc is None:
                 docs = self.hc.search_books(seed["title"])
-                doc, how = pick_hit(docs, seed["title"], seed["author"], known)
+                doc, how = pick_hit(docs, seed["title"], seed["author"], known_isbns)
             if doc is None:
                 res.note = f"{len(docs)} results; none matched by ISBN or title + author"
                 return res
@@ -324,9 +330,12 @@ def run(db: Database, hc: Hardcover, seeds: list[dict], dry_run: bool) -> list[R
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Enrich seed books with Hardcover data.")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--list", default=str(SEED_PATH), help="CSV of books (default: the seed list)")
+    parser.add_argument("--offset", type=int, default=0)
     parser.add_argument("--limit", type=int)
     args = parser.parse_args(argv)
-    seeds = read_seed()[: args.limit] if args.limit else read_seed()
+    rows = read_seed(Path(args.list))
+    seeds = rows[args.offset: args.offset + args.limit] if args.limit else rows[args.offset:]
     hc = Hardcover()
     results = run(SupabaseREST.from_env(), hc, seeds, args.dry_run)
     text = report(results, args.dry_run, hc.requests_made)

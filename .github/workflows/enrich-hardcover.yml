@@ -13,6 +13,17 @@ on:
         description: "Dry run (fetch and match, write nothing)"
         type: boolean
         default: true
+      list:
+        description: "Which list"
+        type: choice
+        options: [data/seed_books.csv, data/candidates.csv]
+        default: data/seed_books.csv
+      offset:
+        description: "Skip the first N books of the list"
+        default: "0"
+      limit:
+        description: "How many books (blank = all)"
+        default: ""
 
 concurrency:
   group: database-writes
@@ -21,7 +32,7 @@ concurrency:
 jobs:
   enrich:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -34,11 +45,10 @@ jobs:
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
           HARDCOVER_TOKEN: ${{ secrets.HARDCOVER_TOKEN }}
         run: |
-          if [ "${{ inputs.dry_run }}" = "true" ]; then
-            python -m pipeline.enrich_hardcover --dry-run
-          else
-            python -m pipeline.enrich_hardcover
-          fi
+          args="--list ${{ inputs.list }} --offset ${{ inputs.offset }}"
+          [ -n "${{ inputs.limit }}" ] && args="$args --limit ${{ inputs.limit }}"
+          [ "${{ inputs.dry_run }}" = "true" ] && args="$args --dry-run"
+          python -m pipeline.enrich_hardcover $args
       - name: Keep report and raw responses
         if: always()
         uses: actions/upload-artifact@v4

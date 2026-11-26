@@ -21,6 +21,13 @@ on:
         description: "Tag matching only (no AI, free)"
         type: boolean
         default: false
+      batch:
+        description: "Use the Batch API (half price; can take up to a few hours)"
+        type: boolean
+        default: false
+      limit:
+        description: "Only the first N books not yet classified (blank = all)"
+        default: ""
 
 concurrency:
   group: database-writes
@@ -29,7 +36,7 @@ concurrency:
 jobs:
   classify:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 330
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -46,6 +53,8 @@ jobs:
           [ "${{ inputs.dry_run }}" = "true" ] && args="$args --dry-run"
           [ "${{ inputs.force }}" = "true" ] && args="$args --force"
           [ "${{ inputs.no_ai }}" = "true" ] && args="$args --no-ai"
+          [ "${{ inputs.batch }}" = "true" ] && args="$args --batch"
+          [ -n "${{ inputs.limit }}" ] && args="$args --limit ${{ inputs.limit }}"
           python -m pipeline.classify.run $args
       - name: Keep report
         if: always()

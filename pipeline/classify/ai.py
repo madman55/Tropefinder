@@ -23,6 +23,8 @@ from pipeline.classify.evidence import BookText, quote_found, strip_html
 MODEL = "claude-haiku-5-5"
 PROMPT_VERSION = "v2-2026-11-26"
 API_URL = "https://api.anthropic.com/v1/messages"
+BATCH_URL = "https://api.anthropic.com/v1/messages/batches"
+BATCH_DISCOUNT = 0.5
 # USD per million tokens (standard, non-batch), checked 2026-11-25.
 PRICE_IN, PRICE_OUT = 0.10, 0.50
 
@@ -139,13 +141,14 @@ class Claude:
         self.session.headers.update({"x-api-key": key, "anthropic-version": "2023-06-01",
                                      "content-type": "application/json"})
         self.input_tokens = self.output_tokens = self.calls = 0
+        self.billed_usd = 0.0
 
     @property
     def cost_usd(self) -> float:
-        return round(self.input_tokens / 1e6 * PRICE_IN + self.output_tokens / 1e6 * PRICE_OUT, 4)
+        return round(self.billed_usd, 4)
 
-    def classify(self, book: BookText, tropes: list[dict]) -> list[dict]:
-        body = {
+    def body(self, book: BookText, tropes: list[dict]) -> dict:
+        return {
             "model": self.model,
             "max_tokens": 16000,
             "system": SYSTEM,
@@ -154,23 +157,64 @@ class Claude:
             "messages": [{"role": "user", "content":
                           f"TROPES:\n{trope_list_text(tropes)}\n\nBOOK EVIDENCE:\n{book_text(book)}"}],
         }
-        for attempt in range(5):
-            r = self.session.post(API_URL, data=json.dumps(body), timeout=180)
+
+    def _verdicts(self, data: dict, price_factor: float = 1.0) -> list[dict]:
+        self.calls += 1
+        usage = data.get("usage", {})
+        self.input_tokens += usage.get("input_tokens", 0)
+        self.output_tokens += usage.get("output_tokens", 0)
+        self.billed_usd += (usage.get("input_tokens", 0) / 1e6 * PRICE_IN
+                            + usage.get("output_tokens", 0) / 1e6 * PRICE_OUT) * price_factor
+        for block in data.get("content", []):
+            if block.get("type") == "tool_use":
+                verdicts = block.get("input", {}).get("verdicts", [])
+                if isinstance(verdicts, str):   # occasionally sent as a JSON string
+                    verdicts = json.loads(verdicts)
+                return [v for v in verdicts if isinstance(v, dict)]
+        raise RuntimeError(f"No verdicts returned (stop_reason {data.get('stop_reason')})")
+
+    def _send(self, method: str, url: str, **kw) -> dict:
+        for attempt in range(6):
+            r = self.session.request(method, url, timeout=180, **kw)
             if r.status_code in (429, 500, 502, 503, 529):
                 time.sleep(float(r.headers.get("retry-after", 10 * (attempt + 1))))
                 continue
             if not r.ok:
                 raise RuntimeError(f"Anthropic HTTP {r.status_code}: {r.text[:300]}")
-            data = r.json()
-            self.calls += 1
-            usage = data.get("usage", {})
-            self.input_tokens += usage.get("input_tokens", 0)
-            self.output_tokens += usage.get("output_tokens", 0)
-            for block in data.get("content", []):
-                if block.get("type") == "tool_use":
-                    verdicts = block.get("input", {}).get("verdicts", [])
-                    if isinstance(verdicts, str):   # occasionally sent as a JSON string
-                        verdicts = json.loads(verdicts)
-                    return [v for v in verdicts if isinstance(v, dict)]
-            raise RuntimeError(f"No verdicts returned (stop_reason {data.get('stop_reason')})")
+            return r
         raise RuntimeError("Anthropic API kept failing")
+
+    def classify(self, book: BookText, tropes: list[dict]) -> list[dict]:
+        """One book, answered straight away (standard price)."""
+        r = self._send("POST", API_URL, data=json.dumps(self.body(book, tropes)))
+        return self._verdicts(r.json())
+
+    def classify_batch(self, books: list[BookText], tropes: list[dict], poll_seconds: int = 60,
+                       max_wait_seconds: int = 5 * 3600) -> dict[str, list[dict] | Exception]:
+        """Many books through the Message Batches API (half price; usually done within an hour).
+        Returns work_id -> verdicts, or the error for that book."""
+        requests_ = [{"custom_id": b.work_id, "params": self.body(b, tropes)} for b in books]
+        batch = self._send("POST", BATCH_URL, data=json.dumps({"requests": requests_})).json()
+        print(f"Submitted batch {batch['id']} with {len(books)} books", flush=True)
+        waited = 0
+        while batch.get("processing_status") != "ended":
+            if waited >= max_wait_seconds:
+                raise RuntimeError(f"Batch {batch['id']} not finished after {waited // 60} minutes")
+            time.sleep(poll_seconds)
+            waited += poll_seconds
+            batch = self._send("GET", f"{BATCH_URL}/{batch['id']}").json()
+            print(f"  {waited // 60} min: {batch.get('request_counts')}", flush=True)
+        out: dict[str, list[dict] | Exception] = {}
+        lines = self._send("GET", batch["results_url"]).text.splitlines()
+        for line in lines:
+            if not line.strip():
+                continue
+            item = json.loads(line)
+            result = item.get("result", {})
+            try:
+                if result.get("type") != "succeeded":
+                    raise RuntimeError(f"batch item {result.get('type')}: {json.dumps(result.get('error'))[:200]}")
+                out[item["custom_id"]] = self._verdicts(result["message"], price_factor=BATCH_DISCOUNT)
+            except Exception as exc:
+                out[item["custom_id"]] = exc
+        return out
