@@ -106,3 +106,18 @@ def map_format(physical_format: str | None) -> str:
 def year_from(text: str | None) -> int | None:
     m = YEAR.search(text or "")
     return int(m.group(1)) if m else None
+
+
+def titles_compatible(a: str | None, b: str | None) -> bool:
+    """Could these be the same book's title? Close match, or one's main title contained in the other.
+
+    "Star Wars - Bloodline" ~ "Bloodline" and "Beguilement (The Sharing Knife #1)" ~ "Beguilement",
+    but not "A Game of Thrones" ~ "A Clash of Kings".
+    """
+    if not a or not b:
+        return False
+    if title_similarity(a, b) >= 0.88:
+        return True
+    na, nb = normalise_text(a), normalise_text(b)
+    ma, mb = main_title(a), main_title(b)
+    return (len(mb) >= 4 and f" {mb} " in f" {na} ") or (len(ma) >= 4 and f" {ma} " in f" {nb} ")

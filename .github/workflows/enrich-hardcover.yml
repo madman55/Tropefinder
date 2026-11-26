@@ -24,6 +24,10 @@ on:
       limit:
         description: "How many books (blank = all)"
         default: ""
+      recheck:
+        description: "Only recheck stored links and remove ones with incompatible titles (no API calls)"
+        type: boolean
+        default: false
 
 concurrency:
   group: database-writes
@@ -48,6 +52,7 @@ jobs:
           args="--list ${{ inputs.list }} --offset ${{ inputs.offset }}"
           [ -n "${{ inputs.limit }}" ] && args="$args --limit ${{ inputs.limit }}"
           [ "${{ inputs.dry_run }}" = "true" ] && args="$args --dry-run"
+          [ "${{ inputs.recheck }}" = "true" ] && args="$args --recheck"
           python -m pipeline.enrich_hardcover $args
       - name: Keep report and raw responses
         if: always()

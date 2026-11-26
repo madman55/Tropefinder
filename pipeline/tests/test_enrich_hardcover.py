@@ -56,7 +56,9 @@ def db_with_storm_front():
     a = db.insert("authors", [{"name": "Jim Butcher", "normalised_name": "jim butcher"}])[0]
     db.insert("work_authors", [{"work_id": w["id"], "author_id": a["id"]}])
     db.insert("editions", [{"work_id": w["id"], "isbn_13": "9780451457813"}])
-    for t in ("external_ids", "work_source_tags", "format_availability", "series", "work_series"):
+    ol = next(d["id"] for d in db.tables["data_sources"] if d["slug"] == "openlibrary")
+    db.insert("external_ids", [{"entity_type": "work", "entity_id": w["id"], "source_id": ol, "external_id": "OL100W"}])
+    for t in ( "work_source_tags", "format_availability", "series", "work_series"):
         db.tables.setdefault(t, [])
     return db, w["id"]
 
@@ -154,3 +156,47 @@ def test_exact_title_beats_sequel_sharing_an_isbn():
              "isbns": ["9780000000001"], "users_count": 800}]
     doc, _ = pick_hit(docs, "Mother of Learning", "Domagoj Kurmaić", {"9780000000002"})
     assert doc["id"] == 1
+
+
+def test_titles_compatible():
+    from pipeline.normalise import titles_compatible
+    assert titles_compatible("Star Wars - Bloodline", "Bloodline")
+    assert titles_compatible("Beguilement (The Sharing Knife #1)", "Beguilement")
+    assert titles_compatible("Mother of Learning: Arc 1", "Mother of Learning: ARC 1")
+    assert not titles_compatible("A Game of Thrones", "A Clash of Kings")
+    assert not titles_compatible("Deathlands", "Crater Lake")
+
+
+def test_shared_isbn_with_incompatible_title_is_rejected():
+    docs = [{"id": 9, "title": "A Clash of Kings", "author_names": ["George R. R. Martin"], "isbns": ["9780000000009"]}]
+    assert pick_hit(docs, "A Game of Thrones", "George R. R. Martin", {"9780000000009"}) == (None, "")
+
+
+def test_box_sets_and_other_scripts_are_rejected_as_matches():
+    docs = [{"id": 1, "title": "Limitless Lands: The Complete Series, Books 1-5", "author_names": ["Dean Henegar"], "isbns": ["1"]},
+            {"id": 2, "title": "Взлет и падение ДОДО", "author_names": ["Neal Stephenson"], "isbns": ["2"]}]
+    assert pick_hit(docs, "Limitless Lands", "Dean Henegar", {"1"}) == (None, "")
+
+
+def test_recheck_removes_wrong_links_and_their_data():
+    from pipeline.enrich_hardcover import recheck
+    db, wid = db_with_storm_front()
+    run(db, FakeHC(), SEEDS[:1], dry_run=False)
+    hc_src = next(d["id"] for d in db.tables["data_sources"] if d["slug"] == "hardcover")
+    link = next(x for x in db.tables["external_ids"] if x["entity_id"] == wid and x["source_id"] == hc_src)
+    link["raw_url"] = "https://hardcover.app/books/a-clash-of-kings"     # simulate a wrong match
+    removed = recheck(db, dry_run=False)
+    assert len(removed) == 1
+    hc = next(d["id"] for d in db.tables["data_sources"] if d["slug"] == "hardcover")
+    assert not [x for x in db.tables["external_ids"] if x["entity_id"] == wid and x["source_id"] == hc]
+    assert not [t for t in db.tables["work_source_tags"] if t["work_id"] == wid]
+    assert not [f for f in db.tables["format_availability"] if f["work_id"] == wid]
+    storm = next(w for w in db.tables["works"] if w["id"] == wid)
+    assert storm["description"] is None          # it had come from Hardcover
+
+
+def test_recheck_keeps_good_links():
+    from pipeline.enrich_hardcover import recheck
+    db, _ = db_with_storm_front()
+    run(db, FakeHC(), SEEDS[:1], dry_run=False)
+    assert recheck(db, dry_run=False) == []

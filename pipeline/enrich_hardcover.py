@@ -30,7 +30,7 @@ from pipeline.import_openlibrary import SEED_PATH
 from pipeline.db import Database, SupabaseREST
 from pipeline.import_openlibrary import read_seed
 from pipeline.normalise import (author_matches, clean_isbn, isbn10_to_13, normalise_text,
-                                title_similarity)
+                                title_similarity, titles_compatible)
 from pipeline.sources.hardcover import Hardcover, as_list
 
 MATCH_THRESHOLD = 0.88
@@ -74,11 +74,16 @@ def pick_hit(docs: list[dict], title: str, author: str, known_isbns: set[str]) -
     AND matching author. Among qualifiers, an exact title match wins (so book 1 beats
     "Book: Arc 2" even if a source mixed their ISBNs), then ISBN overlap, then popularity.
     """
+    from pipeline.discover import acceptable   # box sets, non-English editions, etc.
     want = normalise_text(title)
     ranked = []
     for d in docs:
-        overlap = len(known_isbns & isbn_set(d.get("isbns")))
         names = as_list(d.get("author_names"))
+        # A shared ISBN is not enough on its own: some Open Library records mix ISBNs from
+        # several books of a series, so the titles must be compatible too.
+        if not titles_compatible(title, d.get("title")) or not acceptable(d.get("title"), (names or ["?"])[0]):
+            continue
+        overlap = len(known_isbns & isbn_set(d.get("isbns")))
         close = author_matches(author, names) and title_similarity(title, d.get("title") or "") >= MATCH_THRESHOLD
         if not (overlap or close):
             continue
@@ -110,9 +115,13 @@ class Enricher:
             if e.get("isbn_10"):
                 s.add(isbn10_to_13(e["isbn_10"]))
         self.ext = {}
+        self._ol_linked = set()
+        ol_src = sources.get("openlibrary")
         for x in db.select("external_ids", "entity_type,entity_id,source_id,external_id"):
             if x["source_id"] == self.src:
                 self.ext[(x["entity_type"], x["external_id"])] = x["entity_id"]
+            elif x["source_id"] == ol_src and x["entity_type"] == "work":
+                self._ol_linked.add(x["entity_id"])
         self.tags: dict[str, dict[tuple[str, str], dict]] = {}
         for t in db.select("work_source_tags", "id,work_id,source_id,tag_type,tag,position"):
             if t["source_id"] == self.src:
@@ -231,6 +240,32 @@ class Enricher:
         res.note = f"created from Hardcover with {added} ISBN editions"
         return wid
 
+    def remove_hardcover_data(self, work_id: str) -> None:
+        """Undo a wrong Hardcover link: its id, tags, format flags, series links and description."""
+        self.db.delete("external_ids", {"entity_type": "work", "entity_id": work_id, "source_id": self.src})
+        self.db.delete("work_source_tags", {"work_id": work_id, "source_id": self.src})
+        self.db.delete("format_availability", {"work_id": work_id, "source_id": self.src})
+        self.db.delete("work_series", {"work_id": work_id})   # series come only from Hardcover so far
+        if self.works.get(work_id, {}).get("description_source_id") == self.src:
+            self.db.update("works", {"id": work_id}, {"description": None, "description_source_id": None})
+
+    def recheck_links(self) -> list[str]:
+        """Find stored Hardcover links whose book title is incompatible with ours, and remove them.
+        Works created from Hardcover are left alone (their title came from Hardcover)."""
+        removed = []
+        for x in self.db.select("external_ids", "entity_type,entity_id,source_id,external_id,raw_url"):
+            if x["source_id"] != self.src or x["entity_type"] != "work":
+                continue
+            w = self.works.get(x["entity_id"], {})
+            if x["entity_id"] not in self._ol_linked:   # created from Hardcover: title is Hardcover's own
+                continue
+            slug_title = (x.get("raw_url") or "").rsplit("/", 1)[-1].replace("-", " ")
+            if slug_title and w.get("title") and not titles_compatible(w["title"], slug_title):
+                removed.append(f"{w['title']} (was linked to '{slug_title}')")
+                if not self.dry_run:
+                    self.remove_hardcover_data(x["entity_id"])
+        return removed
+
     # --------------------------------------------------------------- per book
     def enrich(self, seed: dict) -> Result:
         res = Result(seed["seed_id"], seed["title"])
@@ -309,6 +344,10 @@ def report(results: list[Result], dry_run: bool, requests_made: int) -> str:
     return "\n".join(lines)
 
 
+def recheck(db: Database, dry_run: bool) -> list[str]:
+    return Enricher(db, None, dry_run).recheck_links()
+
+
 def run(db: Database, hc: Hardcover, seeds: list[dict], dry_run: bool) -> list[Result]:
     enricher = Enricher(db, hc, dry_run)
     run_id = None
@@ -333,9 +372,21 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--list", default=str(SEED_PATH), help="CSV of books (default: the seed list)")
     parser.add_argument("--offset", type=int, default=0)
     parser.add_argument("--limit", type=int)
+    parser.add_argument("--recheck", action="store_true",
+                        help="remove stored Hardcover links whose titles are incompatible (no API calls)")
     args = parser.parse_args(argv)
     rows = read_seed(Path(args.list))
     seeds = rows[args.offset: args.offset + args.limit] if args.limit else rows[args.offset:]
+    if args.recheck:
+        removed = recheck(SupabaseREST.from_env(), args.dry_run)
+        text = (f"## Hardcover link recheck{' (DRY RUN)' if args.dry_run else ''}\n\n"
+                f"{len(removed)} links with incompatible titles {'would be ' if args.dry_run else ''}removed:\n\n"
+                + "\n".join(f"- {r}" for r in removed))
+        print(text)
+        if os.environ.get("GITHUB_STEP_SUMMARY"):
+            with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as f:
+                f.write(text + "\n")
+        return 0
     hc = Hardcover()
     results = run(SupabaseREST.from_env(), hc, seeds, args.dry_run)
     text = report(results, args.dry_run, hc.requests_made)
