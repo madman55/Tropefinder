@@ -29,48 +29,88 @@ from pipeline.sources.openlibrary import OpenLibrary, strip_key
 CANDIDATES_PATH = Path(__file__).resolve().parent.parent / "data" / "candidates.csv"
 FIELDS = ["seed_id", "title", "author", "ol_work", "hardcover_id", "found_via", "popularity"]
 
-# Open Library subject headings for the initial target genres.
-OL_SUBJECTS = ["LitRPG", "Urban fantasy", "Military science fiction", "Superheroes", "Time travel",
-               "Space opera", "Alternative histories", "Science fantasy", "Wizards", "Magic"]
+# Open Library searches for the initial target genres. Each is restricted to books first
+# published from 1980, in English, and excludes comics and children's books: sorting by
+# number of editions otherwise favours old classics and children's series.
+OL_EXCLUDE = ('-subject:"Comic books, strips, etc." -subject:"Graphic novels" -subject:"Manga" '
+              '-subject:"Juvenile fiction" -subject:"Children\'s fiction" -subject:"Juvenile literature"')
+OL_QUERIES = {
+    "LitRPG": 'subject:"LitRPG"',
+    "Urban fantasy": 'subject:"Urban fantasy"',
+    "Military science fiction": 'subject:"Military science fiction"',
+    "Superheroes": 'subject:"Superheroes" subject:"Fiction"',
+    "Time travel": 'subject:"Time travel" subject:"Fiction"',
+    "Space opera": 'subject:"Space opera"',
+    "Alternative histories": 'subject:"Alternative histories (Fiction)"',
+    "Science fantasy": 'subject:"Science fantasy"',
+    "Magic (fantasy)": 'subject:"Magic" subject:"Fantasy fiction"',
+    "Portals": 'subject:"Portals" subject:"Fiction"',
+}
+OL_FROM_YEAR = 1980
 # Hardcover keyword searches (matched against titles, series and descriptions).
 HC_TERMS = ["LitRPG", "GameLit", "progression fantasy", "cultivation", "isekai", "dungeon core",
-            "superhero", "military science fiction", "urban fantasy", "portal fantasy",
-            "time travel", "space marines"]
-PER_OL_SUBJECT = 40
+            "system apocalypse", "superhero novel", "military science fiction", "urban fantasy",
+            "portal fantasy", "time travel novel", "space marines", "reincarnated"]
+HC_PAGES = 3
+PER_OL_SUBJECT = 45
 PER_HC_TERM = 25
-MIN_OL_EDITIONS = 3
-MIN_HC_READERS = 20
+MIN_OL_EDITIONS = 2
+MIN_HC_READERS = 10
+MAX_PER_AUTHOR = 3
 
 NOT_A_SINGLE_BOOK = re.compile(
     r"\b(omnibus|box(ed)?\s*set|boxset|bundle|collection|anthology|complete series|"
     r"books?\s*\d+\s*(-|–|&|to|and|through)\s*\d+|volumes?\s*\d+\s*(-|–|&|to)\s*\d+|"
     r"study guide|summary|sparknotes|cliffsnotes|analysis of|coloring|colouring|calendar|"
-    r"cookbook|art of|companion|encyclopedia|guide to)\b", re.IGNORECASE)
+    r"cookbook|art of|companion|encyclopedia|guide to|"
+    r"manga|manhua|manhwa|light novel|comic|graphic novel|"
+    r"tales of|stories|novels featuring|a history|plays)\b", re.IGNORECASE)
+SEQUEL_MARKER = re.compile(r"(\bbook\s*#?\s*|\bno\.?\s*|\bpart\s*|\bvol\.?\s*|\bvolume\s*|#\s*)([2-9]|[1-9]\d)\b",
+                           re.IGNORECASE)
+NUMBERED_MAIN_TITLE = re.compile(r"[A-Za-z].*\s([2-9]|[1-9]\d)$")   # "Player Manager 2" but not "1632"
+
+
+def is_sequel(title: str) -> bool:
+    main = re.split(r":| - | \(", title, maxsplit=1)[0].strip()
+    return bool(SEQUEL_MARKER.search(title) or NUMBERED_MAIN_TITLE.search(main))
 
 
 def dedupe_key(title: str, author: str) -> str:
     return f"{main_title(title)}|{surname(author)}"
 
 
+def latin_script(text: str) -> bool:
+    """English-language catalogue for now: reject titles in non-Latin scripts."""
+    return all(ord(c) < 0x300 or c in "‘’“”–—…" for c in text)
+
+
 def acceptable(title: str | None, author: str | None) -> bool:
-    return bool(title and author and not NOT_A_SINGLE_BOOK.search(title) and len(normalise_text(title)) >= 2)
+    """A single, English-language book that isn't a later volume of a series."""
+    if not (title and author) or len(normalise_text(title)) < 2:
+        return False
+    if not latin_script(title) or not latin_script(author):
+        return False
+    return not NOT_A_SINGLE_BOOK.search(title) and not is_sequel(title)
 
 
 def from_openlibrary(ol: OpenLibrary) -> list[dict]:
     out = []
-    for subject in OL_SUBJECTS:
+    for label, query in OL_QUERIES.items():
         docs = ol._get("/search.json", {
-            "q": f'subject:"{subject}" language:eng', "sort": "editions", "limit": PER_OL_SUBJECT * 2,
+            "q": f"{query} language:eng first_publish_year:[{OL_FROM_YEAR} TO *] {OL_EXCLUDE}",
+            "sort": "editions", "limit": 100,
             "fields": "key,title,author_name,first_publish_year,edition_count"}).get("docs", [])
         kept = 0
         for d in docs:
             authors = d.get("author_name") or []
             if kept >= PER_OL_SUBJECT or (d.get("edition_count") or 0) < MIN_OL_EDITIONS:
                 continue
+            if (d.get("first_publish_year") or 0) < OL_FROM_YEAR:
+                continue
             if not authors or not acceptable(d.get("title"), authors[0]):
                 continue
             out.append({"title": d["title"], "author": authors[0], "ol_work": strip_key(d.get("key")),
-                        "hardcover_id": "", "found_via": f"openlibrary:{subject}",
+                        "hardcover_id": "", "found_via": f"openlibrary:{label}",
                         "popularity": d.get("edition_count") or 0})
             kept += 1
     return out
@@ -79,7 +119,8 @@ def from_openlibrary(ol: OpenLibrary) -> list[dict]:
 def from_hardcover(hc: Hardcover) -> list[dict]:
     out = []
     for term in HC_TERMS:
-        for d in hc.search_books(term, per_page=PER_HC_TERM):
+        docs = [d for page in range(1, HC_PAGES + 1) for d in hc.search_books(term, per_page=PER_HC_TERM, page=page)]
+        for d in docs:
             authors = as_list(d.get("author_names"))
             if (d.get("users_count") or 0) < MIN_HC_READERS or not authors:
                 continue
@@ -112,6 +153,9 @@ def merge(existing: list[dict], found: list[dict], seeds: list[dict], target: in
     for lst in by_search.values():
         lst.sort(key=lambda x: -int(x["popularity"] or 0))
 
+    per_author: dict[str, int] = {}
+    for r in rows:
+        per_author[surname(r["author"])] = per_author.get(surname(r["author"]), 0) + 1
     added = 0
     next_id = max([int(r["seed_id"][1:]) for r in rows] or [0]) + 1
     queues = list(by_search.values())
@@ -120,7 +164,7 @@ def merge(existing: list[dict], found: list[dict], seeds: list[dict], target: in
             while q:
                 f = q.pop(0)
                 key = dedupe_key(f["title"], f["author"])
-                if key in taken:
+                if key in taken or per_author.get(surname(f["author"]), 0) >= MAX_PER_AUTHOR:
                     continue
                 twin = next((g for g in found if dedupe_key(g["title"], g["author"]) == key and g is not f), None)
                 row = {**f, "seed_id": f"C{next_id:04d}"}
@@ -129,6 +173,7 @@ def merge(existing: list[dict], found: list[dict], seeds: list[dict], target: in
                         row[k] = row[k] or twin[k]
                 rows.append(row)
                 taken.add(key)
+                per_author[surname(f["author"])] = per_author.get(surname(f["author"]), 0) + 1
                 next_id += 1
                 added += 1
                 break

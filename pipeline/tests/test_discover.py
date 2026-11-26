@@ -9,10 +9,17 @@ from pipeline.tests.test_import_openlibrary import FakeOL, fresh_db
 def test_filters_out_sets_and_guides():
     assert acceptable("Storm Front", "Jim Butcher")
     assert acceptable("Mother of Learning: Arc 1", "Domagoj Kurmaic")
+    assert acceptable("1632", "Eric Flint") and acceptable("Fahrenheit 451", "Ray Bradbury")
+    assert acceptable("Ascendant (Book 1): A Progression Fantasy", "EmergencyComplaints")
     for bad in ["The Dresden Files Box Set", "Cradle: Books 1-3", "Red Rising Omnibus",
-                "Study Guide for Old Man's War", "Urban Fantasy Anthology", "The Art of Red Rising"]:
+                "Study Guide for Old Man's War", "Urban Fantasy Anthology", "The Art of Red Rising",
+                "ONE PIECE 12", "Player Manager 2: A Sports Progression Fantasy", "Street Cultivation 3",
+                "Campaign (Last Life Book #6): A Progression Fantasy Series", "Naked City: Tales of Urban Fantasy",
+                "Time Travel: A History", "86―エイティシックス― (light novel)", "Grandmaster, Vol. 2",
+                "I Got a Cheat Skill (manga)"]:
         assert not acceptable(bad, "Someone"), bad
     assert not acceptable("Untitled", None)
+    assert not acceptable("Fine Title", "尾田栄一郎")
 
 
 def f(title, author, via, pop, ol="", hc=""):
@@ -52,3 +59,9 @@ def test_importer_skips_known_work_without_requests():
     before = ol.requests_made
     res = ol_run(db, ol, seeds, dry_run=False)
     assert res[0].outcome == "already stored" and ol.requests_made == before
+
+
+def test_merge_caps_books_per_author():
+    found = [f(f"Discworld Title {c}", "Terry Pratchett", "openlibrary:Wizards", 10, ol=f"OL{c}W") for c in "ABCDE"]
+    rows, added = merge([], found, [], target=10)
+    assert added == 3
