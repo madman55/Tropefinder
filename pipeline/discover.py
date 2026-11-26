@@ -32,8 +32,12 @@ FIELDS = ["seed_id", "title", "author", "ol_work", "hardcover_id", "found_via", 
 # Open Library searches for the initial target genres. Each is restricted to books first
 # published from 1980, in English, and excludes comics and children's books: sorting by
 # number of editions otherwise favours old classics and children's series.
-OL_EXCLUDE = ('-subject:"Comic books, strips, etc." -subject:"Graphic novels" -subject:"Manga" '
-              '-subject:"Juvenile fiction" -subject:"Children\'s fiction" -subject:"Juvenile literature"')
+OL_EXCLUDE = ('-subject:"Comic books, strips, etc." -subject:"Comic books" -subject:"Comics & graphic novels" '
+              '-subject:"Cartoons and comics" -subject:"Graphic novels" -subject:"Manga" '
+              '-subject:"Juvenile fiction" -subject:"Children\'s fiction" -subject:"Juvenile literature" '
+              '-subject:"Picture books" -subject:"Children\'s stories" '
+              '-subject:"History and criticism" -subject:"Criticism, interpretation, etc." '
+              '-subject:"Motion pictures"')
 OL_QUERIES = {
     "LitRPG": 'subject:"LitRPG"',
     "Urban fantasy": 'subject:"Urban fantasy"',
@@ -44,7 +48,6 @@ OL_QUERIES = {
     "Alternative histories": 'subject:"Alternative histories (Fiction)"',
     "Science fantasy": 'subject:"Science fantasy"',
     "Magic (fantasy)": 'subject:"Magic" subject:"Fantasy fiction"',
-    "Portals": 'subject:"Portals" subject:"Fiction"',
 }
 OL_FROM_YEAR = 1980
 # Hardcover keyword searches (matched against titles, series and descriptions).
@@ -64,10 +67,12 @@ NOT_A_SINGLE_BOOK = re.compile(
     r"study guide|summary|sparknotes|cliffsnotes|analysis of|coloring|colouring|calendar|"
     r"cookbook|art of|companion|encyclopedia|guide to|"
     r"manga|manhua|manhwa|light novel|comic|graphic novel|"
-    r"tales of|stories|novels featuring|a history|plays)\b", re.IGNORECASE)
+    r"tales of|stories|novels featuring|a history|plays|masterworks)\b", re.IGNORECASE)
+# Publisher names that appear as authors of comic collections.
+NOT_AN_AUTHOR = re.compile(r"\b(marvel comics|dc comics|various)\b", re.IGNORECASE)
 SEQUEL_MARKER = re.compile(r"(\bbook\s*#?\s*|\bno\.?\s*|\bpart\s*|\bvol\.?\s*|\bvolume\s*|#\s*)([2-9]|[1-9]\d)\b",
                            re.IGNORECASE)
-NUMBERED_MAIN_TITLE = re.compile(r"[A-Za-z].*\s([2-9]|[1-9]\d)$")   # "Player Manager 2" but not "1632"
+NUMBERED_MAIN_TITLE = re.compile(r"[A-Za-z].*\s([2-9]|[1-9]\d|II|III|IV|V|VI|VII|VIII|IX|X)$")  # "Player Manager 2", not "1632"
 
 
 def is_sequel(title: str) -> bool:
@@ -88,7 +93,7 @@ def acceptable(title: str | None, author: str | None) -> bool:
     """A single, English-language book that isn't a later volume of a series."""
     if not (title and author) or len(normalise_text(title)) < 2:
         return False
-    if not latin_script(title) or not latin_script(author):
+    if not latin_script(title) or not latin_script(author) or NOT_AN_AUTHOR.search(author):
         return False
     return not NOT_A_SINGLE_BOOK.search(title) and not is_sequel(title)
 
@@ -98,7 +103,7 @@ def from_openlibrary(ol: OpenLibrary) -> list[dict]:
     for label, query in OL_QUERIES.items():
         docs = ol._get("/search.json", {
             "q": f"{query} language:eng first_publish_year:[{OL_FROM_YEAR} TO *] {OL_EXCLUDE}",
-            "sort": "editions", "limit": 100,
+            "sort": "editions", "limit": 100, "lang": "en",
             "fields": "key,title,author_name,first_publish_year,edition_count"}).get("docs", [])
         kept = 0
         for d in docs:

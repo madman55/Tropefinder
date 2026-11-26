@@ -16,10 +16,11 @@ def test_filters_out_sets_and_guides():
                 "ONE PIECE 12", "Player Manager 2: A Sports Progression Fantasy", "Street Cultivation 3",
                 "Campaign (Last Life Book #6): A Progression Fantasy Series", "Naked City: Tales of Urban Fantasy",
                 "Time Travel: A History", "86―エイティシックス― (light novel)", "Grandmaster, Vol. 2",
-                "I Got a Cheat Skill (manga)"]:
+                "I Got a Cheat Skill (manga)", "Grantville Gazette III", "Marvel Masterworks"]:
         assert not acceptable(bad, "Someone"), bad
     assert not acceptable("Untitled", None)
     assert not acceptable("Fine Title", "尾田栄一郎")
+    assert not acceptable("X-Men", "Marvel Comics")
 
 
 def f(title, author, via, pop, ol="", hc=""):
