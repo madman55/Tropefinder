@@ -110,3 +110,37 @@ def test_dry_run_writes_nothing():
     results = run(db, FakeHC(), SEEDS, dry_run=True)
     assert [r.outcome for r in results] == ["would enrich", "would create", "not found"]
     assert db.calls == before
+
+
+class _Resp:
+    def __init__(self, status, body):
+        self.status_code, self._body = status, body
+        self.ok = status < 400
+        self.text = __import__("json").dumps(body)
+        self.headers = {}
+
+    def json(self):
+        return self._body
+
+
+class _Session:
+    """Rejects any authorization header that doesn't start with 'Bearer '."""
+    def __init__(self):
+        self.headers, self.sent = {}, []
+
+    def post(self, url, json=None, headers=None, timeout=None):
+        auth = headers["authorization"]
+        self.sent.append(auth)
+        if not auth.startswith("Bearer "):
+            return _Resp(400, {"error": "invalid_request", "error_description": "Invalid Authorization format."})
+        return _Resp(200, {"data": {"search": {"results": {"hits": [{"document": {"id": 1, "title": "X"}}]}}}})
+
+
+def test_token_without_bearer_is_retried_with_it(tmp_path):
+    from pipeline.sources.hardcover import Hardcover
+    session = _Session()
+    hc = Hardcover(token="abc123", cache_dir=tmp_path, min_interval=0, session=session)
+    assert hc.search_books("x") == [{"id": 1, "title": "X"}]
+    assert session.sent == ["abc123", "Bearer abc123"]
+    hc.search_books("y")
+    assert session.sent[-1] == "Bearer abc123"   # remembers the working form

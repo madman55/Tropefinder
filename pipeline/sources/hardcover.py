@@ -75,7 +75,8 @@ class Hardcover:
             if r.status_code >= 500:
                 time.sleep(5 * (attempt + 1))
                 continue
-            auth_problem = r.status_code in (401, 403) or (
+            text = r.text.lower()
+            auth_problem = (r.status_code in (400, 401, 403) and "authoriz" in text) or (
                 r.ok and any("jwt" in str(e).lower() or "unauthor" in str(e).lower()
                              for e in (r.json().get("errors") or [])))
             if auth_problem and not self._auth_flipped:
