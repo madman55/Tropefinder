@@ -69,7 +69,22 @@ Updated: 2026-11-25. Only things actually run are marked as tested; the test env
   - Real run: present 18 of 20 right (90%, target 85%); found 35% of Joseph's present tropes; 6 invented quotes rejected; cost $0.06 for 30 books.
   - Open: Joseph to re-check Monster Hunter International (modern-earth, romance), where the classifier and his labels differ.
   - Known limit: recall is capped by how little the stored descriptions and tags say. Community verification (Phase 4) is the main route to raising it.
-- [ ] Stage 7: scale to 50, then 500 books; scheduled incremental import.
+- [x] **Stage 7 complete (26 Nov 2026): 438 books.** Phase 1 is complete.
+  - Discovery (`pipeline/discover.py`): Open Library subject searches (English, 1980+, no comics/children's/criticism) and Hardcover genre keyword searches. The first two lists were reviewed and rejected (manga volumes, children's books, classics, non-fiction, anthologies, sequels); filters tightened, 26 books excluded on review with reasons (`data/discovery_exclusions.csv`), max 3 books per author. Final list: 409 candidates (target was 470; good candidates ran out under the stricter filters).
+  - Open Library import: 342 imported, 67 not found (mostly indie LitRPG), 3,788 editions, ~46 min.
+  - Hardcover: 321 enriched, 66 created from Hardcover, 22 not found; 4,611 tags. Review found 7 wrong links from Open Library records that mix ISBNs across a series (e.g. A Game of Thrones → A Clash of Kings); matches now also require compatible titles, and `--recheck` removed the bad links. Re-run: everything else unchanged.
+  - Classification (Batch API): 408 books in ~3 min, $0.40; 2,199 present verdicts; 74 invented quotes rejected. Against Joseph's labels: present 19/20 right (95%), found 36% of his present tropes.
+  - Audit (`pipeline/audit.py`): 438 works, 4,137 editions, **0 likely duplicate works**; 345 works from both sources, 68 Hardcover-only, 25 Open Library-only; 227 with an audiobook flag; 46 without a description; 10 with no present trope. 50-book random sample reviewed: no duplicates.
+  - Total AI cost so far: about $0.60.
+
+**Known issues (Phase 1)**
+
+- Ambiguous Open Library records ("Halo", "Gen13", "Deathlands") can't be matched reliably; "Halo" is linked to one Halo novel.
+- Threadbare Volume One lost its Hardcover data (Hardcover lists it under its real title, *Stuff and Nonsense*, which the title check can't connect).
+- Some Open Library works list the same author twice and some first-publication years are wrong (e.g. The Blood of Olympus shows 2001).
+- One book (The Killing Spell) failed classification on a garbled response; it is retried on the next classify run.
+- 10 books have too little text for any trope; 46 have no description.
+- Database size not yet recorded (check Supabase → Project usage).
 
 ## Known gaps and risks
 

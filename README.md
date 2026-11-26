@@ -8,7 +8,18 @@ It is a discovery tool, not a shop: it links out to retailers and libraries.
 
 ## Status
 
-**Phase 1, Stage 1 (foundation).** The database schema, trope taxonomy and project docs exist and pass local tests. No books have been imported yet. See [docs/TASKS.md](docs/TASKS.md) for exactly what is done and what is next.
+**Phase 1 complete (26 Nov 2026).** 438 books in the database, from Open Library and Hardcover, classified against 79 tropes with quoted evidence. "Present" verdicts agree with hand labels 95% of the time. See [docs/TASKS.md](docs/TASKS.md) for results, known issues and what is next.
+
+### Pipeline (all run from the Actions tab)
+
+| Workflow | What it does |
+| --- | --- |
+| discover books | finds candidate books, commits `data/candidates.csv` for review |
+| import open library | imports a list (dry run first) |
+| enrich hardcover | adds tags, formats, series, missing descriptions; creates books Open Library lacks; `recheck` removes bad links |
+| sync taxonomy | loads `taxonomy/tropes.yaml` (runs automatically when it changes) |
+| classify tropes | tags + Claude Haiku with quote checks; scores against `data/gold_labels.csv` |
+| audit catalogue | read-only health check |
 
 ## How it fits together
 
