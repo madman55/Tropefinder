@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
 import sys
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -29,7 +30,7 @@ from pipeline.import_openlibrary import SEED_PATH
 
 from pipeline.db import Database, SupabaseREST
 from pipeline.import_openlibrary import read_seed
-from pipeline.normalise import (author_matches, clean_isbn, isbn10_to_13, normalise_text,
+from pipeline.normalise import (author_matches, clean_isbn, isbn10_to_13, main_title, normalise_text,
                                 title_similarity, titles_compatible)
 from pipeline.sources.hardcover import Hardcover, as_list
 
@@ -65,6 +66,24 @@ def isbn_set(values) -> set[str]:
         if i10:
             out.add(isbn10_to_13(i10))
     return out
+
+
+SLUG_YEAR = re.compile(r"\s(1[5-9]\d\d|20\d\d)$")
+SLUG_NOT_SINGLE_BOOK = re.compile(r"\b(complete series|books? \d+ \d+|box set|boxset|omnibus|stories|anthology)\b")
+
+
+def slug_matches(title: str, slug_title: str) -> bool:
+    """Compare our title with a Hardcover web-address slug, which drops punctuation
+    and apostrophes and may end in a year ("old-mans-war-2005")."""
+    def plain(t: str) -> str:
+        t = normalise_text(t.replace("'", "").replace("\u2019", ""))
+        return " ".join(w for w in t.split() if w != "and")
+    slug = SLUG_YEAR.sub("", " " + plain(slug_title)).strip()
+    if SLUG_NOT_SINGLE_BOOK.search(slug):
+        return False
+    ours = plain(title)
+    return titles_compatible(ours, slug) or titles_compatible(plain(main_title(title)), slug) \
+        or (len(slug) >= 4 and f" {slug} " in f" {ours} ")
 
 
 def pick_hit(docs: list[dict], title: str, author: str, known_isbns: set[str]) -> tuple[dict | None, str]:
@@ -260,7 +279,7 @@ class Enricher:
             if x["entity_id"] not in self._ol_linked:   # created from Hardcover: title is Hardcover's own
                 continue
             slug_title = (x.get("raw_url") or "").rsplit("/", 1)[-1].replace("-", " ")
-            if slug_title and w.get("title") and not titles_compatible(w["title"], slug_title):
+            if slug_title and w.get("title") and not slug_matches(w["title"], slug_title):
                 removed.append(f"{w['title']} (was linked to '{slug_title}')")
                 if not self.dry_run:
                     self.remove_hardcover_data(x["entity_id"])

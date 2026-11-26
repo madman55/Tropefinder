@@ -200,3 +200,19 @@ def test_recheck_keeps_good_links():
     db, _ = db_with_storm_front()
     run(db, FakeHC(), SEEDS[:1], dry_run=False)
     assert recheck(db, dry_run=False) == []
+
+
+def test_slug_matching_allows_years_and_apostrophes():
+    from pipeline.enrich_hardcover import slug_matches
+    ok = [("Old Man’s War", "old mans war 2005"), ("Sword & citadel", "sword citadel"),
+          ("Star Wars Episode I - The Phantom Menace", "the phantom menace 1995"),
+          ("Douglas Adams's Starship Titanic", "starship titanic 1997"), ("Devil's valley", "devils valley 1998"),
+          ("Star Wars - Thrawn Ascendancy - Chaos Rising", "chaos rising 2020"), ("Storm Front", "storm front")]
+    bad = [("A Game of Thrones", "a clash of kings"), ("Deathlands", "crater lake 1987"),
+           ("Settling accounts", "the grapple"), ("The Rise and Fall of D.O.D.O.", "a novel 2017"),
+           ("Limitless Lands", "limitless lands the complete series books 1 5"),
+           ("Who can save us now?", "who can save us now brand new superheroes and their amazing short stories")]
+    for t, sl in ok:
+        assert slug_matches(t, sl), (t, sl)
+    for t, sl in bad:
+        assert not slug_matches(t, sl), (t, sl)
