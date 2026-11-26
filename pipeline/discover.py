@@ -27,6 +27,8 @@ from pipeline.sources.hardcover import Hardcover, as_list
 from pipeline.sources.openlibrary import OpenLibrary, strip_key
 
 CANDIDATES_PATH = Path(__file__).resolve().parent.parent / "data" / "candidates.csv"
+# Books removed on review (wrong language, children's, comics, anthologies...): never re-added.
+EXCLUSIONS_PATH = Path(__file__).resolve().parent.parent / "data" / "discovery_exclusions.csv"
 FIELDS = ["seed_id", "title", "author", "ol_work", "hardcover_id", "found_via", "popularity"]
 
 # Open Library searches for the initial target genres. Each is restricted to books first
@@ -55,7 +57,7 @@ HC_TERMS = ["LitRPG", "GameLit", "progression fantasy", "cultivation", "isekai",
             "system apocalypse", "superhero novel", "military science fiction", "urban fantasy",
             "portal fantasy", "time travel novel", "space marines", "reincarnated"]
 HC_PAGES = 3
-PER_OL_SUBJECT = 45
+PER_OL_SUBJECT = 60
 PER_HC_TERM = 25
 MIN_OL_EDITIONS = 2
 MIN_HC_READERS = 10
@@ -137,9 +139,10 @@ def from_hardcover(hc: Hardcover) -> list[dict]:
     return out
 
 
-def merge(existing: list[dict], found: list[dict], seeds: list[dict], target: int) -> tuple[list[dict], int]:
+def merge(existing: list[dict], found: list[dict], seeds: list[dict], target: int,
+          excluded: list[dict] | None = None) -> tuple[list[dict], int]:
     """Append new, de-duplicated candidates (round-robin across searches) until `target` exist."""
-    taken = {dedupe_key(s["title"], s["author"]) for s in seeds}
+    taken = {dedupe_key(s["title"], s["author"]) for s in seeds + (excluded or [])}
     rows = list(existing)
     index = {dedupe_key(r["title"], r["author"]): r for r in rows}
     taken |= set(index)
@@ -207,7 +210,8 @@ def main(argv: list[str] | None = None) -> int:
     a = p.parse_args(argv)
     ol, hc = OpenLibrary(), Hardcover()
     found = from_openlibrary(ol) + from_hardcover(hc)
-    rows, added = merge(read_candidates(), found, read_seed(SEED_PATH), a.target)
+    excluded = read_candidates(EXCLUSIONS_PATH)
+    rows, added = merge(read_candidates(), found, read_seed(SEED_PATH), a.target, excluded)
     write_candidates(rows)
     by_source: dict[str, int] = {}
     for r in rows[-added:] if added else []:

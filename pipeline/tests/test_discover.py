@@ -66,3 +66,10 @@ def test_merge_caps_books_per_author():
     found = [f(f"Discworld Title {c}", "Terry Pratchett", "openlibrary:Wizards", 10, ol=f"OL{c}W") for c in "ABCDE"]
     rows, added = merge([], found, [], target=10)
     assert added == 3
+
+
+def test_excluded_books_are_never_added():
+    found = [f("Czas pogardy", "Andrzej Sapkowski", "openlibrary:Magic", 50, ol="OL9W"),
+             f("The Last Wish", "Andrzej Sapkowski", "openlibrary:Magic", 40, ol="OL8W")]
+    rows, _ = merge([], found, [], target=10, excluded=[{"title": "Czas pogardy", "author": "Andrzej Sapkowski"}])
+    assert [r["title"] for r in rows] == ["The Last Wish"]
