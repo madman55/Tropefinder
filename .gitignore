@@ -30,3 +30,6 @@ Thumbs.db
 
 # Generated reports (kept as workflow artifacts)
 data/reports/
+
+# Written at deploy time from repository variables
+web/config.js

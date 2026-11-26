@@ -20,6 +20,16 @@ Updated: 2026-11-25. Only things actually run are marked as tested; the test env
 
 **Stage 1 complete (25 Nov 2026).**
 
+## Phase 2 — search engine and simple search page (in progress)
+
+- [x] `search_books()` database function (migration `20261127000000_search_books.sql`): must-have / nice-to-have / don't-want tropes, child tropes count for their parent, "absent" only when stated for the trope itself, audiobook/ebook filter, bands "confirmed" (all must-haves present) and "possible" (some present, none ruled out), and for each book what matched, what isn't confirmed and which unwanted tropes aren't ruled out. Runs with the caller's permissions, so row-level security applies.
+- [x] `supabase/tests/search_test.sql`: 5 checks, passing on local PostgreSQL; added to GitHub's automatic tests.
+- [x] Search page `web/index.html` (plain HTML/CSS/JS, no build step): three trays (must have / nice to have / don't want), trope picker by category with search, audiobooks-only switch, shareable search links, results with reasons, book sheet with evidence quotes, sources and links. Reviewed in a phone-sized browser with sample data.
+- [x] Deploy workflow (`pages.yml`) writes `config.js` from repository variables and refuses a secret key.
+- [ ] Repo made public; Pages source set to GitHub Actions; `SUPABASE_PUBLISHABLE_KEY` variable added (Joseph).
+- [ ] Search migration run in Supabase's SQL Editor, then `search_test.sql` (Joseph).
+- [ ] First real searches; Joseph's searches recorded as test cases.
+
 ## Next (Joseph)
 
 - [ ] `.env` with Supabase URL and secret key (needed from Stage 2; only on a machine that runs the Python jobs).

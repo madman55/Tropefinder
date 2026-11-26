@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TropeFinder</title>
+<meta name="description" content="Find stories, not just books: search science fiction and fantasy by the tropes inside them.">
+<meta name="theme-color" content="#EEF1F4">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Literata:opsz,wght@7..72,500;7..72,650&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --mist: #EEF1F4;
+    --paper: #FAFBFC;
+    --ink: #1C2433;
+    --slate: #5B6577;
+    --line: #D5DBE3;
+    --must: #2F5D50;
+    --nice: #A87A1F;
+    --not: #9C2F3C;
+    --must-soft: #E2ECE8;
+    --nice-soft: #F4ECDA;
+    --not-soft: #F3E2E4;
+    --ui: "Atkinson Hyperlegible", system-ui, sans-serif;
+    --book: "Literata", Georgia, serif;
+    --step--1: 0.875rem;
+    --step-0: 1rem;
+    --step-1: 1.1875rem;
+    --step-2: 1.5rem;
+    --step-3: 2.125rem;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--mist); color: var(--ink);
+    font: 400 var(--step-0)/1.5 var(--ui);
+  }
+  main { max-width: 42rem; margin: 0 auto; padding: 1.25rem 1rem 7rem; }
+  h1, h2, h3 { margin: 0; font-weight: 700; }
+  button { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; border-radius: 4px; }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* Masthead: the name set as a book title, the promise beneath it */
+  .masthead { padding: 0.5rem 0 1.25rem; }
+  .masthead h1 { font: 650 var(--step-3)/1.05 var(--book); letter-spacing: -0.01em; }
+  .masthead p { margin: 0.375rem 0 0; color: var(--slate); }
+
+  /* The three trays: the page's one memorable element */
+  .trays { display: grid; gap: 0.5rem; margin-bottom: 1.5rem; }
+  .tray {
+    border-radius: 14px; padding: 0.625rem 0.75rem 0.75rem; min-height: 3.25rem;
+    border: 2px solid transparent;
+  }
+  .tray h2 { font-size: var(--step--1); font-weight: 700; margin-bottom: 0.375rem; }
+  .tray[data-kind="must"] { background: var(--must-soft); border-color: var(--must); }
+  .tray[data-kind="must"] h2 { color: var(--must); }
+  .tray[data-kind="nice"] { background: var(--nice-soft); border-color: var(--nice); border-style: dashed; }
+  .tray[data-kind="nice"] h2 { color: #7D5B14; }
+  .tray[data-kind="not"] { background: var(--not-soft); border-color: var(--not); }
+  .tray[data-kind="not"] h2 { color: var(--not); }
+  .tray .empty { color: var(--slate); font-size: var(--step--1); margin: 0; }
+  .tray .tokens { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+
+  /* Tokens */
+  .token {
+    display: inline-flex; align-items: center; gap: 0.375rem; min-height: 2.5rem;
+    padding: 0.375rem 0.75rem; border-radius: 999px; cursor: pointer;
+    border: 1.5px solid var(--line); background: var(--paper); line-height: 1.2;
+    text-align: left;
+  }
+  .token[data-state="must"] { background: var(--must); border-color: var(--must); color: #fff; }
+  .token[data-state="nice"] { background: var(--paper); border: 1.5px dashed var(--nice); color: #6B4E10; }
+  .token[data-state="not"]  { background: var(--paper); border-color: var(--not); color: var(--not); text-decoration: line-through; text-decoration-thickness: 2px; }
+  .token .mark { font-weight: 700; width: 1ch; text-align: center; text-decoration: none; display: inline-block; }
+  .token[data-state="none"] .mark { display: none; }
+
+  .howto { color: var(--slate); font-size: var(--step--1); margin: 0 0 0.75rem; }
+  .howto b { color: var(--ink); }
+
+  /* Picker */
+  .filters { display: flex; gap: 0.5rem; align-items: center; margin: 0 0 1rem; flex-wrap: wrap; }
+  .switch { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; cursor: pointer; }
+  .switch input { width: 1.25rem; height: 1.25rem; accent-color: var(--must); }
+  .find { width: 100%; min-height: 2.75rem; border-radius: 10px; border: 1.5px solid var(--line); background: var(--paper); padding: 0.5rem 0.75rem; font: inherit; }
+  details.group { border-top: 1px solid var(--line); }
+  details.group:last-of-type { border-bottom: 1px solid var(--line); }
+  details.group summary {
+    list-style: none; cursor: pointer; padding: 0.875rem 0; display: flex; align-items: baseline; gap: 0.5rem;
+    font-weight: 700;
+  }
+  details.group summary::-webkit-details-marker { display: none; }
+  details.group summary .count { font-weight: 400; color: var(--slate); font-size: var(--step--1); }
+  details.group summary::after { content: "+"; font-weight: 400; color: var(--slate); margin-left: auto; font-size: var(--step-1); line-height: 1; }
+  details.group[open] summary::after { content: "–"; }
+  .group .tokens { display: flex; flex-wrap: wrap; gap: 0.375rem; padding-bottom: 1rem; }
+
+  /* Sticky action */
+  .action {
+    position: fixed; left: 0; right: 0; bottom: 0; padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+    background: var(--mist); border-top: 1px solid var(--line);
+  }
+  .action .inner { max-width: 42rem; margin: 0 auto; display: flex; gap: 0.5rem; }
+  .btn { min-height: 3rem; border-radius: 12px; border: 0; padding: 0 1.25rem; font-weight: 700; cursor: pointer; }
+  .btn-primary { flex: 1; background: var(--ink); color: #fff; }
+  .btn-quiet { background: var(--paper); border: 1.5px solid var(--line); }
+  .btn:disabled { opacity: 0.55; cursor: default; }
+
+  /* Results */
+  #results { margin-top: 2rem; scroll-margin-top: 1rem; }
+  .status { color: var(--slate); margin: 0 0 1rem; }
+  .band { margin-bottom: 2rem; }
+  .band > h2 { font-size: var(--step-1); margin-bottom: 0.25rem; }
+  .band > p { margin: 0 0 0.75rem; color: var(--slate); font-size: var(--step--1); }
+  .book {
+    display: grid; grid-template-columns: 3.5rem 1fr; gap: 0.875rem; width: 100%;
+    padding: 0.875rem 0; border: 0; border-top: 1px solid var(--line); background: none; text-align: left; cursor: pointer;
+  }
+  .cover { width: 3.5rem; aspect-ratio: 2 / 3; border-radius: 4px; background: var(--line); object-fit: cover; display: block; }
+  .cover.blank { display: grid; place-items: center; font: 650 1.25rem/1 var(--book); color: var(--slate); }
+  .book h3 { font: 650 var(--step-1)/1.25 var(--book); }
+  .book .by { color: var(--slate); font-size: var(--step--1); margin: 0.125rem 0 0.375rem; }
+  .why { margin: 0; padding: 0; list-style: none; font-size: var(--step--1); display: grid; gap: 0.125rem; }
+  .why .has { color: var(--must); }
+  .why .open { color: var(--slate); }
+  .why .warn { color: var(--not); }
+  .pill { display: inline-block; font-size: 0.8125rem; border: 1px solid var(--line); border-radius: 999px; padding: 0 0.5rem; margin-right: 0.25rem; background: var(--paper); }
+
+  /* Book detail */
+  dialog {
+    position: fixed; inset: auto 0 0 0; margin: 0 auto; border: 0; padding: 0;
+    width: min(42rem, 100vw); max-width: 100vw; max-height: 92vh; overflow: auto;
+    border-radius: 18px 18px 0 0; background: var(--paper); color: var(--ink);
+  }
+  dialog::backdrop { background: rgba(28, 36, 51, 0.45); }
+  .sheet { padding: 1.25rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom)); }
+  .sheet header { display: flex; justify-content: space-between; gap: 1rem; align-items: start; }
+  .sheet h2 { font: 650 var(--step-2)/1.2 var(--book); }
+  .sheet .by { color: var(--slate); margin: 0.25rem 0 0; }
+  .sheet .blurb { margin: 1rem 0; max-width: 65ch; }
+  .sheet .source { color: var(--slate); font-size: var(--step--1); }
+  .sheet h3 { font-size: var(--step-0); margin: 1.25rem 0 0.5rem; }
+  .evidence { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.625rem; }
+  .evidence li { border-left: 3px solid var(--must); padding-left: 0.75rem; }
+  .evidence .t { font-weight: 700; }
+  .evidence .how { color: var(--slate); font-size: var(--step--1); display: block; }
+  .evidence q { font-family: var(--book); font-style: italic; }
+  .links a { color: var(--ink); margin-right: 1rem; }
+  .close { min-width: 2.75rem; min-height: 2.75rem; border-radius: 999px; border: 1.5px solid var(--line); background: var(--paper); cursor: pointer; font-size: 1.25rem; line-height: 1; }
+
+  footer { margin-top: 3rem; color: var(--slate); font-size: var(--step--1); }
+  footer a { color: inherit; }
+  .error { background: var(--not-soft); border: 1.5px solid var(--not); border-radius: 12px; padding: 0.75rem 1rem; }
+
+  @media (min-width: 40rem) {
+    .trays { grid-template-columns: repeat(3, 1fr); }
+    main { padding-top: 2.5rem; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .token { transition: background-color .15s, border-color .15s, color .15s; }
+    html { scroll-behavior: smooth; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header class="masthead">
+    <h1>TropeFinder</h1>
+    <p>Find stories, not just books. Pick the story ingredients you want, and the ones you don't.</p>
+  </header>
+
+  <section class="trays" aria-label="Your search">
+    <div class="tray" data-kind="must"><h2>Must have</h2><div class="tokens" data-tray="must"></div></div>
+    <div class="tray" data-kind="nice"><h2>Nice to have</h2><div class="tokens" data-tray="nice"></div></div>
+    <div class="tray" data-kind="not"><h2>Don't want</h2><div class="tokens" data-tray="not"></div></div>
+  </section>
+
+  <p class="howto">Tap a trope once for <b>must have</b>, twice for <b>nice to have</b>, three times for <b>don't want</b>, and once more to clear it.</p>
+
+  <div class="filters">
+    <label class="switch"><input type="checkbox" id="audio"> Audiobooks only</label>
+  </div>
+  <label class="visually-hidden" for="find">Find a trope</label>
+  <input class="find" id="find" type="search" placeholder="Find a trope, e.g. portal, soldier, LitRPG" autocomplete="off">
+
+  <div id="picker" aria-live="polite"><p class="status">Loading tropes…</p></div>
+
+  <section id="results" aria-live="polite"></section>
+
+  <footer>
+    <p>Book data from <a href="https://openlibrary.org">Open Library</a> and <a href="https://hardcover.app">Hardcover</a>. Trope tags come from reader tags and from an AI reading each book's description; every tag shows its evidence. Absence of a trope in a description is never taken as proof it isn't in the book.</p>
+  </footer>
+</main>
+
+<div class="action"><div class="inner">
+  <button class="btn btn-quiet" id="clear" type="button">Clear</button>
+  <button class="btn btn-primary" id="go" type="button">Find books</button>
+</div></div>
+
+<dialog id="detail" aria-labelledby="detail-title"><div class="sheet" id="sheet"></div></dialog>
+
+<script src="config.js"></script>
+<script>
+(() => {
+  const cfg = window.TROPEFINDER_CONFIG || {};
+  const STATES = ["none", "must", "nice", "not"];
+  const MARK = { must: "✓", nice: "~", not: "✕", none: "" };
+  const SAY = { must: "must have", nice: "nice to have", not: "don't want", none: "not chosen" };
+  const CATEGORY = {
+    "protagonist": "Main character", "abilities": "Powers and abilities", "setting": "World and setting",
+    "story-mechanics": "Story", "technology": "Technology", "relationships": "Relationships",
+    "structure-and-tone": "Style and tone", "format": "Format"
+  };
+
+  const state = new Map();         // slug -> must | nice | not
+  let tropes = [], bySlug = {}, sources = {};
+
+  // ---------------------------------------------------------------- data
+  function headers() {
+    const h = { apikey: cfg.key, "Content-Type": "application/json" };
+    if ((cfg.key || "").startsWith("eyJ")) h.Authorization = "Bearer " + cfg.key;  // legacy anon key
+    return h;
+  }
+  async function api(path, body) {
+    const res = await fetch(cfg.url.replace(/\/$/, "") + "/rest/v1/" + path, {
+      method: body ? "POST" : "GET", headers: headers(), body: body ? JSON.stringify(body) : undefined
+    });
+    if (!res.ok) throw new Error(`The book database answered ${res.status}. ${(await res.text()).slice(0, 160)}`);
+    return res.json();
+  }
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const nameOf = slug => (bySlug[slug] || {}).name || slug;
+  const list = slugs => slugs.map(nameOf).join(", ");
+
+  // ---------------------------------------------------------------- picker
+  function token(slug) {
+    const s = state.get(slug) || "none";
+    const t = bySlug[slug];
+    return `<button type="button" class="token" data-slug="${esc(slug)}" data-state="${s}"
+      aria-label="${esc(t.name)}: ${SAY[s]}" title="${esc(t.definition)}"><span class="mark" aria-hidden="true">${MARK[s]}</span>${esc(t.name)}</button>`;
+  }
+  function renderTrays() {
+    for (const kind of ["must", "nice", "not"]) {
+      const chosen = [...state].filter(([, k]) => k === kind).map(([slug]) => slug);
+      document.querySelector(`[data-tray="${kind}"]`).innerHTML =
+        chosen.length ? chosen.map(token).join("") : `<p class="empty">Nothing yet</p>`;
+    }
+  }
+  function renderPicker() {
+    const q = document.getElementById("find").value.trim().toLowerCase();
+    const groups = {};
+    for (const t of tropes) {
+      if (q && !(t.name.toLowerCase().includes(q) || (t.aliases || []).some(a => a.includes(q)))) continue;
+      (groups[t.category] ||= []).push(t);
+    }
+    const html = Object.keys(CATEGORY).filter(c => groups[c]).map(c => `
+      <details class="group" ${q ? "open" : ""}>
+        <summary>${CATEGORY[c]} <span class="count">${groups[c].length}</span></summary>
+        <div class="tokens">${groups[c].map(t => token(t.slug)).join("")}</div>
+      </details>`).join("");
+    document.getElementById("picker").innerHTML = html || `<p class="status">No trope matches “${esc(q)}”. Try a shorter word.</p>`;
+  }
+  function cycle(slug) {
+    const next = STATES[(STATES.indexOf(state.get(slug) || "none") + 1) % STATES.length];
+    next === "none" ? state.delete(slug) : state.set(slug, next);
+    document.querySelectorAll(`.token[data-slug="${CSS.escape(slug)}"]`).forEach(b => {
+      b.dataset.state = next;
+      b.querySelector(".mark").textContent = MARK[next];
+      b.setAttribute("aria-label", `${bySlug[slug].name}: ${SAY[next]}`);
+    });
+    renderTrays();
+    saveToUrl();
+  }
+
+  // ---------------------------------------------------------------- url state (shareable searches)
+  function saveToUrl() {
+    const p = new URLSearchParams();
+    for (const kind of ["must", "nice", "not"]) {
+      const v = [...state].filter(([, k]) => k === kind).map(([s]) => s);
+      if (v.length) p.set(kind, v.join(","));
+    }
+    if (document.getElementById("audio").checked) p.set("audio", "1");
+    history.replaceState(null, "", p.toString() ? "#" + p : location.pathname);
+  }
+  function loadFromUrl() {
+    const p = new URLSearchParams(location.hash.slice(1));
+    for (const kind of ["must", "nice", "not"])
+      (p.get(kind) || "").split(",").filter(s => bySlug[s]).forEach(s => state.set(s, kind));
+    document.getElementById("audio").checked = p.get("audio") === "1";
+    return state.size > 0;
+  }
+
+  // ---------------------------------------------------------------- search
+  async function search() {
+    const pick = k => [...state].filter(([, v]) => v === k).map(([s]) => s);
+    const out = document.getElementById("results");
+    const go = document.getElementById("go");
+    if (!state.size) {
+      out.innerHTML = `<p class="status">Choose at least one trope above, then search.</p>`;
+      out.scrollIntoView();
+      return;
+    }
+    go.disabled = true; go.textContent = "Searching…";
+    try {
+      const rows = await api("rpc/search_books", {
+        must: pick("must"), prefer: pick("nice"), exclude: pick("not"),
+        formats: document.getElementById("audio").checked ? ["audiobook"] : [], max_results: 100
+      });
+      const confirmed = rows.filter(r => r.band === "confirmed");
+      const possible = rows.filter(r => r.band === "possible");
+      const hasMust = pick("must").length > 0;
+      out.innerHTML = !rows.length
+        ? `<p class="status">No books match yet. Try moving a trope from “Must have” to “Nice to have”, or turn off “Audiobooks only”.</p>`
+        : band(hasMust ? "Confirmed matches" : "Matches", hasMust ? "Every must-have trope is backed by evidence." : "", confirmed)
+          + band("Possible matches", "Some must-have tropes aren't confirmed yet: the evidence doesn't say either way.", possible);
+      out.scrollIntoView();
+    } catch (e) {
+      out.innerHTML = `<p class="error">${esc(e.message)}</p>`;
+    } finally {
+      go.disabled = false; go.textContent = "Find books";
+    }
+  }
+  function band(title, note, rows) {
+    if (!rows.length) return "";
+    return `<section class="band"><h2>${title} (${rows.length})</h2>${note ? `<p>${note}</p>` : ""}${rows.map(book).join("")}</section>`;
+  }
+  function book(r) {
+    const cover = r.cover_url
+      ? `<img class="cover" src="${esc(r.cover_url)}" alt="" loading="lazy">`
+      : `<span class="cover blank" aria-hidden="true">${esc((r.title || "?")[0])}</span>`;
+    const why = [];
+    const has = [...r.must_matched, ...r.prefer_matched];
+    if (has.length) why.push(`<li class="has">Has ${esc(list(has))}</li>`);
+    if (r.must_unknown.length && r.band === "possible") why.push(`<li class="open">Not confirmed: ${esc(list(r.must_unknown))}</li>`);
+    if (r.exclude_not_ruled_out.length) why.push(`<li class="warn">Not ruled out: ${esc(list(r.exclude_not_ruled_out))}</li>`);
+    const meta = [r.authors, r.series, r.first_published_year].filter(Boolean).map(esc).join(", ");
+    return `<button type="button" class="book" data-id="${r.work_id}">${cover}<div>
+      <h3>${esc(r.title)}</h3><p class="by">${meta}</p>
+      <p class="by">${r.has_audiobook ? '<span class="pill">Audiobook</span>' : ""}${r.has_ebook ? '<span class="pill">Ebook</span>' : ""}</p>
+      <ul class="why">${why.join("")}</ul></div></button>`;
+  }
+
+  // ---------------------------------------------------------------- detail
+  async function openBook(id, title, byline) {
+    const dlg = document.getElementById("detail"), sheet = document.getElementById("sheet");
+    sheet.innerHTML = `<header><h2 id="detail-title">${esc(title)}</h2><button class="close" type="button" aria-label="Close">×</button></header><p class="status">Loading…</p>`;
+    dlg.showModal();
+    try {
+      const [[w], verdicts, links] = await Promise.all([
+        api(`works?id=eq.${id}&select=title,subtitle,description,description_source_id,first_published_year`),
+        api(`book_tropes?work_id=eq.${id}&status=eq.present&select=confidence,verification,tropes(slug,name),classification_evidence(field,quote,evidence_type,source_id)&order=confidence.desc`),
+        api(`external_ids?entity_type=eq.work&entity_id=eq.${id}&select=raw_url,source_id`)
+      ]);
+      const desc = w.description ? w.description.replace(/<[^>]+>/g, " ").trim() : "";
+      const short = desc.length > 420 ? desc.slice(0, 400).replace(/\s+\S*$/, "") + "…" : desc;
+      const how = { source_tag: "Reader tags", human_verified: "Checked by a person", community_verified: "Checked by readers", ai_suggested: "AI, from the description", rule_based: "Keyword match" };
+      sheet.innerHTML = `
+        <header><div><h2 id="detail-title">${esc(w.title)}</h2>
+          <p class="by">${esc(byline || [w.subtitle, w.first_published_year].filter(Boolean).join(", "))}</p></div>
+          <button class="close" type="button" aria-label="Close">×</button></header>
+        ${short ? `<p class="blurb">${esc(short)}</p><p class="source">Description from ${esc(sources[w.description_source_id] || "the source")}.</p>` : `<p class="blurb source">No description stored yet.</p>`}
+        <h3>Tropes found (${verdicts.length})</h3>
+        ${verdicts.length ? `<ul class="evidence">${verdicts.map(v => `<li>
+            <span class="t">${esc(v.tropes.name)}</span><span class="how">${how[v.verification] || ""}</span>
+            ${v.classification_evidence.slice(0, 2).map(e => e.field === "description"
+              ? `<q>${esc(e.quote)}</q>` : `<span class="how">${e.field === "tag" ? "Tagged" : "Subject"} “${esc(e.quote)}” by ${esc(sources[e.source_id] || "a source")}</span>`).join("")}
+          </li>`).join("")}</ul>` : `<p class="status">No tropes confirmed yet.</p>`}
+        ${links.length ? `<h3>Find it</h3><p class="links">${links.filter(l => l.raw_url).map(l =>
+            `<a href="${esc(l.raw_url)}" target="_blank" rel="noopener">${esc(sources[l.source_id] || "Source")}</a>`).join("")}</p>` : ""}`;
+    } catch (e) {
+      sheet.querySelector(".status").outerHTML = `<p class="error">${esc(e.message)}</p>`;
+    }
+  }
+
+  // ---------------------------------------------------------------- wiring
+  document.addEventListener("click", e => {
+    const t = e.target.closest(".token");
+    if (t) return cycle(t.dataset.slug);
+    const b = e.target.closest(".book");
+    if (b) return openBook(b.dataset.id, b.querySelector("h3").textContent, b.querySelector(".by").textContent);
+    if (e.target.closest(".close")) return document.getElementById("detail").close();
+  });
+  document.getElementById("detail").addEventListener("click", e => { if (e.target.id === "detail") e.target.close(); });
+  document.getElementById("go").addEventListener("click", search);
+  document.getElementById("clear").addEventListener("click", () => {
+    state.clear(); renderTrays(); renderPicker(); saveToUrl();
+    document.getElementById("results").innerHTML = "";
+  });
+  document.getElementById("find").addEventListener("input", renderPicker);
+  document.getElementById("audio").addEventListener("change", saveToUrl);
+
+  (async () => {
+    if (!cfg.url || !cfg.key) {
+      document.getElementById("picker").innerHTML = `<p class="error">This page isn't connected to the book database yet: config.js is missing its address or public key.</p>`;
+      return;
+    }
+    try {
+      const [ts, aliases, srcs] = await Promise.all([
+        api("tropes?is_active=eq.true&select=id,slug,name,category,definition,sort_order&order=sort_order"),
+        api("trope_aliases?select=trope_id,alias"),
+        api("data_sources?select=id,name")
+      ]);
+      const byId = Object.fromEntries(ts.map(t => [t.id, t]));
+      aliases.forEach(a => byId[a.trope_id] && (byId[a.trope_id].aliases ||= []).push(a.alias.toLowerCase()));
+      tropes = ts; bySlug = Object.fromEntries(ts.map(t => [t.slug, t]));
+      sources = Object.fromEntries(srcs.map(s => [s.id, s.name]));
+      const restored = loadFromUrl();
+      renderTrays(); renderPicker();
+      if (restored) search();
+    } catch (e) {
+      document.getElementById("picker").innerHTML = `<p class="error">${esc(e.message)}</p>`;
+    }
+  })();
+})();
+</script>
+</body>
+</html>

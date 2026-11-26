@@ -44,3 +44,5 @@ jobs:
           psql -v ON_ERROR_STOP=1 -f supabase/seed.sql
       - name: Schema smoke test
         run: psql -v ON_ERROR_STOP=1 -f supabase/tests/schema_smoke_test.sql | tee result.txt && grep -q "ALL SCHEMA CHECKS PASSED" result.txt
+      - name: Search engine test
+        run: psql -v ON_ERROR_STOP=1 -f supabase/tests/search_test.sql | tee search.txt && grep -q "ALL SEARCH CHECKS PASSED" search.txt
