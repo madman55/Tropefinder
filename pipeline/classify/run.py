@@ -9,7 +9,7 @@ How the layers combine for each book and trope:
   tag says present + AI unknown   -> present  (source_tag)
   tag says present + AI absent    -> unknown, both pieces of evidence kept (conflict)
   no tag           + AI present   -> present  (ai_suggested)
-  no tag           + AI absent    -> absent   (ai_suggested)
+  no tag           + AI absent    -> no row (unknown): see AI_ABSENT_TRUSTED
   anything else                   -> no row, which means unknown
 Human-verified verdicts are never touched.
 """
@@ -33,6 +33,10 @@ from pipeline.normalise import author_matches, title_similarity
 
 GOLD_PATH = Path(__file__).resolve().parents[2] / "data" / "gold_labels.csv"
 PROTECTED = {"human_verified", "community_verified"}
+# The AI's "absent" was wrong 3 of 3 times against Joseph's labels (prompt v2, 26 Nov):
+# descriptions cover too little of a book to rule a trope out. Until that improves,
+# an AI-only "absent" is not stored; "absent" comes from people.
+AI_ABSENT_TRUSTED = False
 
 
 @dataclass
@@ -63,7 +67,7 @@ def combine(hits: list[TagHit], ai: list[AIVerdict], ai_source_id: str | None) -
         elif tag_ev:
             conf = max(0.8, a.confidence if a and ai_status == "present" else 0.0)
             out.append(Verdict(slug, "present", round(conf, 3), "source_tag", tag_ev + ai_ev))
-        elif ai_status in ("present", "absent"):
+        elif ai_status == "present" or (ai_status == "absent" and AI_ABSENT_TRUSTED):
             out.append(Verdict(slug, ai_status, round(a.confidence, 3), "ai_suggested", ai_ev))
     return out
 

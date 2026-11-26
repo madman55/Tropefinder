@@ -66,6 +66,12 @@ def test_combine_rules():
     assert "harem" not in v
 
 
+def test_ai_only_absent_is_not_stored():
+    from pipeline.classify.ai import AIVerdict
+    v = combine([], [AIVerdict("academy-setting", "absent", 0.9, [{"field": "description", "quote": "no school"}])], "ai")
+    assert v == []
+
+
 def test_score():
     gold = [{"seed_id": "1", "title": "A", "trope_slug": "magic", "label": "present"},
             {"seed_id": "1", "title": "A", "trope_slug": "romance", "label": "absent"},
