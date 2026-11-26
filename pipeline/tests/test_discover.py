@@ -76,3 +76,11 @@ def test_excluded_books_are_never_added():
              f("The Last Wish", "Andrzej Sapkowski", "openlibrary:Magic", 40, ol="OL8W")]
     rows, _ = merge([], found, [], target=10, excluded=[{"title": "Czas pogardy", "author": "Andrzej Sapkowski"}])
     assert [r["title"] for r in rows] == ["The Last Wish"]
+
+
+def test_audit_finds_likely_duplicates():
+    from pipeline.audit import likely_duplicates
+    works = [{"id": "1", "title": "Storm Front"}, {"id": "2", "title": "Storm Front (Dresden Files #1)"},
+             {"id": "3", "title": "Fool Moon"}, {"id": "4", "title": "Storm Front"}]
+    authors = {"1": ["Jim Butcher"], "2": ["Jim Butcher"], "3": ["Jim Butcher"], "4": ["Someone Else"]}
+    assert likely_duplicates(works, authors) == [["Storm Front", "Storm Front (Dresden Files #1)"]]
