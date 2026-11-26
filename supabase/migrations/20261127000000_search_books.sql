@@ -162,3 +162,6 @@ $$;
 
 revoke all on function public.search_books(text[], text[], text[], text[], integer) from public;
 grant execute on function public.search_books(text[], text[], text[], text[], integer) to anon, authenticated, service_role;
+
+-- Tell Supabase's API layer to pick up the new function straight away.
+notify pgrst, 'reload schema';

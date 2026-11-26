@@ -51,7 +51,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Page is served
-        run: curl -fsS "${{ needs.deploy.outputs.page_url || format('https://{0}.github.io/{1}/', github.repository_owner, github.event.repository.name) }}" | grep -q "TropeFinder"
+        run: |
+          curl -fsS -o page.html "${{ needs.deploy.outputs.page_url || format('https://{0}.github.io/{1}/', github.repository_owner, github.event.repository.name) }}"
+          grep -q "TropeFinder" page.html && echo "Page is live"
       - name: Public search works on the real data
         env:
           URL: ${{ vars.SUPABASE_URL || 'https://cnqtkfdzpmgkcreezpft.supabase.co' }}
