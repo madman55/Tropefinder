@@ -244,6 +244,9 @@ class Enricher:
                 res.note = f"{len(docs)} results; none matched by ISBN or title + author"
                 return res
             res.hc_id, res.hc_title, res.match = str(doc.get("id")), doc.get("title"), how
+            if normalise_text(doc.get("title")) != normalise_text(seed["title"]):
+                seen = "; ".join(f"{d.get('title')} [{d.get('id')}, {d.get('users_count') or 0} readers]" for d in docs)
+                res.note = f"title differs from seed; search results were: {seen}"[:600]
 
             created = False
             if work_id is None:
