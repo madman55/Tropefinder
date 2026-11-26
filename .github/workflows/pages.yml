@@ -25,6 +25,8 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - name: Write config.js
@@ -41,3 +43,40 @@ jobs:
           path: web
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  check:
+    # After deploying: prove the live page and the public read path work, using only
+    # the publishable key (exactly what visitors' browsers use).
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Page is served
+        run: curl -fsS "${{ needs.deploy.outputs.page_url || format('https://{0}.github.io/{1}/', github.repository_owner, github.event.repository.name) }}" | grep -q "TropeFinder"
+      - name: Public search works on the real data
+        env:
+          URL: ${{ vars.SUPABASE_URL || 'https://cnqtkfdzpmgkcreezpft.supabase.co' }}
+          KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          h=(-H "apikey: $KEY" -H "Content-Type: application/json")
+          echo "Tropes readable: $(curl -fsS "${h[@]}" "$URL/rest/v1/tropes?select=slug" | python3 -c 'import json,sys; print(len(json.load(sys.stdin)))')"
+          curl -fsS "${h[@]}" -X POST "$URL/rest/v1/rpc/search_books" \
+            -d '{"must":["magic","modern-firearms"],"prefer":["military-characters"],"exclude":["romance"],"max_results":10}' > r.json
+          python3 - <<'PY'
+          import json
+          rows = json.load(open("r.json"))
+          print(f"Search 'magic + modern firearms, nice: soldiers, not: romance' -> {len(rows)} results")
+          for r in rows:
+              print(f"  [{r['band']}] {r['title']} - has {', '.join(r['must_matched'] + r['prefer_matched'])}"
+                    + (f"; not confirmed: {', '.join(r['must_unknown'])}" if r['band'] == 'possible' else "")
+                    + (f"; romance not ruled out" if r['exclude_not_ruled_out'] else ""))
+          assert rows, "search returned nothing"
+          PY
+      - name: Public key cannot write
+        env:
+          URL: ${{ vars.SUPABASE_URL || 'https://cnqtkfdzpmgkcreezpft.supabase.co' }}
+          KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          code=$(curl -s -o /dev/null -w "%{http_code}" -H "apikey: $KEY" -H "Content-Type: application/json" \
+            -X POST "$URL/rest/v1/works" -d '{"title":"x","normalised_title":"x"}')
+          echo "Insert with the public key answered HTTP $code"
+          [ "$code" -ge 400 ] || { echo "PUBLIC KEY COULD WRITE"; exit 1; }
