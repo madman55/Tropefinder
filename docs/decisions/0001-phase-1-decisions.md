@@ -11,3 +11,4 @@ Date: 2026-11-25. Decided by: Joseph.
 | Google Books | Optional enrichment only | Its terms forbid charging users without Google permission, which conflicts with a possible premium tier |
 | Taxonomy storage | YAML file in the repo, synced to the database | Readable, editable and reviewable in Git |
 | Database changes | Numbered SQL migration files | The database can be rebuilt exactly from the repo |
+| Order of search vs app | Simple search page built during Phase 2 | Joseph works on his phone; a usable page makes testing search real and gives something to use sooner (26 Nov) |
