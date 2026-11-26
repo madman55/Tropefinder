@@ -1,0 +1,376 @@
+seed_id,title,author,ol_work,hardcover_id,found_via,popularity
+C0001,Carl’s Doomsday Scenario,Matt Dinniman,OL24848193W,,openlibrary:LitRPG,12
+C0002,"Dead Until Dark (Sookie Stackhouse, #1)",Charlaine Harris,OL82374W,,openlibrary:Urban fantasy,38
+C0003,Persepolis rising,James S. A. Corey,OL17857348W,,openlibrary:Military science fiction,12
+C0004,Jokers Wild,George R. R. Martin,OL1955925W,,openlibrary:Superheroes,20
+C0005,A Torre Negra,Stephen King,OL81625W,,openlibrary:Time travel,71
+C0006,Heretics of Dune,Frank Herbert,OL893502W,,openlibrary:Space opera,48
+C0007,The Plot Against America,Philip Roth,OL74664W,,openlibrary:Alternative histories,43
+C0008,Dreamcatcher,Stephen King,OL81598W,,openlibrary:Science fantasy,57
+C0009,A Game of Thrones,George R. R. Martin,OL257943W,,openlibrary:Magic (fantasy),136
+C0010,Mage Tank: A LitRPG Adventure,Cornman,,1820138,hardcover:LitRPG,165
+C0011,"Jackal Among Snakes, Book 1",Nemorosus,,1699722,hardcover:GameLit,31
+C0012,Earthshaker: A LitRPG Progression Fantasy,Plum Parrot,,1821351,hardcover:progression fantasy,31
+C0013,"Grandmaster of Demonic Cultivation: Mo Dao Zu Shi (Novel), Vol. 1",Mò Xiāng Tóng Xiù,,776416,hardcover:cultivation,326
+C0014,Deadworld Isekai,R.C. Joshua,,1494933,hardcover:isekai,27
+C0015,Dungeon Core Online: Remastered Edition - Book One,Jonathan Smidt,,707379,hardcover:dungeon core,25
+C0016,Life in the North,Tao Wong,,2011896,hardcover:system apocalypse,125
+C0017,Nobody Gets the Girl: A Superhero Novel,James Maxey,,1637789,hardcover:superhero novel,15
+C0018,The Ghost Brigades,John Scalzi,,431758,hardcover:military science fiction,1861
+C0019,Demon Lord Academy: An Urban Fantasy Adventure,Shane Hammond,,1720585,hardcover:urban fantasy,22
+C0020,The Time Machine,H. G. Wells,,69589,hardcover:time travel novel,3790
+C0021,Semper Mars,Ian Douglas,,91586,hardcover:space marines,49
+C0022,"The Magical Revolution of the Reincarnated Princess and the Genius Young Lady, Vol. 1",Piero Karasu,,785516,hardcover:reincarnated,31
+C0023,The Gate of the Feral Gods,Matt Dinniman,OL24848267W,,openlibrary:LitRPG,7
+C0024,The Wolf Gift,Anne Rice,OL34984182W,,openlibrary:Urban fantasy,21
+C0025,Leviathan Falls,James S. A. Corey,OL21704818W,,openlibrary:Military science fiction,11
+C0026,Aces Abroad,George R. R. Martin,OL1955938W,,openlibrary:Superheroes,12
+C0027,Sphere,Michael Crichton,OL46917W,,openlibrary:Time travel,70
+C0028,Star Wars Episode I - The Phantom Menace,Terry Brooks,OL5683504W,,openlibrary:Space opera,39
+C0029,The Yiddish Policemen's Union,Michael Chabon,OL119430W,,openlibrary:Alternative histories,36
+C0030,Invasion,Lisa Jackson,OL6528728W,,openlibrary:Science fantasy,11
+C0031,The Name of the Wind,Patrick Rothfuss,OL8479867W,,openlibrary:Magic (fantasy),76
+C0032,Advent: A Fantasy LitRPG Adventure,Seth Ring,,1798970,hardcover:LitRPG,70
+C0033,The Hunter’s Code: Book 1: A Portal Progression Fantasy Series,Oleg Sapphire,,1682752,hardcover:progression fantasy,30
+C0034,Cultivation,Seth Ring,,769340,hardcover:cultivation,168
+C0035,Isekai Emperor,Michael Dalton,,1201067,hardcover:isekai,22
+C0036,Hardcore Dungeon Core,A.J. Markam,,1564048,hardcover:dungeon core,13
+C0037,Apocalypse: Generic System,Macronomicon,,637752,hardcover:system apocalypse,93
+C0038,Earth Strike,Ian Douglas,,446277,hardcover:military science fiction,120
+C0039,Bound to Gods : A Reverse Harem Urban Fantasy,Eva Chase,,690106,hardcover:urban fantasy,16
+C0040,Doomsday Book,Connie Willis,,10086,hardcover:time travel novel,1186
+C0041,Luna Marine,Ian Douglas,,362033,hardcover:space marines,29
+C0042,"Reincarnated as the Last of my Kind, Vol. 1",Kiri Komori,,1182489,hardcover:reincarnated,15
+C0043,The Butcher’s Masquerade,Matt Dinniman,OL34721292W,,openlibrary:LitRPG,7
+C0044,Kraken,China Miéville,OL14990804W,,openlibrary:Urban fantasy,16
+C0045,The Cole Protocol,Tobias S. Buckell,OL5825653W,,openlibrary:Military science fiction,10
+C0046,All My Friends Are Superheroes,Andrew Kaufman,OL9032319W,,openlibrary:Superheroes,11
+C0047,Timeline,Michael Crichton,OL46884W,,openlibrary:Time travel,64
+C0048,Xenocide,Orson Scott Card,OL49604W,,openlibrary:Space opera,38
+C0049,Man in the Dark,Paul Auster,OL1682214W,,openlibrary:Alternative histories,22
+C0050,Sword & citadel,Gene Wolfe,OL14871968W,,openlibrary:Science fantasy,9
+C0051,Skeleton crew,Stephen King,OL81627W,,openlibrary:Magic (fantasy),75
+C0052,Dodge Tank: A LitRPG Novel,Rick Scott,,668264,hardcover:LitRPG,57
+C0053,Downtown Druid: A Progression Fantasy Epic,C.B. Titus,,1859420,hardcover:progression fantasy,27
+C0054,Street Cultivation,Sarah Lin,,606548,hardcover:cultivation,101
+C0055,Seize the Day: A World Conquest Isekai,J. V. Simms,,1923002,hardcover:isekai,11
+C0056,Frozen Time: A Dungeon Core Time Loop,Jonathan    Brooks,,1085396,hardcover:dungeon core,12
+C0057,Redeemer of the Dead,Tao Wong,,496466,hardcover:system apocalypse,78
+C0058,Salvager,Scott Moon,,1588655,hardcover:military science fiction,50
+C0059,Mastering Magic: Urban Fantasy Slice of Life,Kirk Mason,,1364446,hardcover:urban fantasy,15
+C0060,To Say Nothing of the Dog,Connie Willis,OL14858392W,216723,hardcover:time travel novel,715
+C0061,Heroes of the Space Marines,Nick Kyme,,1234228,hardcover:space marines,24
+C0062,WIEDERGEBURT: Legend of the Reincarnated Warrior 1,Brandon Varnell,,991915,hardcover:reincarnated,14
+C0063,Frostworld,Blake Arthur Peel,OL31247711W,,openlibrary:LitRPG,5
+C0064,Lost Souls,Poppy Z. Brite,OL20443949W,,openlibrary:Urban fantasy,11
+C0065,The Lost Fleet,Jack Campbell,OL20456898W,,openlibrary:Military science fiction,7
+C0066,The Shadow,James Patterson,OL24211939W,,openlibrary:Superheroes,11
+C0067,Outlander,Diana Gabaldon,OL3261155W,,openlibrary:Time travel,50
+C0068,Blue Mars,Kim Stanley Robinson,OL81649W,,openlibrary:Space opera,31
+C0069,Numero Zero,Umberto Eco,OL17140057W,,openlibrary:Alternative histories,21
+C0070,Shadow & Claw,Gene Wolfe,OL14871933W,,openlibrary:Science fantasy,9
+C0071,Wizard's First Rule,Terry Goodkind,OL2010436W,,openlibrary:Magic (fantasy),51
+C0072,Rogue Ascension (Book 1): A Progression LitRPG,Hunter Mythos,,1108732,hardcover:LitRPG,52
+C0073,Immortality Starts with Generosity: A Cultivation Progression Fantasy,Plutus,,1189921,hardcover:progression fantasy,23
+C0074,"Grandmaster of Demonic Cultivation, Vol. 1",Luo Di Cheng Qiu,,1668705,hardcover:cultivation,57
+C0075,Christmas Core,Jonathan    Brooks,,769400,hardcover:dungeon core,11
+C0076,Cost of Survival,Tao Wong,,637937,hardcover:system apocalypse,71
+C0077,Outsystem: A Military Science Fiction Space Opera Epic,M.D. Cooper,,446995,hardcover:military science fiction,38
+C0078,Grave Cargo: A FREE Thrilling Adrenaline Laced Urban Fantasy Series First,Jami Gray,,567709,hardcover:urban fantasy,14
+C0079,All Clear,Connie Willis,,459445,hardcover:time travel novel,250
+C0080,Ragnar Blackmane,Aaron Dembski-Bowden,,1239067,hardcover:space marines,13
+C0081,Did I Seriously Just Get Reincarnated as My Gag Character?! Volume 1,Kanade Otonashi,,785834,hardcover:reincarnated,14
+C0082,The Trapped Mind Project,Michael Chatfield,OL27305541W,,openlibrary:LitRPG,5
+C0083,Prince Lestat,Anne Rice,OL20275691W,,openlibrary:Urban fantasy,10
+C0084,Halo,Joseph Staten,OL18162788W,,openlibrary:Military science fiction,6
+C0085,Perfect Assassin,James Patterson,OL27814116W,,openlibrary:Superheroes,10
+C0086,Dragonfly in Amber,Diana Gabaldon,OL3261153W,,openlibrary:Time travel,45
+C0087,The Entropy Effect,Vonda N. McIntyre,OL1921488W,,openlibrary:Space opera,28
+C0088,Settling accounts,Harry Turtledove,OL16555W,,openlibrary:Alternative histories,20
+C0089,Christmas When Music Almost Killed the World,Aberjhani,OL5968387W,,openlibrary:Science fantasy,2
+C0090,Jonathan Strange and Mr. Norrell,Susanna Clarke,OL5703422W,,openlibrary:Magic (fantasy),51
+C0091,Dungeon Life: An Isekai LitRPG,Khenal,,1838536,hardcover:LitRPG,48
+C0092,Ascendant (Book 1): A Progression Fantasy,EmergencyComplaints,,1397154,hardcover:progression fantasy,22
+C0093,Cultivation Nerd,HolyMouse,,2141599,hardcover:cultivation,25
+C0094,Enter System,Tom Larcombe,,993166,hardcover:system apocalypse,50
+C0095,The Lost Colony Ship: A Wild Military Science Fiction Adventure - Previously Published as Destiny Lost,M.D. Cooper,,536288,hardcover:military science fiction,19
+C0096,Dark City Girls: An Urban Fantasy,Michael Dalton,,1850805,hardcover:urban fantasy,13
+C0097,Hazards of Time Travel,Joyce Carol Oates,,441249,hardcover:time travel novel,62
+C0098,Victories of the Space Marines,Christian Z. Dunn,,1193072,hardcover:space marines,10
+C0099,Ravenous,David Petrie,OL26425993W,,openlibrary:LitRPG,4
+C0100,Deep Kiss of Winter,Kresley Cole,OL15192593W,,openlibrary:Urban fantasy,10
+C0101,Sungrazer,Jay Posey,OL19541871W,,openlibrary:Military science fiction,5
+C0102,Aim High,Shawn Pryor,OL25347562W,,openlibrary:Superheroes,8
+C0103,Deathlands,James Axler,OL5690515W,,openlibrary:Time travel,43
+C0104,Dragon's Kin,Anne McCaffrey,OL73330W,,openlibrary:Space opera,24
+C0105,Alvin Journeyman,Orson Scott Card,OL49440W,,openlibrary:Alternative histories,20
+C0106,"Zeus, Inc.",Robin Burks,OL16737934W,,openlibrary:Science fantasy,2
+C0107,The Dragon Reborn,Robert Jordan,OL7924143W,,openlibrary:Magic (fantasy),41
+C0108,Overdue: A Magical Library LitRPG Adventure,K.T. Hanna,,1619346,hardcover:LitRPG,46
+C0109,How I Built a Magic Empire (Book 1): A Portal Progression Fantasy Series,Konstantin Zubov,,1682708,hardcover:progression fantasy,22
+C0110,The Science of Cultivation: A Xianxia Progression Fantasy,RandomBlueCat,,2161916,hardcover:cultivation,10
+C0111,Control System,Tom Larcombe,,1643800,hardcover:system apocalypse,27
+C0112,A Path in the Darkness: A Military Science Fiction Space Opera Epic,M.D. Cooper,,606653,hardcover:military science fiction,17
+C0113,Sword and Shadow: A Compelling Urban Fantasy of Lawmen and Dark Magic,Michelle Sagara,,563789,hardcover:urban fantasy,13
+C0114,Treacheries of the Space Marines,Christian Z. Dunn,,1137004,hardcover:space marines,10
+C0115,"Oh, Great! I Discovered How to Cultivate a Farmer in 52 Easy Steps",Benjamin Kerei,OL32613502W,,openlibrary:LitRPG,4
+C0116,Undead in the Garden of Good and Evil / The Claire Switch Project / Chaotic / Dead Man Dating,Lynsay Sands,OL14906135W,,openlibrary:Urban fantasy,8
+C0117,Outriders,Jay Posey,OL24501719W,,openlibrary:Military science fiction,3
+C0118,Throne of the Crescent Moon,Saladin Ahmed,OL16810035W,,openlibrary:Superheroes,7
+C0119,Lightning,Dean Koontz,OL263242W,,openlibrary:Time travel,40
+C0120,The Legion Of Lazarus,Edmond Hamilton,OL25314393W,,openlibrary:Space opera,23
+C0121,Farthing,Jo Walton,OL15397385W,,openlibrary:Alternative histories,19
+C0122,Stone of Tears,Terry Goodkind,OL2010453W,,openlibrary:Magic (fantasy),38
+C0123,Wizard's Tower: A LitRPG Adventure,Gregory Allanther,,637764,hardcover:LitRPG,44
+C0124,The Last Emperor: A Progression Fantasy Epic,Maxime J. Durand,,1910069,hardcover:progression fantasy,22
+C0125,Alt System,Tom Larcombe,,1643799,hardcover:system apocalypse,18
+C0126,Biomance: An Urban Fantasy Slice of Life,Kirk Mason,,1858493,hardcover:urban fantasy,12
+C0127,Reborn as a Baron Lord,Han Yang,OL28182445W,,openlibrary:LitRPG,4
+C0128,Small favor,Jim Butcher,OL11967339W,,openlibrary:Urban fantasy,8
+C0129,Standing the Final Watch,William Alan Webb,OL17762239W,,openlibrary:Military science fiction,3
+C0130,Heat Wave,T. J. Klune,OL25957815W,,openlibrary:Superheroes,6
+C0131,Voyager,Diana Gabaldon,OL3261154W,,openlibrary:Time travel,39
+C0132,Star Wars Trilogy,George Lucas,OL61921W,,openlibrary:Space opera,23
+C0133,Radio Free Albemuth,Philip K. Dick,OL2172484W,,openlibrary:Alternative histories,18
+C0134,The Blood of Olympus,Rick Riordan,OL17059943W,,openlibrary:Magic (fantasy),38
+C0135,Crow's Fortune: A Fantasy LitRPG Adventure,Seth Ring,,1813240,hardcover:LitRPG,40
+C0136,Falling with Folded Wings (Book 1): A LitRPG Progression Fantasy,Plum Parrot,,684600,hardcover:progression fantasy,21
+C0137,Boat Wizard: An Urban Fantasy Adventure,Michael Dalton,,2119884,hardcover:urban fantasy,12
+C0138,Quill and Still,Aaron Sofaer,OL37941106W,,openlibrary:LitRPG,4
+C0139,La Veggente (Hunting Fear),Kay Hooper,OL504563W,,openlibrary:Urban fantasy,8
+C0140,Passage at Arms,Glen Cook,OL1976823W,,openlibrary:Military science fiction,2
+C0141,Marshal Law,Pat Mills,OL3760501W,,openlibrary:Superheroes,6
+C0142,The Time Traveler's Wife,Audrey Niffenegger,OL4720160W,,openlibrary:Time travel,37
+C0143,"The Long Way to a Small, Angry Planet",Becky Chambers,OL17716925W,,openlibrary:Space opera,21
+C0144,Life After Life,Kate Atkinson,OL16810448W,,openlibrary:Alternative histories,18
+C0145,The Well of Ascension,Brandon Sanderson,OL5738150W,,openlibrary:Magic (fantasy),36
+C0146,A Starbrite Man: A Cyberpunk LitRPG,Warby Picus,,1796266,hardcover:LitRPG,39
+C0147,Majority (Torth): A Sci-Fi Power Progression Fantasy,Abby Goldsmith,,1230372,hardcover:progression fantasy,19
+C0148,Wicked West,Matthew Davenport,OL38057267W,,openlibrary:LitRPG,4
+C0149,Vampire Junction,S. P. Somtow,OL102421W,,openlibrary:Urban fantasy,7
+C0150,Lost Fleet,Jack Campbell,OL21828147W,,openlibrary:Military science fiction,2
+C0151,Hulk,Peter David,OL8126331W,,openlibrary:Superheroes,5
+C0152,Dirk Gently’s Holistic Detective Agency,Douglas Adams,OL2163628W,,openlibrary:Time travel,36
+C0153,Blindsight,Peter Watts,OL8514692W,,openlibrary:Space opera,20
+C0154,Cities of the Red Night,William S. Burroughs,OL258140W,,openlibrary:Alternative histories,16
+C0155,Assassin's Apprentice,Robin Hobb,OL2707183W,,openlibrary:Magic (fantasy),34
+C0156,Wraithwood Botanist: A LitRPG Apocalypse Adventure,Little Lynx,,1947386,hardcover:LitRPG,39
+C0157,The Last Paladin #1: An Action & Adventure Progression Fantasy Series,Roman Savarovsky,,2374877,hardcover:progression fantasy,15
+C0158,The Primal Hunter,Zogarth,OL28766216W,,openlibrary:LitRPG,4
+C0159,No rest for the wicked,Kresley Cole,OL5805171W,,openlibrary:Urban fantasy,7
+C0160,Island of power,Dean Wesley Smith,OL5687541W,,openlibrary:Military science fiction,2
+C0161,We Could Be Heroes,Mike Chen,OL21916301W,,openlibrary:Superheroes,5
+C0162,Night Watch,Terry Pratchett,OL453809W,,openlibrary:Time travel,33
+C0163,The Naked God,Peter F. Hamilton,OL474016W,,openlibrary:Space opera,20
+C0164,Machines Like Me,Ian McEwan,OL20077992W,,openlibrary:Alternative histories,11
+C0165,The Wise Man’s Fear,Patrick Rothfuss,OL8479869W,,openlibrary:Magic (fantasy),32
+C0166,Lord January: A LitRPG Cultivation Saga,Dakota Krout,,587460,hardcover:LitRPG,37
+C0167,Youngest Son of the Black-Hearted: A Progression Fantasy Adventure,Alvin Atwater,,1838179,hardcover:progression fantasy,15
+C0168,"Oh, Great! I was Reincarnated as a Farmer",Benjamin Kerei,OL24719965W,,openlibrary:LitRPG,4
+C0169,This Poison Heart,Kalynn Bayron,OL24728475W,,openlibrary:Urban fantasy,7
+C0170,Standing in the Storm,William Alan Webb,OL17762240W,,openlibrary:Military science fiction,2
+C0171,Midlife Crisis of Commander Invincible,Neil Connelly,OL21247693W,,openlibrary:Superheroes,4
+C0172,Atlantis Found,Clive Cussler,OL84866W,,openlibrary:Time travel,31
+C0173,Yesterday's Son,A. C. Crispin,OL5354800W,,openlibrary:Space opera,20
+C0174,Devil's valley,André Philippus Brink,OL1965261W,,openlibrary:Alternative histories,10
+C0175,Winter's Heart,Robert Jordan,OL7924207W,,openlibrary:Magic (fantasy),31
+C0176,Lady February: A LitRPG Cultivation Saga,Dakota Krout,,587459,hardcover:LitRPG,31
+C0177,Nameless Sovereign 1: A Cultivation Progression Fantasy,Nameless Author,,1917783,hardcover:progression fantasy,13
+C0178,Portal to Nova Roma,J. R. Matthews,OL28953842W,,openlibrary:LitRPG,3
+C0179,Smoke bitten,Patricia Briggs,OL20656218W,,openlibrary:Urban fantasy,6
+C0180,Wings of Ebony,J. Elle,OL22001215W,,openlibrary:Superheroes,4
+C0181,La lenteur,Milan Kundera,OL10423421W,,openlibrary:Time travel,30
+C0182,Fallen Dragon,Peter F. Hamilton,OL474021W,,openlibrary:Space opera,20
+C0183,Weaver,Stephen Baxter,OL72839W,,openlibrary:Alternative histories,8
+C0184,Seventh Son,Orson Scott Card,OL49558W,,openlibrary:Magic (fantasy),29
+C0185,Big Sneaky Barbarian: A LitRPG Novel,Seth McDuffee,,917393,hardcover:LitRPG,30
+C0186,Rise of a Manor Lord: A Progression Fantasy Isekai,T.E. Bakutis,,1184268,hardcover:progression fantasy,13
+C0187,Age of Victoria,Alston Sleet,OL24506661W,,openlibrary:LitRPG,3
+C0188,House of Flame and Shadow,Sarah J. Maas,OL34780775W,,openlibrary:Urban fantasy,6
+C0189,A Neon Darkness,Lauren Shippen,OL20794265W,,openlibrary:Superheroes,4
+C0190,Valley of Silence,Nora Roberts,OL111621W,,openlibrary:Time travel,28
+C0191,Freedom's challenge,Anne McCaffrey,OL73331W,,openlibrary:Space opera,19
+C0192,A Nomad of the Time Streams,Michael Moorcock,OL2697622W,,openlibrary:Alternative histories,7
+C0193,Soul of the Fire,Terry Goodkind,OL2010448W,,openlibrary:Magic (fantasy),29
+C0194,"Shrubley, the Monster Adventurer: A LitRPG Adventure",James T. Callum,,1478714,hardcover:LitRPG,29
+C0195,Words of Power: A Progression Fantasy Epic,Shami Stovall,,1644468,hardcover:progression fantasy,13
+C0196,The Mechanical Crafter,R.A. Mejia,OL24427935W,,openlibrary:LitRPG,3
+C0197,The Changeling,Victor D. LaValle,OL19541804W,,openlibrary:Urban fantasy,6
+C0198,The Incredible Hulk,Peter David,OL16043686W,,openlibrary:Superheroes,4
+C0199,Dance of the Gods,Nora Roberts,OL111623W,,openlibrary:Time travel,28
+C0200,Changing planes,Ursula K. Le Guin,OL59790W,,openlibrary:Space opera,19
+C0201,Rosewater,Tade Thompson,OL19763347W,,openlibrary:Alternative histories,7
+C0202,Miecz przeznaczenia,Andrzej Sapkowski,OL2577472W,,openlibrary:Magic (fantasy),28
+C0203,Casual Farming: A Farming LitRPG,Wolfe Locke,,1103667,hardcover:LitRPG,29
+C0204,"Revolutionizing the Magical World, One Sorceress at a Time: A Portal Progression Fantasy",Alex Prone,,1973907,hardcover:progression fantasy,12
+C0205,Opening Moves,Cosimo Yap,OL28215569W,,openlibrary:LitRPG,3
+C0206,Dark Needs at Night's Edge,Kresley Cole,OL25357067W,,openlibrary:Urban fantasy,6
+C0207,"Spider-Man, Attack of the Heroes",Rich Thomas,OL20125424W,,openlibrary:Superheroes,4
+C0208,The Midnight Library,Matt Haig,OL20965973W,,openlibrary:Time travel,27
+C0209,2312,Kim Stanley Robinson,OL16298967W,,openlibrary:Space opera,19
+C0210,Dreadnought,Cherie Priest,OL15385835W,,openlibrary:Alternative histories,7
+C0211,Czas pogardy,Andrzej Sapkowski,OL2577481W,,openlibrary:Magic (fantasy),28
+C0212,Whispers of the Ghost Alchemist: A LitRPG Adventure,K. Georgiades aka PathofPen,,2200521,hardcover:LitRPG,28
+C0213,Immortal Drunkard: Volume 1: Wuxia/Xianxia Cultivation & Progression Fantasy Adventure,Mortykay,,1756090,hardcover:progression fantasy,12
+C0214,The Snake Report,wercwercwerc,OL27708918W,,openlibrary:LitRPG,3
+C0215,The Everborn,Nicholas Grabowsky,OL8833987W,,openlibrary:Urban fantasy,6
+C0216,Black and white,Jackie Kessler,OL2046740W,,openlibrary:Superheroes,4
+C0217,Angel time,Anne Rice,OL14962785W,,openlibrary:Time travel,27
+C0218,Willful Child,Steven Erikson,OL19339858W,,openlibrary:Space opera,19
+C0219,Liberating Atlantis,Harry Turtledove,OL14923525W,,openlibrary:Alternative histories,6
+C0220,A Memory of Light,Robert Jordan,OL16799133W,,openlibrary:Magic (fantasy),27
+C0221,Arcane Artificer: A Crafting LitRPG Fantasy,Andrew Karevik,,2025352,hardcover:LitRPG,12
+C0222,A Blade Through Time: A Grimdark Progression Fantasy,Louis Kalman,,587424,hardcover:progression fantasy,12
+C0223,Rise of the Necromancer,Arlo Adams,OL28086767W,,openlibrary:LitRPG,3
+C0224,Feverborn,Karen Marie Moning,OL5692976W,,openlibrary:Urban fantasy,5
+C0225,Seven wonders,Adam Christopher,OL19963766W,,openlibrary:Superheroes,4
+C0226,Morrigan's Cross,Nora Roberts,OL111457W,,openlibrary:Time travel,26
+C0227,Redshirts,John Scalzi,OL16564627W,,openlibrary:Space opera,18
+C0228,Iron Winter,Stephen Baxter,OL16810653W,,openlibrary:Alternative histories,6
+C0229,Words of Radiance,Brandon Sanderson,OL16813053W,,openlibrary:Magic (fantasy),23
+C0230,Oaths: A Progression Fantasy Epic,J.M. Clarke,,2099585,hardcover:progression fantasy,11
+C0231,Threadbare Volume One,Andrew Seiple,OL24168960W,,openlibrary:LitRPG,3
+C0232,Hungry for You,Lynsay Sands,OL15505925W,,openlibrary:Urban fantasy,5
+C0233,Changeling,Kelly Meding,OL23254791W,,openlibrary:Superheroes,3
+C0234,Jerusalén. Caballo de Troya 1,J. J. Benítez,OL20826355W,,openlibrary:Time travel,25
+C0235,Ancillary Justice,Ann Leckie,OL17062644W,,openlibrary:Space opera,18
+C0236,The Lucky strike,Kim Stanley Robinson,OL16941402W,,openlibrary:Alternative histories,5
+C0237,A Slow Regard of Silent Things,Patrick Rothfuss,OL17067388W,,openlibrary:Magic (fantasy),23
+C0238,The Wrath of Jerry: A Progression Fantasy Adventure,Valerios,,1974486,hardcover:progression fantasy,11
+C0239,Shadeslinger,Kyle Kirrin,OL28766583W,,openlibrary:LitRPG,3
+C0240,Nice Girls Don't Have Fangs,Molly Harper,OL16966344W,,openlibrary:Urban fantasy,5
+C0241,Erotic Lives of the Superheroes,Marco Mancassola,OL21486246W,,openlibrary:Superheroes,3
+C0242,Making History,Stephen Fry,OL1933636W,,openlibrary:Time travel,22
+C0243,Treachery in Outer Space,Carey Rockwell,OL7477299W,,openlibrary:Space opera,17
+C0244,Pandemonium,Daryl Gregory,OL13693887W,,openlibrary:Alternative histories,5
+C0245,Fool's Assassin,Robin Hobb,OL17268025W,,openlibrary:Magic (fantasy),21
+C0246,Matabar: A Progression Fantasy Epic,Kirill Klevanski,,2193681,hardcover:progression fantasy,10
+C0247,Eight,Samer Rabadi,OL28764060W,,openlibrary:LitRPG,2
+C0248,Tithe,Chani Lynn Feener,OL28832028W,,openlibrary:Urban fantasy,5
+C0249,Sputnik's children,Terri Favro,OL20055118W,,openlibrary:Superheroes,3
+C0250,Well of Lost Plots,Jasper Fforde,OL5730207W,,openlibrary:Time travel,22
+C0251,Dragon Harper,Anne McCaffrey,OL14912607W,,openlibrary:Space opera,17
+C0252,Ganymede,Cherie Priest,OL21190492W,,openlibrary:Alternative histories,5
+C0253,Rise of a Merchant Prince,Raymond E. Feist,OL554694W,,openlibrary:Magic (fantasy),20
+C0254,BuyMort,Joseph Phelps,OL29206876W,,openlibrary:LitRPG,2
+C0255,Every Heart a Doorway,Seanan McGuire,OL17356063W,,openlibrary:Urban fantasy,5
+C0256,The Amber Amulet,Craig Silvey,OL17454340W,,openlibrary:Superheroes,3
+C0257,Ilium,Dan Simmons,OL1963271W,,openlibrary:Time travel,22
+C0258,The Paratwa,Christopher Hinz,OL4481642W,,openlibrary:Space opera,17
+C0259,Disaster At Stalingrad,Peter Tsouras,OL17583895W,,openlibrary:Alternative histories,5
+C0260,The Magicians' Guild,Trudi Canavan,OL275030W,,openlibrary:Magic (fantasy),20
+C0261,Level Up or Die,Joshua Lisec,OL24817746W,,openlibrary:LitRPG,2
+C0262,Bad Luck Vampire,Lynsay Sands,OL29054996W,,openlibrary:Urban fantasy,4
+C0263,Loki,Mackenzi Lee,OL20119852W,,openlibrary:Superheroes,3
+C0264,Beyond Heaven's River,Greg Bear,OL16512W,,openlibrary:Time travel,21
+C0265,Downbelow station,C. J. Cherryh,OL60590W,,openlibrary:Space opera,17
+C0266,To Build Jerusalem,John Whitbourn,OL8256984W,,openlibrary:Alternative histories,4
+C0267,The Confessions of Max Tivoli,Andrew Sean Greer,OL507399W,,openlibrary:Magic (fantasy),20
+C0268,The Path of Ascension,C. Mantis,OL43626044W,,openlibrary:LitRPG,2
+C0269,Big Bad Boss,Renee Rose,OL37873310W,,openlibrary:Urban fantasy,4
+C0270,Misshapes,Alex Flynn,OL17924732W,,openlibrary:Superheroes,3
+C0271,Looking Backward,Edward Bellamy,OL20235973W,,openlibrary:Time travel,21
+C0272,The Fall of Atlantis,Marion Zimmer Bradley,OL23713W,,openlibrary:Space opera,16
+C0273,The Rosewater Insurrection,Tade Thompson,OL20159158W,,openlibrary:Alternative histories,4
+C0274,Pani Jeziora,Andrzej Sapkowski,OL18132161W,,openlibrary:Magic (fantasy),19
+C0275,Limitless Lands,Dean Henegar,OL20905835W,,openlibrary:LitRPG,2
+C0276,The Three Witches and The Master,Max Nowaz,OL34024627W,,openlibrary:Urban fantasy,4
+C0277,Only superhuman,Christopher L. Bennett,OL16646361W,,openlibrary:Superheroes,3
+C0278,Lost in a Good Book,Jasper Fforde,OL5730198W,,openlibrary:Time travel,20
+C0279,Hellhole,Brian Herbert,OL17418561W,,openlibrary:Space opera,16
+C0280,Anvil of Necessity,Stuart Slade,OL9220172W,,openlibrary:Alternative histories,3
+C0281,The time keeper,Mitch Albom,OL16646239W,,openlibrary:Magic (fantasy),19
+C0282,Assassin's Wrath,John Cressman,OL28080858W,,openlibrary:LitRPG,2
+C0283,Dreams Underfoot,Charles de Lint,OL1819841W,,openlibrary:Urban fantasy,4
+C0284,Marrow,Preston Norton,OL20298642W,,openlibrary:Superheroes,3
+C0285,La ley del amour,Laura Esquivel,OL953154W,,openlibrary:Time travel,20
+C0286,Memories of ice,Steven Erikson,OL5734773W,,openlibrary:Space opera,16
+C0287,Blades Of Winter,G. T. Almasi,OL17481880W,,openlibrary:Alternative histories,3
+C0288,Passage to Dawn,R. A. Salvatore,OL516690W,,openlibrary:Magic (fantasy),19
+C0289,Drone Captain,Kyle Johnson,OL27640946W,,openlibrary:LitRPG,2
+C0290,Payback's a Witch,Lana Harper,OL25315886W,,openlibrary:Urban fantasy,4
+C0291,Jinx,Jennifer Estep,OL8110416W,,openlibrary:Superheroes,3
+C0292,Seras-tu là ?,Guillaume Musso,OL10264733W,,openlibrary:Time travel,19
+C0293,Rogue Planet,Greg Bear,OL16505W,,openlibrary:Space opera,16
+C0294,Two fronts,Harry Turtledove,OL19966312W,,openlibrary:Alternative histories,3
+C0295,Starless Night,R. A. Salvatore,OL261589W,,openlibrary:Magic (fantasy),18
+C0296,The Legend of Randidly Ghosthound,Noret Flood,OL28035504W,,openlibrary:LitRPG,2
+C0297,Revelry,Chani Lynn Feener,OL20764138W,,openlibrary:Urban fantasy,4
+C0298,Super Duck,Jez Alborough,OL28948350W,,openlibrary:Superheroes,2
+C0299,Killing Time,Linda Howard,OL491819W,,openlibrary:Time travel,19
+C0300,Scattered Suns,Kevin J. Anderson,OL522193W,,openlibrary:Space opera,16
+C0301,Worlds,Eric Flint,OL17187W,,openlibrary:Alternative histories,3
+C0302,The Dragonbone Chair,Tad Williams,OL2250813W,,openlibrary:Magic (fantasy),18
+C0303,Azarinth Healer,Rhaegar,OL29422051W,,openlibrary:LitRPG,2
+C0304,The cold kiss of death,Suzanne McLeod,OL17740393W,,openlibrary:Urban fantasy,4
+C0305,Supervillains Anonymous,Lexie Dunne,OL26559173W,,openlibrary:Superheroes,2
+C0306,Station Eleven,Emily St. John Mandel,OL17202418W,,openlibrary:Time travel,18
+C0307,Star Trek - Corona,Greg Bear,OL16483W,,openlibrary:Space opera,16
+C0308,Chasing Diana,Jack Firestone,OL16071055W,,openlibrary:Alternative histories,3
+C0309,Who Fears Death,Nnedi Okorafor,OL15935869W,,openlibrary:Magic (fantasy),18
+C0310,Reborn,L. M. Kerr,OL29331081W,,openlibrary:LitRPG,2
+C0311,When They Burned the Butterfly,Wen-yi Lee,OL42451003W,,openlibrary:Urban fantasy,3
+C0312,Heroes of the Year,Frances Watts,OL16361089W,,openlibrary:Superheroes,2
+C0313,The Magic Labyrinth,Philip José Farmer,OL273069W,,openlibrary:Time travel,17
+C0314,The Long Cosmos,Terry Pratchett,OL17801812W,,openlibrary:Space opera,16
+C0315,After Dachau,Daniel Quinn,OL61779W,,openlibrary:Alternative histories,3
+C0316,Exit West,Mohsin Hamid,OL17635446W,,openlibrary:Magic (fantasy),17
+C0317,Koyesta Online,Paige Fallbright,OL28102607W,,openlibrary:LitRPG,2
+C0318,Hemovore,Jordan Castillo Price,OL17563635W,,openlibrary:Urban fantasy,3
+C0319,Strykers,K. M. Ruiz,OL21256468W,,openlibrary:Superheroes,2
+C0320,The summer tree,Guy Gavriel Kay,OL1988294W,,openlibrary:Time travel,17
+C0321,To Sleep in a Sea of Stars,Christopher Paolini,OL20861787W,,openlibrary:Space opera,15
+C0322,Lincoln's bodyguard,T. J. Turner,OL20002169W,,openlibrary:Alternative histories,3
+C0323,Berry Barry,Vash The Author,OL29422308W,,openlibrary:LitRPG,2
+C0324,The Wild Zone,Rick Riordan,OL45607440W,,openlibrary:Urban fantasy,3
+C0325,Resistance,John Birmingham,OL21101424W,,openlibrary:Superheroes,2
+C0326,Replay,Ken Grimwood,OL2252098W,,openlibrary:Time travel,16
+C0327,Bio of a Space Tyrant - Vol. 1 Refugee,Piers Anthony,OL80796W,,openlibrary:Space opera,15
+C0328,The phantom tree,Nicola Cornick,OL19753333W,,openlibrary:Alternative histories,3
+C0329,First Song,Blaise Corvin,OL19490378W,,openlibrary:LitRPG,2
+C0330,A Kiss of Ashen Twilight (Book 1 in the Ashen Twilight Series),Rae Lori,OL16105682W,,openlibrary:Urban fantasy,3
+C0331,Where is Robin?,Maggie Testa,OL19749793W,,openlibrary:Superheroes,2
+C0332,Century rain,Alastair Reynolds,OL5724829W,,openlibrary:Time travel,16
+C0333,Star Wars - The New Jedi Order - Vector Prime,R. A. Salvatore,OL261593W,,openlibrary:Space opera,15
+C0334,Time well bent,Connie Wilkins,OL18645010W,,openlibrary:Alternative histories,3
+C0335,Earth's Gambit,Cosimo Yap,OL28603306W,,openlibrary:LitRPG,2
+C0336,Paola Santiago and the Sanctuary of Shadows,Tehlor Kay Mejia,OL27139078W,,openlibrary:Urban fantasy,3
+C0337,Heroine's journey,Sarah Kuhn,OL19752128W,,openlibrary:Superheroes,2
+C0338,The Rise and Fall of D.O.D.O.,Neal Stephenson,OL19330491W,,openlibrary:Time travel,16
+C0339,Mars,Ben Bova,OL15833W,,openlibrary:Space opera,15
+C0340,Hitler's peace,Philip Kerr,OL79749W,,openlibrary:Alternative histories,3
+C0341,Silver Fox & The Western Hero,M. H. Johnson,OL24028727W,,openlibrary:LitRPG,2
+C0342,Such Sharp Teeth,Rachel Harrison,OL27494475W,,openlibrary:Urban fantasy,3
+C0343,Heroine complex,Sarah Kuhn,OL20033510W,,openlibrary:Superheroes,2
+C0344,The dream daughter,Diane Chamberlain,OL19754725W,,openlibrary:Time travel,15
+C0345,Web of the Romulans,M. S. Murdock,OL8133680W,,openlibrary:Space opera,15
+C0346,In War Times,Kathleen Ann Goonan,OL15578786W,,openlibrary:Alternative histories,3
+C0347,Dead Woman's Revenge,Elle E. Ire,OL27590394W,,openlibrary:Urban fantasy,3
+C0348,Broken,Susan Jane Bigelow,OL17873745W,,openlibrary:Superheroes,2
+C0349,The Light of Other Days,Stephen Baxter,OL14912493W,,openlibrary:Time travel,15
+C0350,Star Trek - Uhura's Song,Janet Kagan,OL4093510W,,openlibrary:Space opera,15
+C0351,gather the weeds,Patrick Kilgallon,OL8767303W,,openlibrary:Alternative histories,2
+C0352,Rosemary and Rue,Seanan McGuire,OL15157260W,,openlibrary:Urban fantasy,3
+C0353,Orfeo,Richard Powers,OL17046891W,,openlibrary:Time travel,15
+C0354,The Wounded Sky,Diane Duane,OL1950888W,,openlibrary:Space opera,15
+C0355,Pages From The Textbook Of Alternate History,Phong Nguyen,OL25897931W,,openlibrary:Alternative histories,2
+C0356,Under a Spell,Hannah Jayne,OL19972329W,,openlibrary:Urban fantasy,3
+C0357,The barbed coil,J. V. Jones,OL1946251W,,openlibrary:Time travel,14
+C0358,Halo,Kelly Gay,OL21163018W,,openlibrary:Space opera,15
+C0359,The Way It Wasn't,Martin H. Greenberg,OL15012306W,,openlibrary:Alternative histories,2
+C0360,Under Suspicion,Hannah Jayne,OL17390627W,,openlibrary:Urban fantasy,3
+C0361,This is How You Lose the Time War,Amal El-Mohtar,OL19859295W,,openlibrary:Time travel,14
+C0362,Star Wars - Darth Maul - Shadow Hunter,Michael Reaves,OL2701178W,,openlibrary:Space opera,14
+C0363,Back in the USSA,Eugene Byrne,OL16027779W,,openlibrary:Alternative histories,2
+C0364,Before the Eyes of Doubt,Ruslana Pidsadiuk,OL45791266W,,openlibrary:Urban fantasy,2
+C0365,The long earth,Terry Pratchett,OL16769202W,,openlibrary:Time travel,14
+C0366,Teranesia,Greg Egan,OL115339W,,openlibrary:Space opera,14
+C0367,Ars Memoriae [signed jhc],Beth Bernobich,OL19641936W,,openlibrary:Alternative histories,2
+C0368,Before the Eyes of Memories,Ruslana Pidsadiuk,OL45791378W,,openlibrary:Urban fantasy,2
+C0369,Nemesis Games,James S. A. Corey,OL17755458W,,openlibrary:Space opera,14
+C0370,Land of wolves,T. J. Turner,OL20056737W,,openlibrary:Alternative histories,2
+C0371,The Killing Spell,Shay Kauwe,OL42570731W,,openlibrary:Urban fantasy,2
+C0372,Other Worlds Than These,John Joseph Adams,OL17400760W,,openlibrary:Alternative histories,2
+C0373,Ghosts of Columbia,"L. E. Modesitt, Jr.",OL8048933W,,openlibrary:Alternative histories,2
+C0374,The severed wing,Martin J. Gidron,OL5965724W,,openlibrary:Alternative histories,2
+C0375,Iron gray sea,Taylor Anderson,OL16471625W,,openlibrary:Alternative histories,2
