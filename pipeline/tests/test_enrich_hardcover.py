@@ -144,3 +144,13 @@ def test_token_without_bearer_is_retried_with_it(tmp_path):
     assert session.sent == ["abc123", "Bearer abc123"]
     hc.search_books("y")
     assert session.sent[-1] == "Bearer abc123"   # remembers the working form
+
+
+def test_exact_title_beats_sequel_sharing_an_isbn():
+    # A source mixed one of Arc 2's ISBNs into Arc 1's record.
+    docs = [{"id": 2, "title": "Mother of Learning: ARC 2", "author_names": ["Domagoj Kurmaic"],
+             "isbns": ["9780000000002"], "users_count": 900},
+            {"id": 1, "title": "Mother of Learning", "author_names": ["Domagoj Kurmaic"],
+             "isbns": ["9780000000001"], "users_count": 800}]
+    doc, _ = pick_hit(docs, "Mother of Learning", "Domagoj Kurmaić", {"9780000000002"})
+    assert doc["id"] == 1

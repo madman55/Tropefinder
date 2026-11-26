@@ -66,15 +66,27 @@ def isbn_set(values) -> set[str]:
 
 
 def pick_hit(docs: list[dict], title: str, author: str, known_isbns: set[str]) -> tuple[dict | None, str]:
-    by_isbn = [d for d in docs if known_isbns & isbn_set(d.get("isbns"))]
-    if by_isbn:
-        return max(by_isbn, key=lambda d: d.get("users_count") or 0), "isbn"
-    good = [d for d in docs
-            if author_matches(author, as_list(d.get("author_names")))
-            and title_similarity(title, d.get("title") or "") >= MATCH_THRESHOLD]
-    if good:
-        return max(good, key=lambda d: d.get("users_count") or 0), "title+author"
-    return None, ""
+    """Pick the best Hardcover result for a seed book.
+
+    A result qualifies if it shares an ISBN with our editions, or has a close title
+    AND matching author. Among qualifiers, an exact title match wins (so book 1 beats
+    "Book: Arc 2" even if a source mixed their ISBNs), then ISBN overlap, then popularity.
+    """
+    want = normalise_text(title)
+    ranked = []
+    for d in docs:
+        overlap = len(known_isbns & isbn_set(d.get("isbns")))
+        names = as_list(d.get("author_names"))
+        close = author_matches(author, names) and title_similarity(title, d.get("title") or "") >= MATCH_THRESHOLD
+        if not (overlap or close):
+            continue
+        exact = normalise_text(d.get("title")) == want
+        ranked.append(((exact, overlap > 0, overlap, d.get("users_count") or 0), d, overlap))
+    if not ranked:
+        return None, ""
+    ranked.sort(key=lambda x: x[0], reverse=True)
+    _, best, overlap = ranked[0]
+    return best, ("isbn" if overlap else "title+author")
 
 
 class Enricher:
