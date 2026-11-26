@@ -77,3 +77,23 @@ def test_score():
     assert s["precision_present"] == 0.5 and s["recall_present"] == 0.5
     assert s["gold_unknown"] == 1 and s["missing_books"] == {"B"}
     assert ("A", "romance", "present", "absent") in s["disagreements"]
+
+
+def test_verdicts_sent_as_a_json_string_are_read():
+    import json
+    from pipeline.classify.ai import Claude
+
+    class Resp:
+        ok, status_code, headers = True, 200, {}
+        def json(self):
+            return {"usage": {}, "content": [{"type": "tool_use", "input": {"verdicts": json.dumps(
+                [{"trope": "magic", "status": "unknown", "confidence": 0}, "junk"])}}]}
+
+    class Session:
+        headers = {}
+        def post(self, *a, **k):
+            return Resp()
+
+    c = Claude(api_key="x", session=Session())
+    assert c.classify(BOOK, [{"slug": "magic", "category": "abilities", "definition": "d"}]) == \
+        [{"trope": "magic", "status": "unknown", "confidence": 0}]

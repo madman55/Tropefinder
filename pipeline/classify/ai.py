@@ -21,7 +21,7 @@ import requests
 from pipeline.classify.evidence import BookText, quote_found, strip_html
 
 MODEL = "claude-haiku-5-5"
-PROMPT_VERSION = "v1-2026-11-26"
+PROMPT_VERSION = "v2-2026-11-26"
 API_URL = "https://api.anthropic.com/v1/messages"
 # USD per million tokens (standard, non-batch), checked 2026-11-25.
 PRICE_IN, PRICE_OUT = 0.10, 0.50
@@ -33,7 +33,7 @@ You will be given the ONLY evidence you may use: a book's description, its subje
 Rules:
 - Do not use anything you may know about the book, its author or its series from elsewhere. If the evidence does not show it, it is "unknown".
 - "present": the evidence clearly shows the trope is a significant part of the book. Give at least one quote.
-- "absent": the evidence explicitly rules the trope out (for example "no romance", or a setting that makes it impossible). Silence is never "absent". Give the quote that rules it out.
+- "absent": ONLY when the evidence states outright that the trope does not happen (for example "there is no romance"). A description covers only part of a book, so never infer absence from the setting, the genre or what the description happens to focus on: a story described as taking place in a dungeon may still begin on modern Earth. Silence is never "absent". Give the quote that states it.
 - "unknown": everything else. Most tropes for most books will be unknown; that is expected and correct.
 - Each quote must be copied EXACTLY, character for character, from one field: a phrase from the description, or one whole tag or subject exactly as listed. Name which field it came from.
 - Tropes describe the book as a whole ("anywhere in the book"), except tropes in the protagonist category, which describe the main character only.
@@ -168,6 +168,9 @@ class Claude:
             self.output_tokens += usage.get("output_tokens", 0)
             for block in data.get("content", []):
                 if block.get("type") == "tool_use":
-                    return block.get("input", {}).get("verdicts", [])
+                    verdicts = block.get("input", {}).get("verdicts", [])
+                    if isinstance(verdicts, str):   # occasionally sent as a JSON string
+                        verdicts = json.loads(verdicts)
+                    return [v for v in verdicts if isinstance(v, dict)]
             raise RuntimeError(f"No verdicts returned (stop_reason {data.get('stop_reason')})")
         raise RuntimeError("Anthropic API kept failing")
