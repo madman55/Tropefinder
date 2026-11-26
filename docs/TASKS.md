@@ -23,7 +23,6 @@ Updated: 2026-11-25. Only things actually run are marked as tested; the test env
 ## Next (Joseph)
 
 - [ ] `.env` with Supabase URL and secret key (needed from Stage 2; only on a machine that runs the Python jobs).
-- [ ] Fill in `data/gold_labels.csv` for the ~20 books you know (present / absent / unknown). Leave books you haven't read blank.
 
 ## Outstanding (later stages)
 
@@ -59,7 +58,9 @@ Updated: 2026-11-25. Only things actually run are marked as tested; the test env
   - [x] Real run: 28 enriched, 2 created (Super Powereds: Year 1, The Wandering Inn), 781 Hardcover tags, all 11 missing descriptions filled, audiobook/ebook flags and series added. 32 API requests.
   - [x] Second run: 30 unchanged.
   - [ ] Tag-to-trope mapping (moved to Stage 6 with classification).
-- [ ] Stage 5: gold labels complete.
+- [x] **Stage 5 complete (26 Nov 2026):** Joseph labelled the 9 seed books he has read: 90 labels (51 present, 28 absent, 11 unknown), in `data/gold_labels.csv` (entered via the "TropeFinder gold labels" Sheet).
+  - Finding: Joseph read tropes as "anywhere in the book" (e.g. soldiers in the story), not "the main character". Adopted as the rule for every category except protagonist; new story-wide trope `military-characters` (taxonomy v0.2), which the "Soldier" column maps to.
+  - Labels are used exactly as given. Where the classifier disagrees, the cell is shown to Joseph for a second look rather than assumed wrong either way.
 - [ ] Stage 6: classification layers (tags, rules, Claude Haiku with quote checking); accuracy report against gold labels.
 - [ ] Stage 7: scale to 50, then 500 books; scheduled incremental import.
 

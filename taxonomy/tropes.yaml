@@ -1,4 +1,4 @@
-# TropeFinder trope taxonomy — version 0.1 (draft, 2026-11-25)
+# TropeFinder trope taxonomy — version 0.2 (2026-11-26)
 #
 # HOW TO EDIT
 #   * One entry per trope. "slug" is its permanent ID: lowercase words joined by hyphens.
@@ -10,6 +10,13 @@
 #   * "related" / "conflicts" list other slugs. Conflicts get flagged for review
 #     when a book is tagged with both.
 #   * Run `python -m pipeline.taxonomy` to check the file before committing.
+#
+# SCOPE (decided 2026-11-26 from Joseph's labels): a trope means "a significant
+# part of the book", anywhere in it, because that is how readers think of it.
+# The one exception is the protagonist category, which describes the MAIN
+# character. Where readers also want the story-wide sense (e.g. soldiers in the
+# story vs. a soldier hero), add a separate story-wide trope, as with
+# military-characters below.
 #
 # Categories: protagonist, abilities, setting, story-mechanics, technology,
 #             relationships, structure-and-tone, format
@@ -268,6 +275,13 @@ tropes:
     category: story-mechanics
     definition: A character deliberately conceals the true extent of their abilities.
     aliases: [hiding power, secretly strong]
+  - slug: military-characters
+    name: Soldiers in the story
+    category: story-mechanics
+    definition: Soldiers or other military personnel are significant characters, whether or not the main character is one.
+    classifier_hint: A passing mention of an army is not enough; they must matter to the story.
+    aliases: [soldiers, military characters]
+    related: [soldier, military-operations]
   - slug: military-operations
     name: Military operations
     category: story-mechanics

@@ -1,301 +1,91 @@
-seed_id,title,trope_slug,label,note
-1,A Connecticut Yankee in King Arthur's Court,soldier,,
-1,A Connecticut Yankee in King Arthur's Court,magic,,
-1,A Connecticut Yankee in King Arthur's Court,superpowers,,
-1,A Connecticut Yankee in King Arthur's Court,portal-fantasy,,
-1,A Connecticut Yankee in King Arthur's Court,modern-earth,,
-1,A Connecticut Yankee in King Arthur's Court,modern-firearms,,
-1,A Connecticut Yankee in King Arthur's Court,romance,,
-1,A Connecticut Yankee in King Arthur's Court,academy-setting,,
-1,A Connecticut Yankee in King Arthur's Court,litrpg-mechanics,,
-1,A Connecticut Yankee in King Arthur's Court,power-progression,,
-2,Lest Darkness Fall,soldier,,
-2,Lest Darkness Fall,magic,,
-2,Lest Darkness Fall,superpowers,,
-2,Lest Darkness Fall,portal-fantasy,,
-2,Lest Darkness Fall,modern-earth,,
-2,Lest Darkness Fall,modern-firearms,,
-2,Lest Darkness Fall,romance,,
-2,Lest Darkness Fall,academy-setting,,
-2,Lest Darkness Fall,litrpg-mechanics,,
-2,Lest Darkness Fall,power-progression,,
-3,1632,soldier,,
-3,1632,magic,,
-3,1632,superpowers,,
-3,1632,portal-fantasy,,
-3,1632,modern-earth,,
-3,1632,modern-firearms,,
-3,1632,romance,,
-3,1632,academy-setting,,
-3,1632,litrpg-mechanics,,
-3,1632,power-progression,,
-4,Island in the Sea of Time,soldier,,
-4,Island in the Sea of Time,magic,,
-4,Island in the Sea of Time,superpowers,,
-4,Island in the Sea of Time,portal-fantasy,,
-4,Island in the Sea of Time,modern-earth,,
-4,Island in the Sea of Time,modern-firearms,,
-4,Island in the Sea of Time,romance,,
-4,Island in the Sea of Time,academy-setting,,
-4,Island in the Sea of Time,litrpg-mechanics,,
-4,Island in the Sea of Time,power-progression,,
-5,Control Point,soldier,,
-5,Control Point,magic,,
-5,Control Point,superpowers,,
-5,Control Point,portal-fantasy,,
-5,Control Point,modern-earth,,
-5,Control Point,modern-firearms,,
-5,Control Point,romance,,
-5,Control Point,academy-setting,,
-5,Control Point,litrpg-mechanics,,
-5,Control Point,power-progression,,
-6,Monster Hunter International,soldier,,
-6,Monster Hunter International,magic,,
-6,Monster Hunter International,superpowers,,
-6,Monster Hunter International,portal-fantasy,,
-6,Monster Hunter International,modern-earth,,
-6,Monster Hunter International,modern-firearms,,
-6,Monster Hunter International,romance,,
-6,Monster Hunter International,academy-setting,,
-6,Monster Hunter International,litrpg-mechanics,,
-6,Monster Hunter International,power-progression,,
-7,The Atrocity Archives,soldier,,
-7,The Atrocity Archives,magic,,
-7,The Atrocity Archives,superpowers,,
-7,The Atrocity Archives,portal-fantasy,,
-7,The Atrocity Archives,modern-earth,,
-7,The Atrocity Archives,modern-firearms,,
-7,The Atrocity Archives,romance,,
-7,The Atrocity Archives,academy-setting,,
-7,The Atrocity Archives,litrpg-mechanics,,
-7,The Atrocity Archives,power-progression,,
-8,Rivers of London,soldier,,
-8,Rivers of London,magic,,
-8,Rivers of London,superpowers,,
-8,Rivers of London,portal-fantasy,,
-8,Rivers of London,modern-earth,,
-8,Rivers of London,modern-firearms,,
-8,Rivers of London,romance,,
-8,Rivers of London,academy-setting,,
-8,Rivers of London,litrpg-mechanics,,
-8,Rivers of London,power-progression,,
-9,Storm Front,soldier,,
-9,Storm Front,magic,,
-9,Storm Front,superpowers,,
-9,Storm Front,portal-fantasy,,
-9,Storm Front,modern-earth,,
-9,Storm Front,modern-firearms,,
-9,Storm Front,romance,,
-9,Storm Front,academy-setting,,
-9,Storm Front,litrpg-mechanics,,
-9,Storm Front,power-progression,,
-10,Hounded,soldier,,
-10,Hounded,magic,,
-10,Hounded,superpowers,,
-10,Hounded,portal-fantasy,,
-10,Hounded,modern-earth,,
-10,Hounded,modern-firearms,,
-10,Hounded,romance,,
-10,Hounded,academy-setting,,
-10,Hounded,litrpg-mechanics,,
-10,Hounded,power-progression,,
-11,Steelheart,soldier,,
-11,Steelheart,magic,,
-11,Steelheart,superpowers,,
-11,Steelheart,portal-fantasy,,
-11,Steelheart,modern-earth,,
-11,Steelheart,modern-firearms,,
-11,Steelheart,romance,,
-11,Steelheart,academy-setting,,
-11,Steelheart,litrpg-mechanics,,
-11,Steelheart,power-progression,,
-12,Vicious,soldier,,
-12,Vicious,magic,,
-12,Vicious,superpowers,,
-12,Vicious,portal-fantasy,,
-12,Vicious,modern-earth,,
-12,Vicious,modern-firearms,,
-12,Vicious,romance,,
-12,Vicious,academy-setting,,
-12,Vicious,litrpg-mechanics,,
-12,Vicious,power-progression,,
-13,Wearing the Cape,soldier,,
-13,Wearing the Cape,magic,,
-13,Wearing the Cape,superpowers,,
-13,Wearing the Cape,portal-fantasy,,
-13,Wearing the Cape,modern-earth,,
-13,Wearing the Cape,modern-firearms,,
-13,Wearing the Cape,romance,,
-13,Wearing the Cape,academy-setting,,
-13,Wearing the Cape,litrpg-mechanics,,
-13,Wearing the Cape,power-progression,,
-14,Ex-Heroes,soldier,,
-14,Ex-Heroes,magic,,
-14,Ex-Heroes,superpowers,,
-14,Ex-Heroes,portal-fantasy,,
-14,Ex-Heroes,modern-earth,,
-14,Ex-Heroes,modern-firearms,,
-14,Ex-Heroes,romance,,
-14,Ex-Heroes,academy-setting,,
-14,Ex-Heroes,litrpg-mechanics,,
-14,Ex-Heroes,power-progression,,
-15,Super Powereds: Year 1,soldier,,
-15,Super Powereds: Year 1,magic,,
-15,Super Powereds: Year 1,superpowers,,
-15,Super Powereds: Year 1,portal-fantasy,,
-15,Super Powereds: Year 1,modern-earth,,
-15,Super Powereds: Year 1,modern-firearms,,
-15,Super Powereds: Year 1,romance,,
-15,Super Powereds: Year 1,academy-setting,,
-15,Super Powereds: Year 1,litrpg-mechanics,,
-15,Super Powereds: Year 1,power-progression,,
-16,Old Man's War,soldier,,
-16,Old Man's War,magic,,
-16,Old Man's War,superpowers,,
-16,Old Man's War,portal-fantasy,,
-16,Old Man's War,modern-earth,,
-16,Old Man's War,modern-firearms,,
-16,Old Man's War,romance,,
-16,Old Man's War,academy-setting,,
-16,Old Man's War,litrpg-mechanics,,
-16,Old Man's War,power-progression,,
-17,Starship Troopers,soldier,,
-17,Starship Troopers,magic,,
-17,Starship Troopers,superpowers,,
-17,Starship Troopers,portal-fantasy,,
-17,Starship Troopers,modern-earth,,
-17,Starship Troopers,modern-firearms,,
-17,Starship Troopers,romance,,
-17,Starship Troopers,academy-setting,,
-17,Starship Troopers,litrpg-mechanics,,
-17,Starship Troopers,power-progression,,
-18,Columbus Day,soldier,,
-18,Columbus Day,magic,,
-18,Columbus Day,superpowers,,
-18,Columbus Day,portal-fantasy,,
-18,Columbus Day,modern-earth,,
-18,Columbus Day,modern-firearms,,
-18,Columbus Day,romance,,
-18,Columbus Day,academy-setting,,
-18,Columbus Day,litrpg-mechanics,,
-18,Columbus Day,power-progression,,
-19,Red Rising,soldier,,
-19,Red Rising,magic,,
-19,Red Rising,superpowers,,
-19,Red Rising,portal-fantasy,,
-19,Red Rising,modern-earth,,
-19,Red Rising,modern-firearms,,
-19,Red Rising,romance,,
-19,Red Rising,academy-setting,,
-19,Red Rising,litrpg-mechanics,,
-19,Red Rising,power-progression,,
-20,Unsouled,soldier,,
-20,Unsouled,magic,,
-20,Unsouled,superpowers,,
-20,Unsouled,portal-fantasy,,
-20,Unsouled,modern-earth,,
-20,Unsouled,modern-firearms,,
-20,Unsouled,romance,,
-20,Unsouled,academy-setting,,
-20,Unsouled,litrpg-mechanics,,
-20,Unsouled,power-progression,,
-21,Dungeon Crawler Carl,soldier,,
-21,Dungeon Crawler Carl,magic,,
-21,Dungeon Crawler Carl,superpowers,,
-21,Dungeon Crawler Carl,portal-fantasy,,
-21,Dungeon Crawler Carl,modern-earth,,
-21,Dungeon Crawler Carl,modern-firearms,,
-21,Dungeon Crawler Carl,romance,,
-21,Dungeon Crawler Carl,academy-setting,,
-21,Dungeon Crawler Carl,litrpg-mechanics,,
-21,Dungeon Crawler Carl,power-progression,,
-22,He Who Fights with Monsters,soldier,,
-22,He Who Fights with Monsters,magic,,
-22,He Who Fights with Monsters,superpowers,,
-22,He Who Fights with Monsters,portal-fantasy,,
-22,He Who Fights with Monsters,modern-earth,,
-22,He Who Fights with Monsters,modern-firearms,,
-22,He Who Fights with Monsters,romance,,
-22,He Who Fights with Monsters,academy-setting,,
-22,He Who Fights with Monsters,litrpg-mechanics,,
-22,He Who Fights with Monsters,power-progression,,
-23,Mother of Learning: Arc 1,soldier,,
-23,Mother of Learning: Arc 1,magic,,
-23,Mother of Learning: Arc 1,superpowers,,
-23,Mother of Learning: Arc 1,portal-fantasy,,
-23,Mother of Learning: Arc 1,modern-earth,,
-23,Mother of Learning: Arc 1,modern-firearms,,
-23,Mother of Learning: Arc 1,romance,,
-23,Mother of Learning: Arc 1,academy-setting,,
-23,Mother of Learning: Arc 1,litrpg-mechanics,,
-23,Mother of Learning: Arc 1,power-progression,,
-24,Ascend Online,soldier,,
-24,Ascend Online,magic,,
-24,Ascend Online,superpowers,,
-24,Ascend Online,portal-fantasy,,
-24,Ascend Online,modern-earth,,
-24,Ascend Online,modern-firearms,,
-24,Ascend Online,romance,,
-24,Ascend Online,academy-setting,,
-24,Ascend Online,litrpg-mechanics,,
-24,Ascend Online,power-progression,,
-25,The Land: Founding,soldier,,
-25,The Land: Founding,magic,,
-25,The Land: Founding,superpowers,,
-25,The Land: Founding,portal-fantasy,,
-25,The Land: Founding,modern-earth,,
-25,The Land: Founding,modern-firearms,,
-25,The Land: Founding,romance,,
-25,The Land: Founding,academy-setting,,
-25,The Land: Founding,litrpg-mechanics,,
-25,The Land: Founding,power-progression,,
-26,The Wandering Inn,soldier,,
-26,The Wandering Inn,magic,,
-26,The Wandering Inn,superpowers,,
-26,The Wandering Inn,portal-fantasy,,
-26,The Wandering Inn,modern-earth,,
-26,The Wandering Inn,modern-firearms,,
-26,The Wandering Inn,romance,,
-26,The Wandering Inn,academy-setting,,
-26,The Wandering Inn,litrpg-mechanics,,
-26,The Wandering Inn,power-progression,,
-27,Beware of Chicken,soldier,,
-27,Beware of Chicken,magic,,
-27,Beware of Chicken,superpowers,,
-27,Beware of Chicken,portal-fantasy,,
-27,Beware of Chicken,modern-earth,,
-27,Beware of Chicken,modern-firearms,,
-27,Beware of Chicken,romance,,
-27,Beware of Chicken,academy-setting,,
-27,Beware of Chicken,litrpg-mechanics,,
-27,Beware of Chicken,power-progression,,
-28,Sufficiently Advanced Magic,soldier,,
-28,Sufficiently Advanced Magic,magic,,
-28,Sufficiently Advanced Magic,superpowers,,
-28,Sufficiently Advanced Magic,portal-fantasy,,
-28,Sufficiently Advanced Magic,modern-earth,,
-28,Sufficiently Advanced Magic,modern-firearms,,
-28,Sufficiently Advanced Magic,romance,,
-28,Sufficiently Advanced Magic,academy-setting,,
-28,Sufficiently Advanced Magic,litrpg-mechanics,,
-28,Sufficiently Advanced Magic,power-progression,,
-29,Gideon the Ninth,soldier,,
-29,Gideon the Ninth,magic,,
-29,Gideon the Ninth,superpowers,,
-29,Gideon the Ninth,portal-fantasy,,
-29,Gideon the Ninth,modern-earth,,
-29,Gideon the Ninth,modern-firearms,,
-29,Gideon the Ninth,romance,,
-29,Gideon the Ninth,academy-setting,,
-29,Gideon the Ninth,litrpg-mechanics,,
-29,Gideon the Ninth,power-progression,,
-30,Ninefox Gambit,soldier,,
-30,Ninefox Gambit,magic,,
-30,Ninefox Gambit,superpowers,,
-30,Ninefox Gambit,portal-fantasy,,
-30,Ninefox Gambit,modern-earth,,
-30,Ninefox Gambit,modern-firearms,,
-30,Ninefox Gambit,romance,,
-30,Ninefox Gambit,academy-setting,,
-30,Ninefox Gambit,litrpg-mechanics,,
-30,Ninefox Gambit,power-progression,,
+seed_id,title,trope_slug,label,labelled_by,labelled_on
+6,Monster Hunter International,military-characters,present,Joseph,2026-11-26
+6,Monster Hunter International,magic,present,Joseph,2026-11-26
+6,Monster Hunter International,superpowers,present,Joseph,2026-11-26
+6,Monster Hunter International,portal-fantasy,absent,Joseph,2026-11-26
+6,Monster Hunter International,modern-earth,absent,Joseph,2026-11-26
+6,Monster Hunter International,modern-firearms,present,Joseph,2026-11-26
+6,Monster Hunter International,romance,absent,Joseph,2026-11-26
+6,Monster Hunter International,academy-setting,absent,Joseph,2026-11-26
+6,Monster Hunter International,litrpg-mechanics,absent,Joseph,2026-11-26
+6,Monster Hunter International,power-progression,absent,Joseph,2026-11-26
+9,Storm Front,military-characters,present,Joseph,2026-11-26
+9,Storm Front,magic,present,Joseph,2026-11-26
+9,Storm Front,superpowers,unknown,Joseph,2026-11-26
+9,Storm Front,portal-fantasy,absent,Joseph,2026-11-26
+9,Storm Front,modern-earth,present,Joseph,2026-11-26
+9,Storm Front,modern-firearms,present,Joseph,2026-11-26
+9,Storm Front,romance,present,Joseph,2026-11-26
+9,Storm Front,academy-setting,absent,Joseph,2026-11-26
+9,Storm Front,litrpg-mechanics,absent,Joseph,2026-11-26
+9,Storm Front,power-progression,unknown,Joseph,2026-11-26
+14,Ex-Heroes,military-characters,present,Joseph,2026-11-26
+14,Ex-Heroes,magic,unknown,Joseph,2026-11-26
+14,Ex-Heroes,superpowers,present,Joseph,2026-11-26
+14,Ex-Heroes,portal-fantasy,absent,Joseph,2026-11-26
+14,Ex-Heroes,modern-earth,present,Joseph,2026-11-26
+14,Ex-Heroes,modern-firearms,unknown,Joseph,2026-11-26
+14,Ex-Heroes,romance,present,Joseph,2026-11-26
+14,Ex-Heroes,academy-setting,absent,Joseph,2026-11-26
+14,Ex-Heroes,litrpg-mechanics,present,Joseph,2026-11-26
+14,Ex-Heroes,power-progression,unknown,Joseph,2026-11-26
+15,Super Powereds: Year 1,military-characters,present,Joseph,2026-11-26
+15,Super Powereds: Year 1,magic,present,Joseph,2026-11-26
+15,Super Powereds: Year 1,superpowers,present,Joseph,2026-11-26
+15,Super Powereds: Year 1,portal-fantasy,absent,Joseph,2026-11-26
+15,Super Powereds: Year 1,modern-earth,present,Joseph,2026-11-26
+15,Super Powereds: Year 1,modern-firearms,unknown,Joseph,2026-11-26
+15,Super Powereds: Year 1,romance,present,Joseph,2026-11-26
+15,Super Powereds: Year 1,academy-setting,present,Joseph,2026-11-26
+15,Super Powereds: Year 1,litrpg-mechanics,unknown,Joseph,2026-11-26
+15,Super Powereds: Year 1,power-progression,present,Joseph,2026-11-26
+16,Old Man's War,military-characters,present,Joseph,2026-11-26
+16,Old Man's War,magic,absent,Joseph,2026-11-26
+16,Old Man's War,superpowers,present,Joseph,2026-11-26
+16,Old Man's War,portal-fantasy,absent,Joseph,2026-11-26
+16,Old Man's War,modern-earth,absent,Joseph,2026-11-26
+16,Old Man's War,modern-firearms,present,Joseph,2026-11-26
+16,Old Man's War,romance,present,Joseph,2026-11-26
+16,Old Man's War,academy-setting,absent,Joseph,2026-11-26
+16,Old Man's War,litrpg-mechanics,absent,Joseph,2026-11-26
+16,Old Man's War,power-progression,absent,Joseph,2026-11-26
+21,Dungeon Crawler Carl,military-characters,absent,Joseph,2026-11-26
+21,Dungeon Crawler Carl,magic,present,Joseph,2026-11-26
+21,Dungeon Crawler Carl,superpowers,present,Joseph,2026-11-26
+21,Dungeon Crawler Carl,portal-fantasy,present,Joseph,2026-11-26
+21,Dungeon Crawler Carl,modern-earth,present,Joseph,2026-11-26
+21,Dungeon Crawler Carl,modern-firearms,present,Joseph,2026-11-26
+21,Dungeon Crawler Carl,romance,unknown,Joseph,2026-11-26
+21,Dungeon Crawler Carl,academy-setting,absent,Joseph,2026-11-26
+21,Dungeon Crawler Carl,litrpg-mechanics,present,Joseph,2026-11-26
+21,Dungeon Crawler Carl,power-progression,present,Joseph,2026-11-26
+22,He Who Fights with Monsters,military-characters,absent,Joseph,2026-11-26
+22,He Who Fights with Monsters,magic,present,Joseph,2026-11-26
+22,He Who Fights with Monsters,superpowers,present,Joseph,2026-11-26
+22,He Who Fights with Monsters,portal-fantasy,present,Joseph,2026-11-26
+22,He Who Fights with Monsters,modern-earth,present,Joseph,2026-11-26
+22,He Who Fights with Monsters,modern-firearms,absent,Joseph,2026-11-26
+22,He Who Fights with Monsters,romance,present,Joseph,2026-11-26
+22,He Who Fights with Monsters,academy-setting,unknown,Joseph,2026-11-26
+22,He Who Fights with Monsters,litrpg-mechanics,present,Joseph,2026-11-26
+22,He Who Fights with Monsters,power-progression,present,Joseph,2026-11-26
+27,Beware of Chicken,military-characters,absent,Joseph,2026-11-26
+27,Beware of Chicken,magic,present,Joseph,2026-11-26
+27,Beware of Chicken,superpowers,present,Joseph,2026-11-26
+27,Beware of Chicken,portal-fantasy,absent,Joseph,2026-11-26
+27,Beware of Chicken,modern-earth,absent,Joseph,2026-11-26
+27,Beware of Chicken,modern-firearms,absent,Joseph,2026-11-26
+27,Beware of Chicken,romance,present,Joseph,2026-11-26
+27,Beware of Chicken,academy-setting,absent,Joseph,2026-11-26
+27,Beware of Chicken,litrpg-mechanics,present,Joseph,2026-11-26
+27,Beware of Chicken,power-progression,present,Joseph,2026-11-26
+28,Sufficiently Advanced Magic,military-characters,present,Joseph,2026-11-26
+28,Sufficiently Advanced Magic,magic,present,Joseph,2026-11-26
+28,Sufficiently Advanced Magic,superpowers,present,Joseph,2026-11-26
+28,Sufficiently Advanced Magic,portal-fantasy,unknown,Joseph,2026-11-26
+28,Sufficiently Advanced Magic,modern-earth,present,Joseph,2026-11-26
+28,Sufficiently Advanced Magic,modern-firearms,present,Joseph,2026-11-26
+28,Sufficiently Advanced Magic,romance,unknown,Joseph,2026-11-26
+28,Sufficiently Advanced Magic,academy-setting,absent,Joseph,2026-11-26
+28,Sufficiently Advanced Magic,litrpg-mechanics,present,Joseph,2026-11-26
+28,Sufficiently Advanced Magic,power-progression,present,Joseph,2026-11-26
