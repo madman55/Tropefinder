@@ -71,7 +71,8 @@ NOT_A_SINGLE_BOOK = re.compile(
     r"manga|manhua|manhwa|light novel|comic|graphic novel|"
     r"tales of|stories|novels featuring|a history|plays|masterworks)\b", re.IGNORECASE)
 # Publisher names that appear as authors of comic collections.
-NOT_AN_AUTHOR = re.compile(r"\b(marvel comics|dc comics|various)\b", re.IGNORECASE)
+NOT_AN_AUTHOR = re.compile(r"\b(marvel comics|dc comics|various|corporation|broadcasting|publishing|press)\b", re.IGNORECASE)
+COLLECTED_WORKS = re.compile(r"^\s*(novels|works|selected works|collected works|stories|plays|poems)\s*$", re.IGNORECASE)
 SEQUEL_MARKER = re.compile(r"(\bbook\s*#?\s*|\bno\.?\s*|\bpart\s*|\bvol\.?\s*|\bvolume\s*|#\s*)([2-9]|[1-9]\d)\b",
                            re.IGNORECASE)
 NUMBERED_MAIN_TITLE = re.compile(r"[A-Za-z].*\s([2-9]|[1-9]\d|II|III|IV|V|VI|VII|VIII|IX|X)$")  # "Player Manager 2", not "1632"
@@ -96,6 +97,8 @@ def acceptable(title: str | None, author: str | None) -> bool:
     if not (title and author) or len(normalise_text(title)) < 2:
         return False
     if not latin_script(title) or not latin_script(author) or NOT_AN_AUTHOR.search(author):
+        return False
+    if " / " in title or COLLECTED_WORKS.match(title):   # "A / B / C" omnibus listings
         return False
     return not NOT_A_SINGLE_BOOK.search(title) and not is_sequel(title)
 

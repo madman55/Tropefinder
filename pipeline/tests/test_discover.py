@@ -21,6 +21,9 @@ def test_filters_out_sets_and_guides():
     assert not acceptable("Untitled", None)
     assert not acceptable("Fine Title", "尾田栄一郎")
     assert not acceptable("X-Men", "Marvel Comics")
+    assert not acceptable("Two Ghosts for Sister Rachel / Run, Run, Rudolph / Six", "Lynsay Sands")
+    assert not acceptable("Doctor Who", "British Broadcasting Corporation")
+    assert not acceptable("Novels", "H. G. Wells")
 
 
 def f(title, author, via, pop, ol="", hc=""):
