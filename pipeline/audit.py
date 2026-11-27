@@ -97,8 +97,30 @@ def audit(db: Database, sample_size: int = 50, seed: int = 7) -> str:
     return "\n".join(lines)
 
 
+def gold_check(db: Database) -> str:
+    """For each trope Joseph labelled, what the catalogue says now (to see which finds were missed)."""
+    from pipeline.classify.run import read_gold, seed_work_ids
+    seed_to_work = seed_work_ids(db)
+    slug_of = {t["id"]: t["slug"] for t in db.select("tropes", "id,slug")}
+    now = {(b["work_id"], slug_of.get(b["trope_id"])): (b["status"], b["verification"])
+           for b in db.select("book_tropes", "work_id,trope_id,status,verification")}
+    rows, found, total = [], 0, 0
+    for g in read_gold():
+        if g["label"] != "present":
+            continue
+        total += 1
+        status, how = now.get((seed_to_work.get(g["seed_id"]), g["trope_slug"]), ("unknown", ""))
+        found += status == "present"
+        if status != "present":
+            rows.append(f"| {g['title']} | {g['trope_slug']} | {status} |")
+    return "\n".join([
+        "", f"### Joseph's 'present' labels: {found} of {total} found", "",
+        "Missed ones (still unknown or wrong):", "", "| Book | Trope | Now |", "| --- | --- | --- |", *rows])
+
+
 def main() -> int:
-    text = audit(SupabaseREST.from_env())
+    db = SupabaseREST.from_env()
+    text = audit(db) + "\n" + gold_check(db)
     print(text)
     if os.environ.get("GITHUB_STEP_SUMMARY"):
         with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as f:
