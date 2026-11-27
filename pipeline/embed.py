@@ -27,7 +27,8 @@ from pipeline.classify.run import load_books
 from pipeline.db import Database, SupabaseREST, _load_dotenv
 
 MODEL = "gte-small"
-BATCH = 8           # the function accepts at most 8 texts per call
+BATCH = 8           # the function accepts at most 8 texts per call (fine for short trope texts)
+BOOK_BATCH = 2      # long book texts: fewer per call, or the function runs out of compute
 MAX_CHARS = 1800    # gte-small reads roughly the first 512 word-pieces; keep the important parts first
 
 
@@ -67,6 +68,9 @@ class Embedder:
         for attempt in range(4):
             r = self.session.post(self.url, json={"input": texts}, timeout=120)
             self.calls += 1
+            if r.status_code == 546 and len(texts) > 1:   # out of compute: split the group
+                half = len(texts) // 2
+                return self.embed(texts[:half]) + self.embed(texts[half:])
             if r.status_code < 500 and r.status_code != 429:
                 break
             time.sleep(5 * (attempt + 1))
@@ -131,13 +135,14 @@ def run(db: Database, embedder: Embedder | None, force: bool = False, limit: int
     if embedder is None:
         lines += [f"  e.g. {t[:160]}…" for _, t, _ in books[:3]]
         return "\n".join(lines)
-    for table, key, jobs in (("trope_embeddings", "trope_id", tropes), ("work_embeddings", "work_id", books)):
+    for table, key, jobs, size in (("trope_embeddings", "trope_id", tropes, BATCH),
+                                   ("work_embeddings", "work_id", books, BOOK_BATCH)):
         existing = {e[key] for e in db.select(table, key)}
-        for i in range(0, len(jobs), BATCH):
-            chunk = jobs[i:i + BATCH]
+        for i in range(0, len(jobs), size):
+            chunk = jobs[i:i + size]
             store(db, table, key, chunk, embedder.embed([t for _, t, _ in chunk]), existing)
-            if (i // BATCH) % 10 == 0:
-                print(f"  {table}: {min(i + BATCH, len(jobs))}/{len(jobs)}", flush=True)
+            if (i // size) % 25 == 0:
+                print(f"  {table}: {min(i + size, len(jobs))}/{len(jobs)}", flush=True)
     lines.append(f"Done. Calls to the embed function: {embedder.calls}.")
     return "\n".join(lines)
 

@@ -39,7 +39,7 @@ def test_embeds_everything_once_then_only_changes():
     e = FakeEmbedder()
     run(db, e)
     assert len(db.tables["work_embeddings"]) == 10 and len(db.tables["trope_embeddings"]) == 1   # inactive trope skipped
-    assert e.calls == 3   # 1 trope call + 10 books in batches of 8
+    assert e.calls == 6   # 1 trope call + 10 books in groups of 2
     assert any("Tropes: Superpowers" in s for s in e.seen) and not any("Book 2" in s and "Tropes" in s for s in e.seen)
     assert plan(db) == ([], [])                      # nothing changed: nothing to do
     db.tables["works"][3]["description"] = "Now about dragons."
@@ -54,3 +54,23 @@ def test_dry_run_calls_nothing_and_vector_format():
     assert "Books to embed: 10" in run(db, None)
     assert not db.tables.get("work_embeddings")
     assert vector_literal([0.5, -1]) == "[0.500000,-1.000000]"
+
+
+def test_out_of_compute_splits_the_group():
+    from pipeline.embed import Embedder
+
+    class Resp:
+        def __init__(self, n):
+            self.status_code = 546 if n > 1 else 200
+            self.text = "limit"
+            self._n = n
+        def json(self):
+            return {"model": "gte-small", "embeddings": [[0.0] * 384] * self._n}
+
+    class S:
+        headers = {}
+        def post(self, url, json, timeout):
+            return Resp(len(json["input"]))
+
+    e = Embedder("https://x.supabase.co", "k", S())
+    assert len(e.embed(["a", "b", "c", "d"])) == 4
