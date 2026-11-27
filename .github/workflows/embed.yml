@@ -1,0 +1,45 @@
+name: embed books and tropes
+
+# Gives new or changed books and tropes a meaning vector (via our "embed" Edge Function)
+# for meaning search. Runs after the trope list syncs, and by hand after imports or
+# re-tagging. Books whose text hasn't changed are skipped, so re-runs are cheap.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (count what would be embedded)"
+        type: boolean
+        default: false
+      force:
+        description: "Re-embed everything"
+        type: boolean
+        default: false
+  workflow_run:
+    workflows: ["sync taxonomy"]
+    types: [completed]
+
+concurrency:
+  group: database-writes
+  cancel-in-progress: false
+
+jobs:
+  embed:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Embed
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          args=""
+          [ "${{ inputs.dry_run }}" = "true" ] && args="$args --dry-run"
+          [ "${{ inputs.force }}" = "true" ] && args="$args --force"
+          python -m pipeline.embed $args

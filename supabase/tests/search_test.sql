@@ -42,6 +42,17 @@ begin
   insert into public.works (title, normalised_title) values ('ZZ F: caped hero', 'zz f');
   insert into public.book_tropes (work_id, trope_id, status, confidence, verification)
     select w.id, t.id, 'present', 0.9, 'source_tag' from public.works w, public.tropes t where w.title = 'ZZ F: caped hero' and t.slug = 'zz-superhero';
+
+  -- meaning search: simple 384-number vectors pointing in different directions
+  insert into public.work_embeddings (work_id, embedding, text_hash)
+    select id, (array[1, 0, 0]::real[] || array_fill(0::real, array[381]))::extensions.vector, 'h'
+    from public.works where title = 'ZZ F: caped hero';
+  insert into public.work_embeddings (work_id, embedding, text_hash)
+    select id, (array[0, 1, 0]::real[] || array_fill(0::real, array[381]))::extensions.vector, 'h'
+    from public.works where title like 'ZZ A%';
+  insert into public.trope_embeddings (trope_id, embedding, text_hash)
+    select id, (array[0.9, 0.1, 0]::real[] || array_fill(0::real, array[381]))::extensions.vector, 'h'
+    from public.tropes where slug = 'zz-superpowers';
 end;
 $$;
 
@@ -103,6 +114,17 @@ begin
     raise exception 'FAIL - implied trope: %', got;
   end if;
   raise notice 'ok   - a trope that implies the chosen one counts for it';
+
+  select string_agg(title, ', ' order by similarity desc) into got
+    from public.match_books((array[1, 0.2, 0]::real[] || array_fill(0::real, array[381]))::extensions.vector, 2);
+  if got not like 'ZZ F: caped hero, ZZ A%' then
+    raise exception 'FAIL - meaning search order: %', got;
+  end if;
+  select slug into got from public.match_tropes((array[1, 0, 0]::real[] || array_fill(0::real, array[381]))::extensions.vector, 1);
+  if got is distinct from 'zz-superpowers' then
+    raise exception 'FAIL - trope suggestion: %', got;
+  end if;
+  raise notice 'ok   - meaning search ranks books and suggests tropes (public role)';
 end;
 $$;
 

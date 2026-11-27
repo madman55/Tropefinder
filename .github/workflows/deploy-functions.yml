@@ -1,0 +1,56 @@
+name: deploy edge functions
+
+# Deploys supabase/functions/* to Supabase with the Supabase CLI, then checks the live
+# "embed" function returns 384-number vectors and that similar texts score closer than
+# unrelated ones. Needs the SUPABASE_ACCESS_TOKEN secret.
+
+on:
+  push:
+    branches: [main]
+    paths: ["supabase/functions/**", ".github/workflows/deploy-functions.yml"]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      PROJECT_REF: cnqtkfdzpmgkcreezpft
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Deploy
+        # --no-verify-jwt: the function is public (like the search page). The new-style
+        # publishable key is not a JWT, so Supabase's built-in JWT check would refuse it.
+        run: supabase functions deploy embed --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
+      - name: Check the live function
+        env:
+          URL: ${{ vars.SUPABASE_URL || 'https://cnqtkfdzpmgkcreezpft.supabase.co' }}
+          KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          sleep 10
+          python3 - <<'PY'
+          import json, os, time, urllib.request
+          def embed(texts):
+              req = urllib.request.Request(os.environ["URL"] + "/functions/v1/embed",
+                  data=json.dumps({"input": texts}).encode(),
+                  headers={"apikey": os.environ["KEY"], "Content-Type": "application/json"})
+              for attempt in range(5):
+                  try:
+                      return json.load(urllib.request.urlopen(req, timeout=60))
+                  except Exception as e:
+                      print("retrying:", e); time.sleep(10)
+              raise SystemExit("embed function did not answer")
+          out = embed(["a man discovers he has superpowers in modern London",
+                       "superheroes with powers in a present-day city",
+                       "a recipe for lemon drizzle cake"])
+          v = out["embeddings"]
+          assert out["model"] == "gte-small" and len(v) == 3 and all(len(x) == 384 for x in v), out
+          sim = lambda a, b: sum(x * y for x, y in zip(a, b))
+          close, far = sim(v[0], v[1]), sim(v[0], v[2])
+          print(f"similar texts: {close:.3f}   unrelated texts: {far:.3f}")
+          assert close > far, "similar texts should score higher"
+          print("EMBED FUNCTION OK")
+          PY
