@@ -76,6 +76,7 @@
   .token .mark { font-weight: 700; width: 1ch; text-align: center; text-decoration: none; display: inline-block; }
   .token[data-state="none"] .mark { display: none; }
 
+  #picker > .status:first-child { margin-top: 0.75rem; }
   .howto { color: var(--slate); font-size: var(--step--1); margin: 0 0 0.75rem; }
   .howto b { color: var(--ink); }
 
@@ -182,7 +183,7 @@
     <label class="switch"><input type="checkbox" id="audio"> Audiobooks only</label>
   </div>
   <label class="visually-hidden" for="find">Find a trope</label>
-  <input class="find" id="find" type="search" placeholder="Find a trope, e.g. portal, soldier, LitRPG" autocomplete="off">
+  <input class="find" id="find" type="search" placeholder="Find tropes, e.g. superpowers in modern world" autocomplete="off">
 
   <div id="picker" aria-live="polite"><p class="status">Loading tropes…</p></div>
 
@@ -247,11 +248,25 @@
         chosen.length ? chosen.map(token).join("") : `<p class="empty">Nothing yet</p>`;
     }
   }
+  const STOP = new Set(["a", "an", "the", "in", "on", "of", "with", "and", "or", "set", "where", "who", "that", "book",
+    "books", "story", "stories", "about", "like", "some", "want", "no", "not", "without", "but", "for", "to", "is", "are"]);
+  const stem = w => w.replace(/(ies)$/, "y").replace(/(es|s)$/, "");
+  function words(text) { return text.toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length >= 3 && !STOP.has(w)).map(stem); }
+  function matches(t, q) {
+    // One trope name typed ("magic") or a phrase ("superpowers in modern world"):
+    // a trope matches if the whole text is in its name or aliases, or any typed word starts one of their words.
+    const names = [t.name.toLowerCase(), ...(t.aliases || [])];
+    if (names.some(n => n.includes(q))) return true;
+    const typed = words(q);
+    if (typed.length < 2) return false;
+    const own = new Set(names.flatMap(n => words(n)));
+    return typed.some(w => [...own].some(o => o.startsWith(w) || w.startsWith(o) && o.length >= 4));
+  }
   function renderPicker() {
     const q = document.getElementById("find").value.trim().toLowerCase();
     const groups = {};
     for (const t of tropes) {
-      if (q && !(t.name.toLowerCase().includes(q) || (t.aliases || []).some(a => a.includes(q)))) continue;
+      if (q && !matches(t, q)) continue;
       (groups[t.category] ||= []).push(t);
     }
     const html = Object.keys(CATEGORY).filter(c => groups[c]).map(c => `
@@ -259,7 +274,11 @@
         <summary>${CATEGORY[c]} <span class="count">${groups[c].length}</span></summary>
         <div class="tokens">${groups[c].map(t => token(t.slug)).join("")}</div>
       </details>`).join("");
-    document.getElementById("picker").innerHTML = html || `<p class="status">No trope matches “${esc(q)}”. Try a shorter word.</p>`;
+    const phrase = q && words(q).length >= 2
+      ? `<p class="status">Tropes that match words in “${esc(q)}”. Tap the ones you mean. (Typing a whole search in words is coming later.)</p>` : "";
+    document.getElementById("picker").innerHTML = html
+      ? phrase + html
+      : `<p class="status">No trope matches “${esc(q)}”. Try one word, such as magic, soldier or portal.</p>`;
   }
   function cycle(slug) {
     const next = STATES[(STATES.indexOf(state.get(slug) || "none") + 1) % STATES.length];
