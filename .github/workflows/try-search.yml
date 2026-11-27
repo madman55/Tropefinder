@@ -1,0 +1,49 @@
+name: try a search
+
+# Runs search_books() against the live database with the PUBLIC key, exactly as the
+# search page does, and prints the results. For checking searches people report.
+
+on:
+  workflow_dispatch:
+    inputs:
+      must:
+        description: "Must-have trope slugs, comma-separated"
+        default: ""
+      prefer:
+        description: "Nice-to-have trope slugs, comma-separated"
+        default: ""
+      exclude:
+        description: "Don't-want trope slugs, comma-separated"
+        default: ""
+      audiobook:
+        description: "Audiobooks only"
+        type: boolean
+        default: false
+
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Search
+        env:
+          URL: ${{ vars.SUPABASE_URL || 'https://cnqtkfdzpmgkcreezpft.supabase.co' }}
+          KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+          MUST: ${{ inputs.must }}
+          PREFER: ${{ inputs.prefer }}
+          EXCLUDE: ${{ inputs.exclude }}
+          AUDIO: ${{ inputs.audiobook }}
+        run: |
+          python3 - <<'PY'
+          import json, os, urllib.request
+          split = lambda v: [s.strip() for s in v.split(",") if s.strip()]
+          body = {"must": split(os.environ["MUST"]), "prefer": split(os.environ["PREFER"]),
+                  "exclude": split(os.environ["EXCLUDE"]),
+                  "formats": ["audiobook"] if os.environ["AUDIO"] == "true" else [], "max_results": 60}
+          req = urllib.request.Request(os.environ["URL"] + "/rest/v1/rpc/search_books", data=json.dumps(body).encode(),
+                                       headers={"apikey": os.environ["KEY"], "Content-Type": "application/json"})
+          rows = json.load(urllib.request.urlopen(req))
+          print(f"Search {body} -> {len(rows)} results")
+          for r in rows:
+              print(f"  [{r['band']}] {r['title']} ({r['authors']}) has: {', '.join(r['must_matched'] + r['prefer_matched']) or '-'}"
+                    + (f" | not confirmed: {', '.join(r['must_unknown'])}" if r['must_unknown'] else ""))
+          PY
