@@ -134,3 +134,17 @@ def test_batch_results_are_matched_to_books_and_half_price():
     assert out["w1"] == [{"trope": "magic", "status": "unknown", "confidence": 0}]
     assert isinstance(out["w2"], Exception)
     assert c.cost_usd == 0.05   # 1M input tokens at $0.10, halved
+
+
+def test_tags_match_plurals_and_aliases():
+    from pipeline.classify.tags import match_key
+    assert match_key("Superheroes") == match_key("superhero")
+    assert match_key("Aliens") == match_key("alien")
+    assert match_key("Mysteries") == match_key("mystery")
+    assert match_key("Dragons & Mythical Creatures") == match_key("dragon and mythical creature")
+    assert match_key("Progress") == "progress" and match_key("Fantasy") == "fantasy"
+    tropes = [{"id": "t1", "slug": "superhero", "name": "Superhero protagonist", "is_active": True},
+              {"id": "t2", "slug": "urban-setting", "name": "Modern city setting", "is_active": True}]
+    aliases = [{"trope_id": "t1", "alias": "superheroes"}, {"trope_id": "t2", "alias": "urban fantasy"}]
+    book = BookText("w", "X", None, [], [("genre", "Superhero"), ("genre", "Urban Fantasy")], None, None, "hc")
+    assert {h.trope_slug for h in tag_hits(book, build_lookup(tropes, aliases))} == {"superhero", "urban-setting"}

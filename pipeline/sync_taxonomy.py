@@ -25,7 +25,7 @@ from pipeline.taxonomy import load, validate
 
 TROPE_FIELDS = ("name", "category", "definition", "classifier_hint", "sort_order", "is_active")
 MANAGED_ALIAS_TYPE = "synonym"  # aliases of other types (e.g. source_tag) are managed elsewhere
-RELATION_KEYS = {"related": "related", "conflicts": "often_conflicts"}
+RELATION_KEYS = {"related": "related", "conflicts": "often_conflicts", "implies": "implies"}
 
 
 @dataclass

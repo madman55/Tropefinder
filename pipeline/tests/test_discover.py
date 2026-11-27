@@ -84,3 +84,31 @@ def test_audit_finds_likely_duplicates():
              {"id": "3", "title": "Fool Moon"}, {"id": "4", "title": "Storm Front"}]
     authors = {"1": ["Jim Butcher"], "2": ["Jim Butcher"], "3": ["Jim Butcher"], "4": ["Someone Else"]}
     assert likely_duplicates(works, authors) == [["Storm Front", "Storm Front (Dresden Files #1)"]]
+
+
+def test_migrate_records_hand_applied_and_finds_pending(tmp_path):
+    from pipeline.migrate import APPLIED_BY_HAND, pending
+
+    class FakeAPI:
+        def __init__(self):
+            self.rows, self.queries = [], []
+        def sql(self, q):
+            self.queries.append(q)
+            if q.startswith("select name"):
+                return [{"name": n} for n in self.rows]
+            if q.startswith("insert into private.applied_migrations (name, how)"):
+                self.rows += APPLIED_BY_HAND
+            return []
+
+    files = [tmp_path / n for n in APPLIED_BY_HAND + ["20261127010000_search_implies.sql"]]
+    api = FakeAPI()
+    assert [f.name for f in pending(api, files)] == ["20261127010000_search_implies.sql"]
+    assert [f.name for f in pending(api, files)] == ["20261127010000_search_implies.sql"]   # no double-recording
+    assert sum(q.startswith("insert into private.applied_migrations (name, how)") for q in api.queries) == 1
+
+
+def test_project_ref_from_url(monkeypatch):
+    from pipeline.migrate import project_ref
+    monkeypatch.delenv("SUPABASE_PROJECT_REF", raising=False)
+    monkeypatch.setenv("SUPABASE_URL", "https://cnqtkfdzpmgkcreezpft.supabase.co")
+    assert project_ref() == "cnqtkfdzpmgkcreezpft"

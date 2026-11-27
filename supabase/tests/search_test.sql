@@ -33,6 +33,15 @@ begin
     (w_e, t_romance, 'absent', 0.9, 'human_verified'), (w_e, t_litrpg, 'present', 0.9, 'ai_suggested');
 
   insert into public.format_availability (work_id, format, source_id, confirmed) values (w_e, 'audiobook', src, true);
+
+  -- "superhero protagonist" implies "superpowers"
+  insert into public.tropes (slug, name, category, definition) values ('zz-superpowers', 'Superpowers', 'abilities', 'x');
+  insert into public.tropes (slug, name, category, definition) values ('zz-superhero', 'Superhero', 'protagonist', 'x');
+  insert into public.trope_relations (trope_id, related_trope_id, relation)
+    select h.id, p.id, 'implies' from public.tropes h, public.tropes p where h.slug = 'zz-superhero' and p.slug = 'zz-superpowers';
+  insert into public.works (title, normalised_title) values ('ZZ F: caped hero', 'zz f');
+  insert into public.book_tropes (work_id, trope_id, status, confidence, verification)
+    select w.id, t.id, 'present', 0.9, 'source_tag' from public.works w, public.tropes t where w.title = 'ZZ F: caped hero' and t.slug = 'zz-superhero';
 end;
 $$;
 
@@ -88,6 +97,12 @@ begin
     raise exception 'FAIL - max_results';
   end if;
   raise notice 'ok   - unknown tropes ignored, result size capped';
+
+  select string_agg(title, ', ') into got from public.search_books(array['zz-superpowers']);
+  if got is distinct from 'ZZ F: caped hero' then
+    raise exception 'FAIL - implied trope: %', got;
+  end if;
+  raise notice 'ok   - a trope that implies the chosen one counts for it';
 end;
 $$;
 

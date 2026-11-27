@@ -1,4 +1,4 @@
-# TropeFinder trope taxonomy — version 0.2 (2026-11-26)
+# TropeFinder trope taxonomy — version 0.3 (2026-11-27)
 #
 # HOW TO EDIT
 #   * One entry per trope. "slug" is its permanent ID: lowercase words joined by hyphens.
@@ -9,6 +9,8 @@
 #   * "aliases" are other words people search for, and tags other sites use.
 #   * "related" / "conflicts" list other slugs. Conflicts get flagged for review
 #     when a book is tagged with both.
+#   * "implies" lists tropes that are always true when this one is (a superhero
+#     main character implies superpowers). Search counts them automatically.
 #   * Run `python -m pipeline.taxonomy` to check the file before committing.
 #
 # SCOPE (decided 2026-11-26 from Joseph's labels): a trope means "a significant
@@ -30,6 +32,7 @@ tropes:
     definition: The main character is or was a member of an organised military force.
     classifier_hint: Current or former service counts. Mercenaries count; police do not.
     aliases: [military protagonist, marine, army]
+    implies: [military-characters]
   - slug: special-forces
     name: Special forces operator
     category: protagonist
@@ -95,7 +98,8 @@ tropes:
     name: Superhero protagonist
     category: protagonist
     definition: The main character uses extraordinary powers to fight crime or protect others, usually in a world with other supers.
-    aliases: [cape, hero, supers]
+    aliases: [cape, hero, supers, superheroes]
+    implies: [superpowers]
   - slug: antihero
     name: Antihero
     category: protagonist
@@ -129,7 +133,7 @@ tropes:
     name: Superpowers
     category: abilities
     definition: Characters have innate or acquired extraordinary powers not framed as magic.
-    aliases: [powers, metahumans]
+    aliases: [powers, metahumans, superpowered, super powers]
   - slug: magic
     name: Magic
     category: abilities
@@ -155,7 +159,7 @@ tropes:
     name: Cybernetic enhancements
     category: abilities
     definition: Characters have machine parts or implants that improve their abilities.
-    aliases: [cyborg, implants, augmentation]
+    aliases: [cyborg, implants, augmentation, cyberpunk]
   - slug: superhuman-strength
     name: Superhuman strength
     category: abilities
@@ -186,18 +190,18 @@ tropes:
     name: Modern Earth
     category: setting
     definition: The story is set on present-day or near-present Earth.
-    aliases: [contemporary, present day]
+    aliases: [contemporary, present day, contemporary fantasy]
   - slug: urban-setting
     name: Modern city setting
     category: setting
     parent: modern-earth
     definition: The story takes place mainly in a real or realistic modern city.
-    aliases: [urban fantasy setting, city]
+    aliases: [urban fantasy setting, city, urban fantasy, urban]
   - slug: alternate-earth
     name: Alternate Earth
     category: setting
     definition: Earth with a changed history or fundamentally different present.
-    aliases: [alternate history, alt history]
+    aliases: [alternate history, alt history, alternative histories (fiction), alternate history fiction]
   - slug: futuristic-civilisation
     name: Futuristic civilisation
     category: setting
@@ -212,7 +216,7 @@ tropes:
     name: Post-apocalyptic world
     category: setting
     definition: The story takes place after a civilisation-ending catastrophe.
-    aliases: [apocalypse, wasteland]
+    aliases: [apocalypse, wasteland, post apocalyptic, apocalyptic]
   - slug: alien-planet
     name: Alien planet
     category: setting
@@ -227,11 +231,16 @@ tropes:
     category: setting
     definition: A secret world of magic or supernatural beings exists alongside the ordinary one.
     aliases: [masquerade, hidden world]
+  - slug: dystopia
+    name: Dystopia
+    category: setting
+    definition: The society is oppressive, controlling or deeply unjust, and that shapes the story.
+    aliases: [dystopian, dystopian fiction]
   - slug: space-setting
     name: Space setting
     category: setting
     definition: Much of the story takes place in space, on ships or stations.
-    aliases: [space opera]
+    aliases: [space opera, space]
 
   # ---------------------------------------------------------------- story mechanics
   - slug: portal-fantasy
@@ -275,18 +284,39 @@ tropes:
     category: story-mechanics
     definition: A character deliberately conceals the true extent of their abilities.
     aliases: [hiding power, secretly strong]
+  - slug: aliens
+    name: Aliens in the story
+    category: story-mechanics
+    definition: Alien beings are significant characters or a significant force in the story.
+    aliases: [first contact, extraterrestrials, alien invasion]
+  - slug: supernatural-creatures
+    name: Supernatural creatures
+    category: story-mechanics
+    definition: Vampires, werewolves, ghosts, demons, fae or similar beings are significant in the story.
+    aliases: [paranormal, vampires, werewolves, ghosts, demons, fae]
+  - slug: mythical-creatures
+    name: Dragons and mythical creatures
+    category: story-mechanics
+    definition: Dragons, griffins or other creatures from myth and legend are significant in the story.
+    aliases: [dragons, dragons & mythical creatures, mythical creatures]
+  - slug: mystery
+    name: Mystery to solve
+    category: story-mechanics
+    definition: Solving a crime or puzzle drives the plot.
+    aliases: [mysteries, whodunit, crime]
   - slug: military-characters
     name: Soldiers in the story
     category: story-mechanics
     definition: Soldiers or other military personnel are significant characters, whether or not the main character is one.
     classifier_hint: A passing mention of an army is not enough; they must matter to the story.
-    aliases: [soldiers, military characters]
+    aliases: [soldiers, military characters, military]
     related: [soldier, military-operations]
   - slug: military-operations
     name: Military operations
     category: story-mechanics
     definition: Organised military missions, campaigns or battles drive the plot.
     aliases: [war, campaign, missions]
+    implies: [military-characters]
   - slug: team-based-adventure
     name: Team-based adventure
     category: story-mechanics
@@ -310,7 +340,8 @@ tropes:
   - slug: modern-firearms
     name: Modern firearms
     category: technology
-    definition: Guns of modern or near-modern design are used in the story.
+    definition: Guns of 20th-century or later design (pistols, rifles, shotguns, machine guns) are used in the story.
+    classifier_hint: Muskets, flintlocks, cannon and other black-powder weapons do not count, nor do energy weapons such as lasers or blasters.
     aliases: [guns, firearms]
   - slug: firearms-effective-vs-magic
     name: Firearms work against magical creatures
@@ -429,14 +460,24 @@ tropes:
     name: Dark tone
     category: structure-and-tone
     definition: The story is bleak, violent or grim in overall tone.
-    aliases: [grimdark, dark]
+    aliases: [grimdark, dark, dark fantasy]
+  - slug: horror
+    name: Horror
+    category: structure-and-tone
+    definition: The story aims to frighten or disturb, with horror as a major part of its tone.
+    aliases: [horror fiction, scary]
   - slug: humorous-tone
     name: Humorous tone
     category: structure-and-tone
     definition: Comedy is a major part of the story's voice.
-    aliases: [funny, comedic, lighthearted]
+    aliases: [funny, comedic, lighthearted, humor, humour, humorous, comedy, comedy & humor]
 
   # ---------------------------------------------------------------- format
+  - slug: young-adult
+    name: Young adult
+    category: format
+    definition: Written for a teenage readership, usually with teenage main characters.
+    aliases: [ya, young adult fiction, teen]
   - slug: standalone
     name: Standalone
     category: format

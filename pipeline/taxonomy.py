@@ -34,7 +34,7 @@ CATEGORIES = {
 SLUG_PATTERN = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 ALLOWED_KEYS = {
     "slug", "name", "category", "parent", "definition",
-    "classifier_hint", "aliases", "related", "conflicts",
+    "classifier_hint", "aliases", "related", "conflicts", "implies",
 }
 REQUIRED_KEYS = {"slug", "name", "category", "definition"}
 
@@ -82,7 +82,7 @@ def validate(tropes: list[dict]) -> list[str]:
             elif parent == slug:
                 problems.append(f"{slug}: is its own parent")
 
-        for field in ("related", "conflicts"):
+        for field in ("related", "conflicts", "implies"):
             for other in t.get(field) or []:
                 if other not in known:
                     problems.append(f"{slug}: {field} '{other}' does not exist")
