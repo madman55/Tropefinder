@@ -99,9 +99,11 @@ def audit(db: Database, sample_size: int = 50, seed: int = 7) -> str:
 
 def gold_check(db: Database) -> str:
     """For each trope Joseph labelled, what the catalogue says now (to see which finds were missed)."""
-    from pipeline.classify.run import read_gold, seed_work_ids
+    from pipeline.classify.run import counts_for_map, read_gold, seed_work_ids
     seed_to_work = seed_work_ids(db)
-    slug_of = {t["id"]: t["slug"] for t in db.select("tropes", "id,slug")}
+    trope_rows = db.select("tropes", "id,slug,parent_id")
+    slug_of = {t["id"]: t["slug"] for t in trope_rows}
+    counts_for = counts_for_map(trope_rows, db.select("trope_relations", "trope_id,related_trope_id,relation"))
     now = {(b["work_id"], slug_of.get(b["trope_id"])): (b["status"], b["verification"])
            for b in db.select("book_tropes", "work_id,trope_id,status,verification")}
     rows, found, total = [], 0, 0
@@ -109,9 +111,14 @@ def gold_check(db: Database) -> str:
         if g["label"] != "present":
             continue
         total += 1
-        status, how = now.get((seed_to_work.get(g["seed_id"]), g["trope_slug"]), ("unknown", ""))
-        found += status == "present"
-        if status != "present":
+        wid = seed_to_work.get(g["seed_id"])
+        status, how = now.get((wid, g["trope_slug"]), ("unknown", ""))
+        via = [x for x in counts_for.get(g["trope_slug"], ()) if x != g["trope_slug"]
+               and now.get((wid, x), ("",))[0] == "present"]
+        if status != "present" and via:
+            status = "present (via " + ", ".join(sorted(via)) + ")"
+        found += status.startswith("present")
+        if not status.startswith("present"):
             rows.append(f"| {g['title']} | {g['trope_slug']} | {status} |")
     return "\n".join([
         "", f"### Joseph's 'present' labels: {found} of {total} found", "",

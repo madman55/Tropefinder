@@ -148,3 +148,20 @@ def test_tags_match_plurals_and_aliases():
     aliases = [{"trope_id": "t1", "alias": "superheroes"}, {"trope_id": "t2", "alias": "urban fantasy"}]
     book = BookText("w", "X", None, [], [("genre", "Superhero"), ("genre", "Urban Fantasy")], None, None, "hc")
     assert {h.trope_slug for h in tag_hits(book, build_lookup(tropes, aliases))} == {"superhero", "urban-setting"}
+
+
+def test_score_counts_child_and_implied_tropes_like_search():
+    from pipeline.classify.run import counts_for_map
+    tropes = [{"id": "1", "slug": "modern-earth", "parent_id": None},
+              {"id": "2", "slug": "urban-setting", "parent_id": "1"},
+              {"id": "3", "slug": "superpowers", "parent_id": None},
+              {"id": "4", "slug": "superhero", "parent_id": None}]
+    rel = [{"trope_id": "4", "related_trope_id": "3", "relation": "implies"}]
+    cf = counts_for_map(tropes, rel)
+    assert cf["modern-earth"] == {"modern-earth", "urban-setting"}
+    assert cf["superpowers"] == {"superpowers", "superhero"}
+    assert cf["urban-setting"] == {"urban-setting"}
+    gold = [{"seed_id": "1", "title": "X", "trope_slug": "modern-earth", "label": "present"},
+            {"seed_id": "1", "title": "X", "trope_slug": "superpowers", "label": "present"}]
+    s = score({("w", "urban-setting"): "present", ("w", "superhero"): "present"}, gold, {"1": "w"}, cf)
+    assert s["tp"] == 2 and s["fn"] == 0

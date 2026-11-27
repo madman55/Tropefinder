@@ -103,7 +103,33 @@ def seed_work_ids(db: Database) -> dict[str, str]:
 
 
 # ------------------------------------------------------------------ scoring
-def score(verdicts: dict[tuple[str, str], str], gold: list[dict], seed_to_work: dict[str, str]) -> dict:
+def counts_for_map(tropes: list[dict], relations: list[dict]) -> dict[str, set[str]]:
+    """slug -> every slug whose "present" counts for it, the same way search does:
+    itself, its child tropes, and tropes that imply it (followed all the way down)."""
+    slug_of = {t["id"]: t["slug"] for t in tropes}
+    edges: dict[str, set[str]] = {}
+    for t in tropes:
+        if t.get("parent_id") in slug_of:
+            edges.setdefault(slug_of[t["parent_id"]], set()).add(t["slug"])
+    for r in relations:
+        if r.get("relation") == "implies" and r["trope_id"] in slug_of and r["related_trope_id"] in slug_of:
+            edges.setdefault(slug_of[r["related_trope_id"]], set()).add(slug_of[r["trope_id"]])
+    out = {}
+    for slug in slug_of.values():
+        seen, todo = {slug}, [slug]
+        while todo:
+            for nxt in edges.get(todo.pop(), ()):
+                if nxt not in seen:
+                    seen.add(nxt)
+                    todo.append(nxt)
+        out[slug] = seen
+    return out
+
+
+def score(verdicts: dict[tuple[str, str], str], gold: list[dict], seed_to_work: dict[str, str],
+          counts_for: dict[str, set[str]] | None = None) -> dict:
+    """Scores like search: a child or implying trope that is present counts as the labelled
+    trope being present. "Absent" only counts for the labelled trope itself."""
     s = {"labels": 0, "tp": 0, "fp": 0, "fn": 0, "abs_right": 0, "abs_wrong": 0, "unknown": 0,
          "gold_present": 0, "gold_unknown": 0, "disagreements": [], "missing_books": set()}
     for g in gold:
@@ -116,6 +142,9 @@ def score(verdicts: dict[tuple[str, str], str], gold: list[dict], seed_to_work: 
             continue
         s["labels"] += 1
         mine = verdicts.get((wid, g["trope_slug"]), "unknown")
+        if mine != "present" and any(verdicts.get((wid, x)) == "present"
+                                     for x in (counts_for or {}).get(g["trope_slug"], ())):
+            mine = "present"
         s["gold_present"] += g["label"] == "present"
         if mine == "present":
             if g["label"] == "present":
@@ -239,7 +268,9 @@ def run(db: Database, claude: Claude | None, dry_run: bool, force: bool, limit: 
             "cost_usd": claude.cost_usd if claude else 0,
             "notes": f"rejected quotes: {rejected_total}; conflicts: {conflicts}"})
 
-    s = score(final, read_gold(), seed_work_ids(db))
+    counts_for = counts_for_map(db.select("tropes", "id,slug,parent_id"),
+                                db.select("trope_relations", "trope_id,related_trope_id,relation"))
+    s = score(final, read_gold(), seed_work_ids(db), counts_for)
     head = [
         f"## Trope classification{' (DRY RUN - nothing written)' if dry_run else ''}",
         "",
