@@ -24,7 +24,7 @@ jobs:
       - name: Deploy
         # --no-verify-jwt: the function is public (like the search page). The new-style
         # publishable key is not a JWT, so Supabase's built-in JWT check would refuse it.
-        run: supabase functions deploy embed --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
+        run: supabase functions deploy embed --project-ref "$PROJECT_REF" --no-verify-jwt --use-api --yes
       - name: Check the live function
         env:
           URL: ${{ vars.SUPABASE_URL || 'https://cnqtkfdzpmgkcreezpft.supabase.co' }}

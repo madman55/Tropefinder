@@ -9,7 +9,11 @@
 --
 -- All embeddings must come from the same model (column "model"), or distances mean nothing.
 
+create schema if not exists extensions;
 create extension if not exists vector with schema extensions;
+-- Supabase already lets the public roles use types in "extensions"; stated here so the
+-- vector type works for them everywhere (including the test database).
+grant usage on schema extensions to anon, authenticated, service_role;
 
 create table public.work_embeddings (
   work_id    uuid primary key references public.works (id) on delete cascade,
