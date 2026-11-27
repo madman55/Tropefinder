@@ -103,3 +103,9 @@ Updated: 2026-11-25. Only things actually run are marked as tested; the test env
 
 - Hardcover terms are from a third-party summary; must be confirmed on Hardcover's own rules page (SETUP step 6).
 - Some seed books (indie and web-serial titles) may not be in Open Library. That is a finding to record, not a bug.
+
+## 27 Nov 2026: tag accuracy pass
+- Taxonomy 0.3 synced (7 new tropes, 41 aliases, 3 "implies" links); plural-aware tag matching.
+- `migrate database` workflow + SUPABASE_ACCESS_TOKEN: migrations now applied from GitHub, recorded in `private.applied_migrations`. Applied 20261127010000_search_implies.
+- Re-classified all 438 books with prompt v3 (Batch API, $0.46). Present precision 15/16 (94%); recall 15/53 (28%, was 36%: worth checking which earlier finds were lost).
+- Search "superpowers + modern world": 31 confirmed (was 0). Some look loose (Dead Until Dark, Rivers of London count vampire/magic abilities as superpowers): review the Superpowers definition next.
