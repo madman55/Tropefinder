@@ -73,6 +73,27 @@ jobs:
                     + (f"; romance not ruled out" if r['exclude_not_ruled_out'] else ""))
           assert rows, "search returned nothing"
           PY
+      - name: Meaning search works with the public key (from a browser origin)
+        env:
+          URL: ${{ vars.SUPABASE_URL || 'https://cnqtkfdzpmgkcreezpft.supabase.co' }}
+          KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          # The page's browser asks permission first (CORS preflight); check it's allowed.
+          curl -fsS -o /dev/null -X OPTIONS "$URL/functions/v1/embed" -H "Origin: https://madman55.github.io" \
+            -H "Access-Control-Request-Method: POST" -H "Access-Control-Request-Headers: apikey,content-type"
+          python3 - <<'PY'
+          import json, os, urllib.request
+          def call(path, body):
+              req = urllib.request.Request(os.environ["URL"] + path, data=json.dumps(body).encode(),
+                  headers={"apikey": os.environ["KEY"], "Content-Type": "application/json", "Origin": "https://madman55.github.io"})
+              return json.load(urllib.request.urlopen(req, timeout=60))
+          vec = call("/functions/v1/embed", {"input": "a wizard detective in Chicago"})["embeddings"][0]
+          books = call("/rest/v1/rpc/match_books", {"query_embedding": vec, "match_count": 10})
+          tropes = call("/rest/v1/rpc/match_tropes", {"query_embedding": vec, "match_count": 3})
+          print("Typed 'a wizard detective in Chicago' ->", ", ".join(b["title"] for b in books))
+          print("Suggested tropes:", ", ".join(t["slug"] for t in tropes))
+          assert any("Storm Front" in b["title"] for b in books), "Storm Front should be in the top 10"
+          PY
       - name: Public key cannot write
         env:
           URL: ${{ vars.SUPABASE_URL || 'https://cnqtkfdzpmgkcreezpft.supabase.co' }}

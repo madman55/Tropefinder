@@ -113,3 +113,10 @@ Updated: 2026-11-25. Only things actually run are marked as tested; the test env
 - Taxonomy 0.4 (Joseph's choice, 27 Nov): new broad "Special powers" trope (any extraordinary abilities); Superpowers narrowed to superhero-style and made its child, along with psychic abilities, superhuman strength and healing; magic, cybernetic enhancements and power progression imply it. Joseph's six broad "superpowers" labels (MHI, Old Man's War, DCC, HWFWM, Beware of Chicken, Sufficiently Advanced Magic) moved to special-powers, which is what he meant. Prompt v4.
 - Re-tagged with prompt v4 ($0.47): present precision 19/20 (95%), found 19/53 (36%). Search "superpowers + modern Earth" now 27 confirmed, superhero-style only (Dead Until Dark and Rivers of London gone; they show under Special powers). Borderline: The Time Traveler's Wife.
 - Next: meaning search (Phase 2), then grow to ~2,000 books, then Phase 3 app.
+
+## 27 Nov 2026: meaning search (Phase 2)
+- Supabase "embed" Edge Function (built-in gte-small, 384 numbers per text) deployed from GitHub (`deploy edge functions`); checked live: similar texts 0.86 vs unrelated 0.68.
+- pgvector tables `work_embeddings` / `trope_embeddings`, `match_books` / `match_tropes` (migrations 20261127020000-030000). All 438 books and 87 tropes embedded (`embed books and tropes`; re-runs only touch changed text; also runs after each taxonomy sync).
+- Page: typing a description shows "Sounds like" trope suggestions (tap to add), turns "no X" / "without X" into "Don't want" suggestions, and Find books adds a "Similar in feel" list that is clearly labelled as not confirmed. Don't-want tropes and the audiobook filter apply to it too.
+- Calibration from real queries: trope suggestions within 0.05 of the best match and at least 0.815; books at least 0.80.
+- Rate limiting: the function caps 8 texts x 2,000 characters per call; the page waits for a pause in typing and caches. No per-visitor limit yet (fine at this scale; revisit before sharing widely).

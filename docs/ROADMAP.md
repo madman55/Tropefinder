@@ -16,7 +16,7 @@ Each stage has a pass condition; we don't move on until it's met and recorded in
 
 ## Phase 2 — Search engine, with a simple search page
 
-Trope search, include/exclude filters, mandatory vs optional requirements, transparent ranking with confirmed / possible / unverified bands, accuracy testing, natural-language search (Postgres full-text, then pgvector).
+Trope search, include/exclude filters, mandatory vs optional requirements, transparent ranking with confirmed / possible / unverified bands, accuracy testing, natural-language search: meaning search with Supabase's built-in gte-small embeddings and pgvector (done 27 Nov 2026; suggestions and a labelled "Similar in feel" list, never counted as confirmed).
 
 Decided 26 Nov 2026: a plain, working search page is built alongside the engine (not left to Phase 3), so Joseph can try real searches on his phone and spot bad results early. It uses only the public key and row-level security. Phase 3 then turns it into the polished, installable app.
 

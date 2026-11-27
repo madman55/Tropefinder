@@ -20,8 +20,10 @@ Python jobs (the **collection engine** and the **trope engine**) fetch book data
 
 | Component | Folder | Runs where | Writes to DB? |
 | --- | --- | --- | --- |
-| Collection engine | `pipeline/sources`, `normalise`, `dedupe`, `load` | Your computer, later GitHub Actions on a schedule | Yes (secret key) |
-| Trope engine | `pipeline/classify`, `taxonomy/` | Same | Yes (secret key) |
+| Collection engine | `pipeline/sources`, `normalise`, `dedupe`, `load` | GitHub Actions | Yes (secret key) |
+| Trope engine | `pipeline/classify`, `taxonomy/` | GitHub Actions | Yes (secret key) |
+| Meaning engine | `supabase/functions/embed`, `pipeline/embed.py` | Supabase Edge Function (built-in gte-small model); embedding job in GitHub Actions | Job: yes (secret key). Function: stores nothing |
+| Search engine | `search_books`, `match_books`, `match_tropes` (SQL) | Supabase Postgres + pgvector | No (read-only, runs as the caller) |
 | Web app | `web/` | Browser, hosted on GitHub Pages | No (public key, RLS) |
 
 Each can be replaced without rebuilding the others, because they only share the database schema.
@@ -34,6 +36,10 @@ Four groups of tables (full definitions in `supabase/migrations/`):
 - **Provenance:** `data_sources`, `external_ids` (main duplicate guard), `format_availability`, `external_links`, `import_runs`.
 - **Trope intelligence:** `tropes`, `trope_aliases`, `trope_relations`, `book_tropes` (current verdict), `classification_evidence`, `classification_runs`.
 - **Users (Phase 4):** profiles, reading history, preferences, lists, community votes.
+
+Meaning matches (closeness of a book's description to typed words) are only ever
+suggestions or a separately labelled "Similar in feel" list. Confirmed / possible bands come
+only from stored, evidence-backed trope verdicts.
 
 ## Trust rules
 

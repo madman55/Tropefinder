@@ -97,6 +97,16 @@
   details.group[open] summary::after { content: "–"; }
   .group .tokens { display: flex; flex-wrap: wrap; gap: 0.375rem; padding-bottom: 1rem; }
 
+  /* Suggestions from typed words */
+  .suggest { margin: 0.75rem 0 0.25rem; }
+  .suggest h2 { font-size: var(--step--1); color: var(--slate); font-weight: 700; margin: 0 0 0.375rem; }
+  .suggest .tokens { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-bottom: 0.625rem; }
+  .token.say-not { border-color: var(--not); color: var(--not); }
+  .token.say-not[data-state="not"] { background: var(--not); color: #fff; text-decoration: none; }
+  .band.feel > h2 { font-family: var(--ui); }
+  .band.feel .book { opacity: 0.92; }
+  .feel-note { border-left: 3px solid var(--line); padding-left: 0.625rem; }
+
   /* Sticky action */
   .action {
     position: fixed; left: 0; right: 0; bottom: 0; padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
@@ -177,13 +187,14 @@
     <div class="tray" data-kind="not"><h2>Don't want</h2><div class="tokens" data-tray="not"></div></div>
   </section>
 
-  <p class="howto">Tap a trope once for <b>must have</b>, twice for <b>nice to have</b>, three times for <b>don't want</b>, and once more to clear it.</p>
+  <p class="howto">Describe the story you want in your own words, or tap a trope once for <b>must have</b>, twice for <b>nice to have</b>, three times for <b>don't want</b>, and once more to clear it.</p>
 
   <div class="filters">
     <label class="switch"><input type="checkbox" id="audio"> Audiobooks only</label>
   </div>
-  <label class="visually-hidden" for="find">Find a trope</label>
-  <input class="find" id="find" type="search" placeholder="Find tropes, e.g. superpowers in modern world" autocomplete="off">
+  <label class="visually-hidden" for="find">Describe a story or find a trope</label>
+  <input class="find" id="find" type="search" placeholder="Describe a story, e.g. a wizard detective in Chicago, no romance" autocomplete="off">
+  <div id="suggest" aria-live="polite"></div>
 
   <div id="picker" aria-live="polite"><p class="status">Loading tropes…</p></div>
 
@@ -274,11 +285,100 @@
         <summary>${CATEGORY[c]} <span class="count">${groups[c].length}</span></summary>
         <div class="tokens">${groups[c].map(t => token(t.slug)).join("")}</div>
       </details>`).join("");
-    const phrase = q && words(q).length >= 2
-      ? `<p class="status">Tropes that match words in “${esc(q)}”. Tap the ones you mean. (Typing a whole search in words is coming later.)</p>` : "";
+    const phrase = q && words(q).length >= 2 ? `<p class="status">Tropes whose names share words with what you typed:</p>` : "";
     document.getElementById("picker").innerHTML = html
       ? phrase + html
-      : `<p class="status">No trope matches “${esc(q)}”. Try one word, such as magic, soldier or portal.</p>`;
+      : (words(q).length >= 2 ? "" : `<p class="status">No trope name matches “${esc(q)}”.</p>`);
+    queueMeaning();
+  }
+
+  // ---------------------------------------------------------------- meaning search
+  // What you type is turned into a "meaning vector" by our embed function, then compared with
+  // every trope and book. That gives suggestions and a "Similar in feel" list, never confirmed matches.
+  let meaning = { text: "", vec: null, timer: null };
+  const cache = new Map();
+  const NEG = /\b(?:no|without|not|minus|nothing with|avoid|hate)\s+([a-z][a-z' -]*?)(?=\s*(?:[,.;!?]|\band\b|\bbut\b|\bor\b|\bwith\b|$))/gi;
+  function splitNegatives(text) {
+    const neg = [];
+    const pos = text.replace(NEG, (_, phrase) => { neg.push(phrase.trim()); return " "; }).replace(/\s+/g, " ").trim();
+    return { pos, neg: neg.filter(Boolean).slice(0, 4) };
+  }
+  async function embed(texts) {
+    const todo = texts.filter(t => !cache.has(t));
+    if (todo.length) {
+      const res = await fetch(cfg.url.replace(/\/$/, "") + "/functions/v1/embed",
+        { method: "POST", headers: headers(), body: JSON.stringify({ input: todo }) });
+      if (!res.ok) throw new Error(`Meaning search answered ${res.status}.`);
+      (await res.json()).embeddings.forEach((v, i) => cache.set(todo[i], v));
+    }
+    return texts.map(t => cache.get(t));
+  }
+  function queueMeaning() {
+    clearTimeout(meaning.timer);
+    const text = document.getElementById("find").value.trim();
+    if (text.split(/\s+/).length < 2 || text.length < 6) {
+      meaning = { text: "", vec: null, timer: null };
+      document.getElementById("suggest").innerHTML = "";
+      return;
+    }
+    meaning.timer = setTimeout(() => suggest(text), 650);
+  }
+  async function suggest(text) {
+    const box = document.getElementById("suggest");
+    const { pos, neg } = splitNegatives(text.toLowerCase());
+    try {
+      const vecs = await embed([pos || text, ...neg]);
+      if (document.getElementById("find").value.trim() !== text) return;   // typing moved on
+      meaning = { text, vec: vecs[0], timer: null };
+      const top = await api("rpc/match_tropes", { query_embedding: vecs[0], match_count: 8 });
+      const notSlugs = [];
+      for (const v of vecs.slice(1)) {
+        const [best] = await api("rpc/match_tropes", { query_embedding: v, match_count: 1 });
+        if (best && best.similarity >= 0.84 && bySlug[best.slug]) notSlugs.push(best.slug);
+      }
+      const best = top.length ? top[0].similarity : 0;
+      const yes = top.filter(t => t.similarity >= Math.max(0.815, best - 0.05) && bySlug[t.slug] && !notSlugs.includes(t.slug))
+                     .slice(0, 5).map(t => t.slug);
+      box.innerHTML = (yes.length ? `<div class="suggest"><h2>Sounds like (tap to add)</h2><div class="tokens">${yes.map(token).join("")}</div></div>` : "")
+        + (notSlugs.length ? `<div class="suggest"><h2>You said no to</h2><div class="tokens">${notSlugs.map(sayNot).join("")}</div></div>` : "")
+        + `<p class="status">Find books will also list stories similar in feel to what you typed.</p>`;
+    } catch (e) {
+      box.innerHTML = `<p class="status">Meaning suggestions aren't available right now. Trope names still work.</p>`;
+    }
+  }
+  function sayNot(slug) {
+    const on = state.get(slug) === "not";
+    return `<button type="button" class="token say-not" data-say-not="${esc(slug)}" data-state="${on ? "not" : "none"}"
+      aria-pressed="${on}" title="${esc(bySlug[slug].definition)}">${on ? "✕ " : ""}Don't want: ${esc(bySlug[slug].name)}</button>`;
+  }
+  function withChildren(slugs) {
+    const out = new Set(slugs);
+    let grew = true;
+    while (grew) {
+      grew = false;
+      for (const t of tropes) {
+        const parent = tropes.find(p => p.id === t.parent_id);
+        if (parent && out.has(parent.slug) && !out.has(t.slug)) { out.add(t.slug); grew = true; }
+      }
+    }
+    return [...out];
+  }
+  async function similarInFeel(shownIds, notSlugs, audioOnly) {
+    if (!meaning.vec) return [];
+    let rows = (await api("rpc/match_books", { query_embedding: meaning.vec, match_count: 30 }))
+      .filter(r => !shownIds.has(r.work_id) && r.similarity >= 0.8);
+    if (!rows.length) return rows;
+    const ids = rows.map(r => r.work_id).join(",");
+    if (notSlugs.length) {
+      const bad = await api(`book_tropes?work_id=in.(${ids})&status=eq.present&select=work_id,tropes!inner(slug)&tropes.slug=in.(${withChildren(notSlugs).join(",")})`);
+      const badIds = new Set(bad.map(b => b.work_id));
+      rows = rows.filter(r => !badIds.has(r.work_id));
+    }
+    if (audioOnly && rows.length) {
+      const ok = new Set((await api(`format_availability?work_id=in.(${ids})&format=eq.audiobook&select=work_id`)).map(f => f.work_id));
+      rows = rows.filter(r => ok.has(r.work_id));
+    }
+    return rows.slice(0, 12);
   }
   function cycle(slug) {
     const next = STATES[(STATES.indexOf(state.get(slug) || "none") + 1) % STATES.length];
@@ -315,24 +415,36 @@
     const pick = k => [...state].filter(([, v]) => v === k).map(([s]) => s);
     const out = document.getElementById("results");
     const go = document.getElementById("go");
-    if (!state.size) {
-      out.innerHTML = `<p class="status">Choose at least one trope above, then search.</p>`;
+    const typed = document.getElementById("find").value.trim();
+    if (!state.size && !typed) {
+      out.innerHTML = `<p class="status">Describe a story above, or choose at least one trope, then search.</p>`;
       out.scrollIntoView();
       return;
     }
     go.disabled = true; go.textContent = "Searching…";
     try {
-      const rows = await api("rpc/search_books", {
+      if (typed && meaning.text !== typed) {
+        clearTimeout(meaning.timer);
+        await suggest(typed);
+      }
+      const audioOnly = document.getElementById("audio").checked;
+      const rows = state.size ? await api("rpc/search_books", {
         must: pick("must"), prefer: pick("nice"), exclude: pick("not"),
-        formats: document.getElementById("audio").checked ? ["audiobook"] : [], max_results: 100
-      });
+        formats: audioOnly ? ["audiobook"] : [], max_results: 100
+      }) : [];
+      const feel = typed ? await similarInFeel(new Set(rows.map(r => r.work_id)), pick("not"), audioOnly).catch(() => []) : [];
       const confirmed = rows.filter(r => r.band === "confirmed");
       const possible = rows.filter(r => r.band === "possible");
       const hasMust = pick("must").length > 0;
-      out.innerHTML = !rows.length
+      const feelHtml = feel.length ? `<section class="band feel"><h2>Similar in feel (${feel.length})</h2>
+          <p class="feel-note">Chosen by how close each book's description is to what you typed, not by checked tropes. Treat these as ideas, not confirmed matches.</p>
+          ${feel.map(feelBook).join("")}</section>` : "";
+      out.innerHTML = (!rows.length && !feel.length)
         ? `<p class="status">No books match yet. Try moving a trope from “Must have” to “Nice to have”, or turn off “Audiobooks only”.</p>`
-        : band(hasMust ? "Confirmed matches" : "Matches", hasMust ? "Every must-have trope is backed by evidence." : "", confirmed)
-          + band("Possible matches", "Some must-have tropes aren't confirmed yet: the evidence doesn't say either way.", possible);
+        : (state.size && !rows.length ? `<p class="status">No books have the tropes you chose yet.</p>` : "")
+          + band(hasMust ? "Confirmed matches" : "Matches", hasMust ? "Every must-have trope is backed by evidence." : "", confirmed)
+          + band("Possible matches", "Some must-have tropes aren't confirmed yet: the evidence doesn't say either way.", possible)
+          + feelHtml;
       out.scrollIntoView();
     } catch (e) {
       out.innerHTML = `<p class="error">${esc(e.message)}</p>`;
@@ -358,6 +470,15 @@
       <h3>${esc(r.title)}</h3><p class="by">${meta}</p>
       <p class="by">${r.has_audiobook ? '<span class="pill">Audiobook</span>' : ""}${r.has_ebook ? '<span class="pill">Ebook</span>' : ""}</p>
       <ul class="why">${why.join("")}</ul></div></button>`;
+  }
+
+  function feelBook(r) {
+    const cover = r.cover_url
+      ? `<img class="cover" src="${esc(r.cover_url)}" alt="" loading="lazy">`
+      : `<span class="cover blank" aria-hidden="true">${esc((r.title || "?")[0])}</span>`;
+    const meta = [r.authors, r.first_published_year].filter(Boolean).map(esc).join(", ");
+    return `<button type="button" class="book" data-id="${r.work_id}">${cover}<div>
+      <h3>${esc(r.title)}</h3><p class="by">${meta}</p></div></button>`;
   }
 
   // ---------------------------------------------------------------- detail
@@ -394,6 +515,18 @@
 
   // ---------------------------------------------------------------- wiring
   document.addEventListener("click", e => {
+    const n = e.target.closest("[data-say-not]");
+    if (n) {
+      const slug = n.dataset.sayNot;
+      state.get(slug) === "not" ? state.delete(slug) : state.set(slug, "not");
+      n.outerHTML = sayNot(slug);
+      document.querySelectorAll(`.token[data-slug="${CSS.escape(slug)}"]`).forEach(b => {
+        const s = state.get(slug) || "none";
+        b.dataset.state = s; b.querySelector(".mark").textContent = MARK[s];
+      });
+      renderTrays(); saveToUrl();
+      return;
+    }
     const t = e.target.closest(".token");
     if (t) return cycle(t.dataset.slug);
     const b = e.target.closest(".book");
@@ -403,7 +536,8 @@
   document.getElementById("detail").addEventListener("click", e => { if (e.target.id === "detail") e.target.close(); });
   document.getElementById("go").addEventListener("click", search);
   document.getElementById("clear").addEventListener("click", () => {
-    state.clear(); renderTrays(); renderPicker(); saveToUrl();
+    state.clear(); document.getElementById("find").value = "";
+    renderTrays(); renderPicker(); saveToUrl();
     document.getElementById("results").innerHTML = "";
   });
   document.getElementById("find").addEventListener("input", renderPicker);
@@ -416,7 +550,7 @@
     }
     try {
       const [ts, aliases, srcs] = await Promise.all([
-        api("tropes?is_active=eq.true&select=id,slug,name,category,definition,sort_order&order=sort_order"),
+        api("tropes?is_active=eq.true&select=id,slug,name,category,definition,parent_id,sort_order&order=sort_order"),
         api("trope_aliases?select=trope_id,alias"),
         api("data_sources?select=id,name")
       ]);
