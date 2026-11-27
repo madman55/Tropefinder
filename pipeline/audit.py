@@ -53,6 +53,13 @@ def audit(db: Database, sample_size: int = 50, seed: int = 7) -> str:
         if f.get("work_id"):
             formats[f["work_id"]].add(f["format"])
 
+    tropes = {t["id"]: t for t in db.select("tropes", "id,slug,name,is_active")}
+    per_trope: dict[str, Counter] = defaultdict(Counter)
+    for b in db.select("book_tropes", "trope_id,status,verification"):
+        if b["status"] == "present":
+            per_trope[b["trope_id"]][b["verification"]] += 1
+    tags = Counter(t["tag"] for t in db.select("work_source_tags", "tag,tag_type") if t["tag_type"] in ("genre", "tag"))
+
     dups = likely_duplicates(works, authors_of)
     no_desc = [w["title"] for w in works if not w.get("description")]
     no_tropes = [w["title"] for w in works if not verdicts.get(w["id"])]
@@ -73,6 +80,13 @@ def audit(db: Database, sample_size: int = 50, seed: int = 7) -> str:
         f"- Without a description: {len(no_desc)}" + (f" ({'; '.join(no_desc[:15])}{'…' if len(no_desc) > 15 else ''})" if no_desc else ""),
         f"- Without any 'present' trope: {len(no_tropes)}",
         f"- Without an author: {len(no_author)}" + (f" ({'; '.join(no_author[:10])})" if no_author else ""),
+        "", "### Books per trope ('present')", "",
+        "| Trope | Books | From tags | From AI | From people |", "| --- | --- | --- | --- | --- |",
+        *[f"| {t['slug']} | {sum(per_trope[i].values())} | {per_trope[i]['source_tag']} | {per_trope[i]['ai_suggested']} | "
+          f"{per_trope[i]['human_verified'] + per_trope[i]['community_verified']} |"
+          for i, t in sorted(tropes.items(), key=lambda x: -sum(per_trope[x[0]].values())) if t.get("is_active")],
+        "", "### Most common reader tags (genre and tag)", "",
+        ", ".join(f"{t} ({n})" for t, n in tags.most_common(120)),
         "", f"### Random sample of {len(sample)} books (seed {seed}) for a hand check", "",
         "| Title | Author | Year | Sources | Present tropes | Formats |", "| --- | --- | --- | --- | --- | --- |",
     ]
