@@ -1,7 +1,7 @@
 seed_id,title,trope_slug,label,labelled_by,labelled_on
 6,Monster Hunter International,military-characters,present,Joseph,2026-11-26
 6,Monster Hunter International,magic,present,Joseph,2026-11-26
-6,Monster Hunter International,superpowers,present,Joseph,2026-11-26
+6,Monster Hunter International,special-powers,present,Joseph,2026-11-26
 6,Monster Hunter International,portal-fantasy,present,Joseph,2026-11-26
 6,Monster Hunter International,modern-earth,present,Joseph,2026-11-26
 6,Monster Hunter International,modern-firearms,present,Joseph,2026-11-26
@@ -41,7 +41,7 @@ seed_id,title,trope_slug,label,labelled_by,labelled_on
 15,Super Powereds: Year 1,power-progression,present,Joseph,2026-11-26
 16,Old Man's War,military-characters,present,Joseph,2026-11-26
 16,Old Man's War,magic,absent,Joseph,2026-11-26
-16,Old Man's War,superpowers,present,Joseph,2026-11-26
+16,Old Man's War,special-powers,present,Joseph,2026-11-26
 16,Old Man's War,portal-fantasy,absent,Joseph,2026-11-26
 16,Old Man's War,modern-earth,absent,Joseph,2026-11-26
 16,Old Man's War,modern-firearms,present,Joseph,2026-11-26
@@ -51,7 +51,7 @@ seed_id,title,trope_slug,label,labelled_by,labelled_on
 16,Old Man's War,power-progression,absent,Joseph,2026-11-26
 21,Dungeon Crawler Carl,military-characters,absent,Joseph,2026-11-26
 21,Dungeon Crawler Carl,magic,present,Joseph,2026-11-26
-21,Dungeon Crawler Carl,superpowers,present,Joseph,2026-11-26
+21,Dungeon Crawler Carl,special-powers,present,Joseph,2026-11-26
 21,Dungeon Crawler Carl,portal-fantasy,present,Joseph,2026-11-26
 21,Dungeon Crawler Carl,modern-earth,present,Joseph,2026-11-26
 21,Dungeon Crawler Carl,modern-firearms,present,Joseph,2026-11-26
@@ -61,7 +61,7 @@ seed_id,title,trope_slug,label,labelled_by,labelled_on
 21,Dungeon Crawler Carl,power-progression,present,Joseph,2026-11-26
 22,He Who Fights with Monsters,military-characters,absent,Joseph,2026-11-26
 22,He Who Fights with Monsters,magic,present,Joseph,2026-11-26
-22,He Who Fights with Monsters,superpowers,present,Joseph,2026-11-26
+22,He Who Fights with Monsters,special-powers,present,Joseph,2026-11-26
 22,He Who Fights with Monsters,portal-fantasy,present,Joseph,2026-11-26
 22,He Who Fights with Monsters,modern-earth,present,Joseph,2026-11-26
 22,He Who Fights with Monsters,modern-firearms,absent,Joseph,2026-11-26
@@ -71,7 +71,7 @@ seed_id,title,trope_slug,label,labelled_by,labelled_on
 22,He Who Fights with Monsters,power-progression,present,Joseph,2026-11-26
 27,Beware of Chicken,military-characters,absent,Joseph,2026-11-26
 27,Beware of Chicken,magic,present,Joseph,2026-11-26
-27,Beware of Chicken,superpowers,present,Joseph,2026-11-26
+27,Beware of Chicken,special-powers,present,Joseph,2026-11-26
 27,Beware of Chicken,portal-fantasy,absent,Joseph,2026-11-26
 27,Beware of Chicken,modern-earth,absent,Joseph,2026-11-26
 27,Beware of Chicken,modern-firearms,absent,Joseph,2026-11-26
@@ -81,7 +81,7 @@ seed_id,title,trope_slug,label,labelled_by,labelled_on
 27,Beware of Chicken,power-progression,present,Joseph,2026-11-26
 28,Sufficiently Advanced Magic,military-characters,present,Joseph,2026-11-26
 28,Sufficiently Advanced Magic,magic,present,Joseph,2026-11-26
-28,Sufficiently Advanced Magic,superpowers,present,Joseph,2026-11-26
+28,Sufficiently Advanced Magic,special-powers,present,Joseph,2026-11-26
 28,Sufficiently Advanced Magic,portal-fantasy,unknown,Joseph,2026-11-26
 28,Sufficiently Advanced Magic,modern-earth,present,Joseph,2026-11-26
 28,Sufficiently Advanced Magic,modern-firearms,present,Joseph,2026-11-26

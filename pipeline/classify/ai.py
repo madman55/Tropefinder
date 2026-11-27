@@ -21,7 +21,7 @@ import requests
 from pipeline.classify.evidence import BookText, quote_found, strip_html
 
 MODEL = "claude-haiku-5-5"
-PROMPT_VERSION = "v3-2026-11-27"   # v3: taxonomy 0.3 (new tropes, stricter modern firearms)
+PROMPT_VERSION = "v4-2026-11-27"   # v4: taxonomy 0.4 (Special powers umbrella; narrower Superpowers)
 API_URL = "https://api.anthropic.com/v1/messages"
 BATCH_URL = "https://api.anthropic.com/v1/messages/batches"
 BATCH_DISCOUNT = 0.5

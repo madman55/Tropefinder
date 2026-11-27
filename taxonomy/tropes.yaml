@@ -1,4 +1,4 @@
-# TropeFinder trope taxonomy — version 0.3 (2026-11-27)
+# TropeFinder trope taxonomy — version 0.4 (2026-11-27)
 #
 # HOW TO EDIT
 #   * One entry per trope. "slug" is its permanent ID: lowercase words joined by hyphens.
@@ -129,16 +129,25 @@ tropes:
     definition: The main character is an alien.
 
   # ---------------------------------------------------------------- abilities
+  - slug: special-powers
+    name: Special powers
+    category: abilities
+    definition: Characters have extraordinary personal abilities of any kind, whether from superpowers, magic, cultivation, a game system, enhancement or a supernatural nature.
+    classifier_hint: The broad umbrella. Prefer the more specific trope (Superpowers, Magic, Psychic abilities...) when it fits; mark this one directly only when the powers are clear but fit none of them.
+    aliases: [powers, abilities, special abilities, extraordinary abilities, powered]
   - slug: superpowers
     name: Superpowers
     category: abilities
-    definition: Characters have innate or acquired extraordinary powers not framed as magic.
-    aliases: [powers, metahumans, superpowered, super powers]
+    parent: special-powers
+    definition: Superhero-style powers. People have innate or acquired extraordinary abilities (mutants, metahumans, "supers") that are not framed as magic, cultivation, a game system or a supernatural creature's nature.
+    classifier_hint: Not wizards, vampires, werewolves, cultivators or game-system skills; those are Special powers (or Magic). Superhero, mutant and "powered people" stories are the core case.
+    aliases: [metahumans, superpowered, super powers, mutants]
   - slug: magic
     name: Magic
     category: abilities
     definition: Characters use magic or spellcasting.
     aliases: [sorcery, spells, wizards]
+    implies: [special-powers]
   - slug: hard-magic-system
     name: Hard magic system
     category: abilities
@@ -153,6 +162,7 @@ tropes:
   - slug: psychic-abilities
     name: Psychic abilities
     category: abilities
+    parent: special-powers
     definition: Characters use telepathy, telekinesis, precognition or similar mental powers.
     aliases: [telepathy, telekinesis, psionics]
   - slug: cybernetic-enhancements
@@ -160,9 +170,11 @@ tropes:
     category: abilities
     definition: Characters have machine parts or implants that improve their abilities.
     aliases: [cyborg, implants, augmentation, cyberpunk]
+    implies: [special-powers]
   - slug: superhuman-strength
     name: Superhuman strength
     category: abilities
+    parent: special-powers
     definition: A character's physical strength or toughness is far beyond human limits.
   - slug: immortality
     name: Immortality
@@ -172,6 +184,7 @@ tropes:
   - slug: healing-abilities
     name: Healing abilities
     category: abilities
+    parent: special-powers
     definition: A character can heal themselves or others by extraordinary means.
     aliases: [regeneration, healer]
   - slug: technological-enhancements
@@ -275,6 +288,7 @@ tropes:
     category: story-mechanics
     definition: A character's growth in power is a central, tracked part of the story.
     aliases: [progression fantasy, cultivation, levelling up]
+    implies: [special-powers]
   - slug: secret-identity
     name: Secret identity
     category: story-mechanics
