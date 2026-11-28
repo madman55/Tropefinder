@@ -66,9 +66,10 @@ def test_importer_skips_known_work_without_requests():
 
 
 def test_merge_caps_books_per_author():
-    found = [f(f"Discworld Title {c}", "Terry Pratchett", "openlibrary:Wizards", 10, ol=f"OL{c}W") for c in "ABCDE"]
+    from pipeline.discover import MAX_PER_AUTHOR
+    found = [f(f"Discworld Title {c}", "Terry Pratchett", "openlibrary:Wizards", 10, ol=f"OL{c}W") for c in "ABCDEFGH"]
     rows, added = merge([], found, [], target=10)
-    assert added == 3
+    assert added == MAX_PER_AUTHOR < 8
 
 
 def test_excluded_books_are_never_added():

@@ -9,7 +9,7 @@ on:
     inputs:
       target:
         description: "Total number of candidates wanted in the list"
-        default: "470"
+        default: "2000"
 
 permissions:
   contents: write
@@ -17,7 +17,7 @@ permissions:
 jobs:
   discover:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

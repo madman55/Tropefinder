@@ -50,18 +50,39 @@ OL_QUERIES = {
     "Alternative histories": 'subject:"Alternative histories (Fiction)"',
     "Science fantasy": 'subject:"Science fantasy"',
     "Magic (fantasy)": 'subject:"Magic" subject:"Fantasy fiction"',
+    # added 28 Nov 2026 to grow towards ~2,000 books
+    "Science fiction": 'subject:"Science fiction"',
+    "Fantasy fiction": 'subject:"Fantasy fiction"',
+    "Dystopias": 'subject:"Dystopias"',
+    "Cyberpunk": 'subject:"Cyberpunk fiction"',
+    "Dragons": 'subject:"Dragons" subject:"Fiction"',
+    "Vampires": 'subject:"Vampires" subject:"Fiction"',
+    "Wizards": 'subject:"Wizards" subject:"Fiction"',
+    "Robots": 'subject:"Robots" subject:"Fiction"',
+    "Interplanetary voyages": 'subject:"Interplanetary voyages"',
+    "Life on other planets": 'subject:"Life on other planets"',
+    "End of the world": 'subject:"End of the world" subject:"Fiction"',
+    "Imaginary wars": 'subject:"Imaginary wars and battles"',
+    "Steampunk": 'subject:"Steampunk fiction"',
 }
 OL_FROM_YEAR = 1980
 # Hardcover keyword searches (matched against titles, series and descriptions).
 HC_TERMS = ["LitRPG", "GameLit", "progression fantasy", "cultivation", "isekai", "dungeon core",
             "system apocalypse", "superhero novel", "military science fiction", "urban fantasy",
-            "portal fantasy", "time travel novel", "space marines", "reincarnated"]
-HC_PAGES = 3
-PER_OL_SUBJECT = 60
+            "portal fantasy", "time travel novel", "space marines", "reincarnated",
+            # added 28 Nov 2026
+            "epic fantasy", "space opera", "cyberpunk", "dystopian", "post-apocalyptic", "grimdark",
+            "cozy fantasy", "monster hunter", "dragon rider", "alien invasion", "first contact",
+            "zombie apocalypse", "magic academy", "dungeon crawler", "kingdom building", "base building",
+            "vampire", "werewolf", "necromancer", "mecha", "artificial intelligence", "military fantasy",
+            "sword and sorcery", "steampunk", "time loop", "generation ship", "colony ship"]
+HC_PAGES = 5
+OL_PAGES = 3          # 100 results per page
+PER_OL_SUBJECT = 150
 PER_HC_TERM = 25
 MIN_OL_EDITIONS = 2
 MIN_HC_READERS = 10
-MAX_PER_AUTHOR = 3
+MAX_PER_AUTHOR = 5
 
 NOT_A_SINGLE_BOOK = re.compile(
     r"\b(omnibus|box(ed)?\s*set|boxset|bundle|collection|anthology|complete series|"
@@ -106,10 +127,10 @@ def acceptable(title: str | None, author: str | None) -> bool:
 def from_openlibrary(ol: OpenLibrary) -> list[dict]:
     out = []
     for label, query in OL_QUERIES.items():
-        docs = ol._get("/search.json", {
+        docs = [d for page in range(1, OL_PAGES + 1) for d in ol._get("/search.json", {
             "q": f"{query} language:eng first_publish_year:[{OL_FROM_YEAR} TO *] {OL_EXCLUDE}",
-            "sort": "editions", "limit": 100, "lang": "en",
-            "fields": "key,title,author_name,first_publish_year,edition_count"}).get("docs", [])
+            "sort": "editions", "limit": 100, "page": page, "lang": "en",
+            "fields": "key,title,author_name,first_publish_year,edition_count"}).get("docs", [])]
         kept = 0
         for d in docs:
             authors = d.get("author_name") or []
@@ -209,7 +230,7 @@ def write_candidates(rows: list[dict], path: Path = CANDIDATES_PATH) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description="Discover candidate books in the target genres.")
-    p.add_argument("--target", type=int, default=470, help="total candidates wanted in the list")
+    p.add_argument("--target", type=int, default=2000, help="total candidates wanted in the list")
     a = p.parse_args(argv)
     ol, hc = OpenLibrary(), Hardcover()
     found = from_openlibrary(ol) + from_hardcover(hc)
