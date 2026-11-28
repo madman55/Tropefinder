@@ -53,3 +53,9 @@ def test_run_stores_flags_skips_checked_and_survives_failures():
     run(db, c2)
     assert c2.calls == 1          # only the failed one is retried
     assert "nothing stored" in run(FakeDB(), None)
+
+
+def test_sexual_content_warning_alone_is_not_adult():
+    ans = {"audience": "adult", "kind": "story", "explicit": "unclear", "reason": ""}
+    assert not decide(book([("tag", "Sexual content"), ("genre", "Science Fiction")]), ans).adult_content
+    assert decide(book([("tag", "Explicit sexual content")]), ans).adult_content

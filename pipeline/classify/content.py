@@ -15,14 +15,15 @@ from dataclasses import dataclass
 from pipeline.classify.ai import Claude
 from pipeline.classify.evidence import BookText, strip_html
 
-CHECK_VERSION = "content-v1-2026-11-28"
+CHECK_VERSION = "content-v2-2026-11-28"   # v2: "Sexual content" warning tag no longer counts as explicit; anthologies are stories
 
 SYSTEM = """You sort books for a science-fiction and fantasy discovery site. From the book's title,
 description and reader tags only, answer four questions with the record_content_check tool.
 - audience: who the book is written for. picture_book = illustrated books for young children;
   early_reader = chapter books for roughly ages 5-8; middle_grade = roughly ages 8-12;
   young_adult = teens; adult = adults; unclear = the text doesn't say.
-- kind: story = a novel, novella or story collection (including graphic novels);
+- kind: story = a novel, novella, short-story collection or anthology (even one with an editor's
+  introduction about the genre), graphic novel or comic collection;
   nonfiction = about real things (science, history, essays, how-to, biography);
   companion = a guide, encyclopedia, art book, quiz or other companion to a fictional series;
   other = anything else (poetry, games, scripts).
@@ -51,8 +52,10 @@ TOOL = {
 }
 
 # Reader tags that on their own mark a book as adult (explicit sexual content).
-ADULT_TAGS = {"erotica", "erotic", "erotic romance", "smut", "explicit", "explicit sex", "sexual content",
-              "harem", "reverse harem", "steamy", "spicy", "adult content", "porn", "bdsm"}
+# Not "Sexual content": Hardcover uses it as a content warning on many mainstream novels.
+ADULT_TAGS = {"erotica", "erotic", "erotic romance", "smut", "explicit", "explicit sex", "explicit sexual content",
+              "sexual content/explicit", "harem", "reverse harem", "steamy", "spicy", "spice level 4",
+              "spice level 5", "adult content", "porn", "bdsm"}
 # Reader tags that on their own mark a book as for young children.
 CHILD_TAGS = {"picture book", "picture books", "board book", "early reader", "early readers",
               "beginning reader", "easy reader"}
