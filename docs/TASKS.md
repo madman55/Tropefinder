@@ -120,3 +120,12 @@ Updated: 2026-11-25. Only things actually run are marked as tested; the test env
 - Page: typing a description shows "Sounds like" trope suggestions (tap to add), turns "no X" / "without X" into "Don't want" suggestions, and Find books adds a "Similar in feel" list that is clearly labelled as not confirmed. Don't-want tropes and the audiobook filter apply to it too.
 - Calibration from real queries: trope suggestions within 0.05 of the best match and at least 0.815; books at least 0.80.
 - Rate limiting: the function caps 8 texts x 2,000 characters per call; the page waits for a pause in typing and caches. No per-visitor limit yet (fine at this scale; revisit before sharing widely).
+
+## 28 Nov 2026: library growth to 1,784 books
+- Discovery widened (13 more Open Library subjects, 27 more Hardcover terms, 5 per author) and filtered (non-fiction, publisher-credited tie-ins, Disney novelisations). 1,348 new candidates.
+- Open Library import: 1,187 imported, 159 not found, 1 needs review (2 h 17 min). Hardcover: 1,095 enriched, 158 created from Hardcover alone, 92 not found (1,457 requests). Fixed: the same book twice in one run duplicated tags.
+- AI tagging (prompt v4, Batch API): 1,351 books, $1.43. 2 failed (Dark Intelligence, The Immortal Highlander). Accuracy on Joseph's labels unchanged: 19/20 present verdicts right; 19/53 found.
+- Embeddings: 1,664 books (re-embedded the old ones too, since their tropes changed); 832 function calls.
+- Audit: 1,784 works, 6.2 present tropes per book on average, 202 without a description, 99 with no present trope. 5 "likely duplicates" are false alarms from shared series prefixes ("Buffy the Vampire Slayer: ...", "Star Wars - ...") except "Vampire Academy: The Ultimate Guide" (a companion guide, not a novel).
+- Problems found by test searches: children's picture books (Little Robots, Geeger the Robot Goes to School), non-fiction (21st Century Robot, Robot Haiku) and explicit adult titles got in. Next: a clean-up pass that flags children's, non-fiction and adult books (from Hardcover genres and AI), hides children's and non-fiction, and adds an adult-content flag.
+- Total AI spend so far: about $3.40.
