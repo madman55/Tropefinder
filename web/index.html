@@ -136,6 +136,7 @@
   .why .has { color: var(--must); }
   .why .open { color: var(--slate); }
   .why .warn { color: var(--not); }
+  .pill.adult { border-color: var(--not); color: var(--not); }
   .pill { display: inline-block; font-size: 0.8125rem; border: 1px solid var(--line); border-radius: 999px; padding: 0 0.5rem; margin-right: 0.25rem; background: var(--paper); }
 
   /* Book detail */
@@ -191,6 +192,7 @@
 
   <div class="filters">
     <label class="switch"><input type="checkbox" id="audio"> Audiobooks only</label>
+    <label class="switch"><input type="checkbox" id="adult"> Show adult titles</label>
   </div>
   <label class="visually-hidden" for="find">Describe a story or find a trope</label>
   <input class="find" id="find" type="search" placeholder="Describe a story, e.g. a wizard detective in Chicago, no romance" autocomplete="off">
@@ -365,7 +367,8 @@
   }
   async function similarInFeel(shownIds, notSlugs, audioOnly) {
     if (!meaning.vec) return [];
-    let rows = (await api("rpc/match_books", { query_embedding: meaning.vec, match_count: 30 }))
+    let rows = (await api("rpc/match_books", { query_embedding: meaning.vec, match_count: 30,
+                                                include_adult: document.getElementById("adult").checked }))
       .filter(r => !shownIds.has(r.work_id) && r.similarity >= 0.8);
     if (!rows.length) return rows;
     const ids = rows.map(r => r.work_id).join(",");
@@ -400,6 +403,7 @@
       if (v.length) p.set(kind, v.join(","));
     }
     if (document.getElementById("audio").checked) p.set("audio", "1");
+    if (document.getElementById("adult").checked) p.set("adult", "1");
     history.replaceState(null, "", p.toString() ? "#" + p : location.pathname);
   }
   function loadFromUrl() {
@@ -407,6 +411,7 @@
     for (const kind of ["must", "nice", "not"])
       (p.get(kind) || "").split(",").filter(s => bySlug[s]).forEach(s => state.set(s, kind));
     document.getElementById("audio").checked = p.get("audio") === "1";
+    document.getElementById("adult").checked = p.get("adult") === "1";
     return state.size > 0;
   }
 
@@ -430,7 +435,8 @@
       const audioOnly = document.getElementById("audio").checked;
       const rows = state.size ? await api("rpc/search_books", {
         must: pick("must"), prefer: pick("nice"), exclude: pick("not"),
-        formats: audioOnly ? ["audiobook"] : [], max_results: 100
+        formats: audioOnly ? ["audiobook"] : [], max_results: 100,
+        include_adult: document.getElementById("adult").checked
       }) : [];
       const feel = typed ? await similarInFeel(new Set(rows.map(r => r.work_id)), pick("not"), audioOnly).catch(() => []) : [];
       const confirmed = rows.filter(r => r.band === "confirmed");
@@ -468,7 +474,7 @@
     const meta = [r.authors, r.series, r.first_published_year].filter(Boolean).map(esc).join(", ");
     return `<button type="button" class="book" data-id="${r.work_id}">${cover}<div>
       <h3>${esc(r.title)}</h3><p class="by">${meta}</p>
-      <p class="by">${r.has_audiobook ? '<span class="pill">Audiobook</span>' : ""}${r.has_ebook ? '<span class="pill">Ebook</span>' : ""}</p>
+      <p class="by">${r.adult_content ? '<span class="pill adult">Adult</span>' : ""}${r.has_audiobook ? '<span class="pill">Audiobook</span>' : ""}${r.has_ebook ? '<span class="pill">Ebook</span>' : ""}</p>
       <ul class="why">${why.join("")}</ul></div></button>`;
   }
 
@@ -478,7 +484,8 @@
       : `<span class="cover blank" aria-hidden="true">${esc((r.title || "?")[0])}</span>`;
     const meta = [r.authors, r.first_published_year].filter(Boolean).map(esc).join(", ");
     return `<button type="button" class="book" data-id="${r.work_id}">${cover}<div>
-      <h3>${esc(r.title)}</h3><p class="by">${meta}</p></div></button>`;
+      <h3>${esc(r.title)}</h3><p class="by">${meta}</p>
+      ${r.adult_content ? '<p class="by"><span class="pill adult">Adult</span></p>' : ""}</div></button>`;
   }
 
   // ---------------------------------------------------------------- detail
@@ -542,6 +549,7 @@
   });
   document.getElementById("find").addEventListener("input", renderPicker);
   document.getElementById("audio").addEventListener("change", saveToUrl);
+  document.getElementById("adult").addEventListener("change", saveToUrl);
 
   (async () => {
     if (!cfg.url || !cfg.key) {

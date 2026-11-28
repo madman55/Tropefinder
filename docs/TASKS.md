@@ -129,3 +129,10 @@ Updated: 2026-11-25. Only things actually run are marked as tested; the test env
 - Audit: 1,784 works, 6.2 present tropes per book on average, 202 without a description, 99 with no present trope. 5 "likely duplicates" are false alarms from shared series prefixes ("Buffy the Vampire Slayer: ...", "Star Wars - ...") except "Vampire Academy: The Ultimate Guide" (a companion guide, not a novel).
 - Problems found by test searches: children's picture books (Little Robots, Geeger the Robot Goes to School), non-fiction (21st Century Robot, Robot Haiku) and explicit adult titles got in. Next: a clean-up pass that flags children's, non-fiction and adult books (from Hardcover genres and AI), hides children's and non-fiction, and adds an adult-content flag.
 - Total AI spend so far: about $3.40.
+
+## 28 Nov 2026: content checks
+- Migration 20261128000000: works.audience / content_kind / adult_content / hidden_reason / content_note / content_checked. search_books and match_books leave hidden books out and adult titles unless include_adult; both return adult_content.
+- `content check` workflow (pipeline/check_content.py, classify/content.py): one short AI question per book + tag rules. v1 treated Hardcover's "Sexual content" warning tag as explicit and caught Hyperion, Storm Front etc.; v2 fixed that and treats anthologies as stories. Cost $0.20 per full run (ran twice).
+- Result (v2): 1,740 shown; hidden 11 children's, 28 non-fiction, 5 companion guides; 19 adult (erotica, harem LitRPG, explicit paranormal romance).
+- Page: "Show adult titles" switch (off by default, remembered in the link) and an Adult badge.
+- Known gaps: RPG rulebooks (Dungeon Crawl Classics, Star Trek Adventures) and Nostradamus Predicts... slipped back to shown between runs (AI variation); a tag rule for "Roleplaying Games" would make that stable. New imports need a content check run (add to the import routine).
