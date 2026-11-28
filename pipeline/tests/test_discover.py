@@ -113,3 +113,10 @@ def test_project_ref_from_url(monkeypatch):
     monkeypatch.delenv("SUPABASE_PROJECT_REF", raising=False)
     monkeypatch.setenv("SUPABASE_URL", "https://cnqtkfdzpmgkcreezpft.supabase.co")
     assert project_ref() == "cnqtkfdzpmgkcreezpft"
+
+
+def test_branded_and_nonfiction_rejected():
+    from pipeline.discover import acceptable
+    assert not acceptable("Star Trek - Klingon", "Simon & Schuster")
+    assert not acceptable("Disney's Flubber", "Vanessa Elder")
+    assert acceptable("Sea of Rust", "C. Robert Cargill")

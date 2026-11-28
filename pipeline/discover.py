@@ -39,7 +39,8 @@ OL_EXCLUDE = ('-subject:"Comic books, strips, etc." -subject:"Comic books" -subj
               '-subject:"Juvenile fiction" -subject:"Children\'s fiction" -subject:"Juvenile literature" '
               '-subject:"Picture books" -subject:"Children\'s stories" '
               '-subject:"History and criticism" -subject:"Criticism, interpretation, etc." '
-              '-subject:"Motion pictures"')
+              '-subject:"Motion pictures" -subject:"Nonfiction" -subject:"Philosophy" -subject:"Sociology" '
+              '-subject:"Popular culture" -subject:"Juvenile films" -subject:"Study and teaching"')
 OL_QUERIES = {
     "LitRPG": 'subject:"LitRPG"',
     "Urban fantasy": 'subject:"Urban fantasy"',
@@ -74,7 +75,7 @@ HC_TERMS = ["LitRPG", "GameLit", "progression fantasy", "cultivation", "isekai",
             "epic fantasy", "space opera", "cyberpunk", "dystopian", "post-apocalyptic", "grimdark",
             "cozy fantasy", "monster hunter", "dragon rider", "alien invasion", "first contact",
             "zombie apocalypse", "magic academy", "dungeon crawler", "kingdom building", "base building",
-            "vampire", "werewolf", "necromancer", "mecha", "artificial intelligence", "military fantasy",
+            "vampire", "werewolf", "necromancer", "mecha", "rogue AI novel", "military fantasy",
             "sword and sorcery", "steampunk", "time loop", "generation ship", "colony ship"]
 HC_PAGES = 5
 OL_PAGES = 3          # 100 results per page
@@ -90,9 +91,10 @@ NOT_A_SINGLE_BOOK = re.compile(
     r"study guide|summary|sparknotes|cliffsnotes|analysis of|coloring|colouring|calendar|"
     r"cookbook|art of|companion|encyclopedia|guide to|"
     r"manga|manhua|manhwa|light novel|comic|graphic novel|"
-    r"tales of|stories|novels featuring|a history|plays|masterworks)\b", re.IGNORECASE)
+    r"tales of|stories|novels featuring|a history|plays|masterworks|disney's|junior novel(ization)?)\b", re.IGNORECASE)
 # Publisher names that appear as authors of comic collections.
-NOT_AN_AUTHOR = re.compile(r"\b(marvel comics|dc comics|various|corporation|broadcasting|publishing|press)\b", re.IGNORECASE)
+NOT_AN_AUTHOR = re.compile(r"\b(marvel comics|dc comics|various|corporation|broadcasting|publishing|press|"
+                           r"simon & schuster|simon and schuster|disney|lucasfilm|paramount|hasbro|books inc)\b", re.IGNORECASE)
 COLLECTED_WORKS = re.compile(r"^\s*(novels|works|selected works|collected works|stories|plays|poems)\s*$", re.IGNORECASE)
 SEQUEL_MARKER = re.compile(r"(\bbook\s*#?\s*|\bno\.?\s*|\bpart\s*|\bvol\.?\s*|\bvolume\s*|#\s*)([2-9]|[1-9]\d)\b",
                            re.IGNORECASE)
@@ -154,6 +156,9 @@ def from_hardcover(hc: Hardcover) -> list[dict]:
         for d in docs:
             authors = as_list(d.get("author_names"))
             if (d.get("users_count") or 0) < MIN_HC_READERS or not authors:
+                continue
+            if any(g.lower() in ("nonfiction", "non-fiction", "science", "technology", "philosophy", "self help")
+                   for g in as_list(d.get("genres"))):
                 continue
             if not acceptable(d.get("title"), authors[0]):
                 continue
