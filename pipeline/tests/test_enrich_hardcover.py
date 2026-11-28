@@ -216,3 +216,12 @@ def test_slug_matching_allows_years_and_apostrophes():
         assert slug_matches(t, sl), (t, sl)
     for t, sl in bad:
         assert not slug_matches(t, sl), (t, sl)
+
+
+def test_same_book_twice_in_one_run_does_not_duplicate_tags():
+    db, _ = db_with_storm_front()
+    twice = [SEEDS[0], {**SEEDS[0], "seed_id": "C9999"}]
+    results = run(db, FakeHC(), twice, dry_run=False)
+    assert all(r.outcome != "error" for r in results)
+    keys = [(t["work_id"], t["tag_type"], t["tag"]) for t in db.tables["work_source_tags"]]
+    assert len(keys) == len(set(keys))

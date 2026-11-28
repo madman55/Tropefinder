@@ -174,9 +174,14 @@ class Enricher:
             return
         for k in remove:
             self.db.delete("work_source_tags", {"id": have[k]["id"]})
-        self.db.insert("work_source_tags", [
-            {"work_id": work_id, "source_id": self.src, "tag_type": t, "tag": tag, "position": want[(t, tag)]}
-            for (t, tag) in add])
+            del have[k]
+        new = [{"work_id": work_id, "source_id": self.src, "tag_type": t, "tag": tag, "position": want[(t, tag)]}
+               for (t, tag) in add]
+        stored = self.db.insert("work_source_tags", new) if new else []
+        # keep the cache current, in case another list entry points at the same book in this run
+        for row in stored or new:
+            have[(row["tag_type"], row["tag"])] = row
+        self.tags[work_id] = have
 
     def _sync_formats(self, res: Result, work_id: str, doc: dict) -> bool:
         changed = False
