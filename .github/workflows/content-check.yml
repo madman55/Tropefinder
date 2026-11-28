@@ -1,0 +1,54 @@
+name: content check
+
+# Checks who each book is for, whether it's a story, and whether it's explicit, then stores
+# the flags: children's picture books, non-fiction and companion guides are left out of
+# search; explicit books only appear when "Show adult titles" is on. Books already checked
+# with the current version are skipped. The report lists every hidden and adult book.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (tag rules only, no AI, store nothing)"
+        type: boolean
+        default: false
+      batch:
+        description: "Use the half-price Batch API (slower, best for many books)"
+        type: boolean
+        default: true
+      force:
+        description: "Re-check books already checked"
+        type: boolean
+        default: false
+
+concurrency:
+  group: database-writes
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Check content
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          args=""
+          [ "${{ inputs.dry_run }}" = "true" ] && args="$args --dry-run"
+          [ "${{ inputs.batch }}" = "true" ] && args="$args --batch"
+          [ "${{ inputs.force }}" = "true" ] && args="$args --force"
+          python -m pipeline.check_content $args
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: content-report
+          path: content-report.md
+          if-no-files-found: ignore

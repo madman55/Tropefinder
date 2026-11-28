@@ -43,6 +43,13 @@ begin
   insert into public.book_tropes (work_id, trope_id, status, confidence, verification)
     select w.id, t.id, 'present', 0.9, 'source_tag' from public.works w, public.tropes t where w.title = 'ZZ F: caped hero' and t.slug = 'zz-superhero';
 
+  -- content checks: a hidden picture book and an adult title, both with the superhero trope
+  insert into public.works (title, normalised_title, hidden_reason, audience) values ('ZZ G: picture book', 'zz g', 'children', 'picture_book');
+  insert into public.works (title, normalised_title, adult_content) values ('ZZ H: steamy hero', 'zz h', true);
+  insert into public.book_tropes (work_id, trope_id, status, confidence, verification)
+    select w.id, t.id, 'present', 0.9, 'source_tag' from public.works w, public.tropes t
+    where w.title in ('ZZ G: picture book', 'ZZ H: steamy hero') and t.slug = 'zz-superhero';
+
   -- meaning search: simple 384-number vectors pointing in different directions
   insert into public.work_embeddings (work_id, embedding, text_hash)
     select id, (array[1, 0, 0]::real[] || array_fill(0::real, array[381]))::extensions.vector, 'h'
@@ -114,6 +121,12 @@ begin
     raise exception 'FAIL - implied trope: %', got;
   end if;
   raise notice 'ok   - a trope that implies the chosen one counts for it';
+
+  select string_agg(title, ', ' order by title) into got from public.search_books(array['zz-superhero'], include_adult => true);
+  if got is distinct from 'ZZ F: caped hero, ZZ H: steamy hero' then
+    raise exception 'FAIL - hidden or adult handling: %', got;
+  end if;
+  raise notice 'ok   - hidden books never appear; adult titles only when asked for';
 
   select string_agg(title, ', ' order by similarity desc) into got
     from public.match_books((array[1, 0.2, 0]::real[] || array_fill(0::real, array[381]))::extensions.vector, 2);

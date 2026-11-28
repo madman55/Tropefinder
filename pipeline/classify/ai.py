@@ -159,6 +159,13 @@ class Claude:
         }
 
     def _verdicts(self, data: dict, price_factor: float = 1.0) -> list[dict]:
+        verdicts = self._tool_input(data, price_factor).get("verdicts", [])
+        if isinstance(verdicts, str):   # occasionally sent as a JSON string
+            verdicts = json.loads(verdicts)
+        return [v for v in verdicts if isinstance(v, dict)]
+
+    def _tool_input(self, data: dict, price_factor: float = 1.0) -> dict:
+        """Count the cost of one answer and return what it put into the forced tool."""
         self.calls += 1
         usage = data.get("usage", {})
         self.input_tokens += usage.get("input_tokens", 0)
@@ -167,11 +174,8 @@ class Claude:
                             + usage.get("output_tokens", 0) / 1e6 * PRICE_OUT) * price_factor
         for block in data.get("content", []):
             if block.get("type") == "tool_use":
-                verdicts = block.get("input", {}).get("verdicts", [])
-                if isinstance(verdicts, str):   # occasionally sent as a JSON string
-                    verdicts = json.loads(verdicts)
-                return [v for v in verdicts if isinstance(v, dict)]
-        raise RuntimeError(f"No verdicts returned (stop_reason {data.get('stop_reason')})")
+                return block.get("input") or {}
+        raise RuntimeError(f"No answer returned (stop_reason {data.get('stop_reason')})")
 
     def _send(self, method: str, url: str, **kw) -> dict:
         for attempt in range(6):
